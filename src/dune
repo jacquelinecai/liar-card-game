@@ -1,0 +1,3 @@
+(library
+ (name liargame)
+ (public_name LiarCardGame))
