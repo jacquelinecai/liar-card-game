@@ -12,3 +12,11 @@ type number =
   | Jack
   | Queen
   | King
+
+type suit =
+  | Clubs
+  | Diamonds
+  | Hearts
+  | Spades
+
+type card = suit * number
