@@ -21,9 +21,9 @@ finalcheck:
 	@bash check.sh final
 
 zip:
-	rm -f warmup.zip
-	zip -r warmup.zip . -x@exclude.lst
+	rm -f game.zip
+	zip -r game.zip . -x@exclude.lst
 
 clean:
 	dune clean
-	rm -f warmup.zip
+	rm -f game.zip
