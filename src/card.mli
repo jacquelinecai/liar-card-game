@@ -20,3 +20,5 @@ type suit =
   | Spades
 
 type card = suit * number
+
+val shuffle : card list
