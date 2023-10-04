@@ -80,6 +80,8 @@ let card_list : card list =
     (Spades, King);
   ]
 
+(** Implementation based on the Fisher-Yates Shuffling Algorithm:
+    https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
 let shuffle d =
   let d_arr = Array.of_list d in
   for i = 51 downto 0 do
