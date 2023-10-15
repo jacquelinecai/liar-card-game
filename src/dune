@@ -1,3 +1,4 @@
 (library
  (name liargame)
- (public_name LiarCardGame))
+ (public_name LiarCardGame)
+ (libraries bogue))
