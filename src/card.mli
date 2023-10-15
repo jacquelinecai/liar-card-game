@@ -21,4 +21,5 @@ type suit =
 
 type card = suit * number
 
+val card_list : card list
 val shuffle : card list -> card list
