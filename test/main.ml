@@ -1,4 +1,5 @@
 open OUnit2
+open Liargame
 open Card
 open Hand
 
