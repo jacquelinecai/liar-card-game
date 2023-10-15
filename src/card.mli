@@ -14,12 +14,13 @@ type number =
   | King
 
 type suit =
-  | Clubs
   | Diamonds
+  | Clubs
   | Hearts
   | Spades
 
 type card = suit * number
 
+val fileValue : card -> string
 val card_list : card list
 val shuffle : card list -> card list
