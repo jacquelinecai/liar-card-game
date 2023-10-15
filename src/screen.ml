@@ -4,14 +4,19 @@ module W = Widget
 module L = Layout
 
 let main () =
-  let b = W.check_box () in
-  let l = W.label "Hello world" in
-  let layout = L.flat_of_w [ b; l ] in
-  let size = L.set_size layout (500, 500) in
+  let button = W.button ~border_radius:10 "Start" in
+  let buttonlayout = L.flat_of_w [ button ] in
+  let tower = L.tower ~sep:10 ~align:Draw.Center [ buttonlayout ] in
+  let size = L.set_size tower (500, 500) in
   let background =
-    L.set_background layout (Some (L.color_bg (255, 218, 224, 255)))
+    L.set_background tower (Some (L.color_bg (255, 218, 224, 255)))
   in
-  let board = Bogue.of_layout layout in
+
+  (* let on_press button _ev = let b = W.get_button button in if
+     Button.is_pressed b then (W.label "Hi") else (W.label "Start game") in
+
+     let c = W.connect ~priority:W.Join button on_press *)
+  let board = Bogue.of_layout tower in
   Bogue.run board
 
 let () =
