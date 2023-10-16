@@ -52,7 +52,7 @@ let rec card_to_string_list (cards : card list) : string list =
   | (s, n) :: t ->
       (number_to_string n ^ " of " ^ suit_to_string s) :: card_to_string_list t
 
-let cmp_demo =
+let hand_tests =
   [
     ( "ordering cards test on five cards" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
@@ -70,7 +70,24 @@ let cmp_demo =
         |> Hand.order |> card_to_string_list)
         [ "Six of Diamonds"; "Six of Clubs"; "Six of Hearts"; "Six of Spades" ]
     );
+    ( "assigning unordered deck of cards" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        (assign 1 3 Hand.unshuffled_deck [] |> Hand.order |> card_to_string_list)
+        [ "Ace of Clubs"; "Two of Clubs"; "Three of Clubs" ] );
+    ( "assigning unordered deck of cards" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        (assign 39 45 Hand.unshuffled_deck []
+        |> Hand.order |> card_to_string_list)
+        [
+          "Ace of Spades";
+          "Two of Spades";
+          "Three of Spades";
+          "Four of Spades";
+          "Five of Spades";
+          "Six of Spades";
+          "King of Hearts";
+        ] );
   ]
 
-let suite = "test suite for Liar Card Game" >::: List.flatten [ cmp_demo ]
+let suite = "test suite for Liar Card Game" >::: List.flatten [ hand_tests ]
 let () = run_test_tt_main suite

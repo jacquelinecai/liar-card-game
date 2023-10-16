@@ -11,6 +11,7 @@ val shuffled_deck : card list
 val unshuffled_deck : card list
 (**unshuffled_deck used mainly for testing*)
 
+val assign : int -> int -> card list -> card list -> card list
 val order : card list -> card list
 val player1_hand : card list
 val player2_hand : card list
