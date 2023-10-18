@@ -12,10 +12,10 @@ let shuffled_deck = Card.shuffle Card.card_list
 let rec assign (a : int) (b : int) (deck : card list) (acc : card list) :
     card list =
   match deck with
-  | [] -> []
+  | [] -> acc
   | h :: t ->
-      let card_number = List.length shuffled_deck - List.length t in
-      if card_number >= a && card_number <= b then (h :: acc) @ assign a b t acc
+      let card_number = List.length unshuffled_deck - List.length t in
+      if card_number >= a && card_number <= b then assign a b t (h :: acc)
       else assign a b t acc
 
 let rec order (deck : card list) : card list =
