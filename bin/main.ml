@@ -1,7 +1,12 @@
 let () =
   print_endline "\n\nWelcome to BS.\n";
-  print_endline "Press s to start the game: ";
-  let x = read_line () in
-  match x with
-  | "s" -> print_endline "Here are the cards:"
-  | _ -> print_endline "Please try again. Press s to start the game: "
+
+  let y = ref false in
+  while not !y do
+    print_endline "Press s to start the game: ";
+    let x = read_line () in
+    if x = "s" then y := true
+  done
+;;
+
+print_endline "Here are the cards:"
