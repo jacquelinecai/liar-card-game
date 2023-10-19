@@ -23,6 +23,12 @@ let rec order (deck : card list) : card list =
     (fun (s1, n1) (s2, n2) -> if n1 = n2 then compare s1 s2 else compare n1 n2)
     deck
 
+let rec deck_to_string (deck : card list) : string =
+  match deck with
+  | [] -> ""
+  | [ x ] -> Card.card_to_string x
+  | h :: t -> Card.card_to_string h ^ ", " ^ deck_to_string t
+
 let player1_hand = assign 1 13 shuffled_deck [] |> order
 let player2_hand = assign 14 26 shuffled_deck [] |> order
 let player3_hand = assign 27 39 shuffled_deck [] |> order

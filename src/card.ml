@@ -2,16 +2,7 @@ open Array
 open Random
 
 type number =
-  | Ace
-  | Two
-  | Three
-  | Four
-  | Five
-  | Six
-  | Seven
-  | Eight
-  | Nine
-  | Ten
+  | Number of int
   | Jack
   | Queen
   | King
@@ -26,114 +17,86 @@ type card = suit * number
 
 let card_list : card list =
   [
-    (Clubs, Ace);
-    (Clubs, Two);
-    (Clubs, Three);
-    (Clubs, Four);
-    (Clubs, Five);
-    (Clubs, Six);
-    (Clubs, Seven);
-    (Clubs, Eight);
-    (Clubs, Nine);
-    (Clubs, Ten);
+    (Clubs, Number 1);
+    (Clubs, Number 2);
+    (Clubs, Number 3);
+    (Clubs, Number 4);
+    (Clubs, Number 5);
+    (Clubs, Number 6);
+    (Clubs, Number 7);
+    (Clubs, Number 8);
+    (Clubs, Number 9);
+    (Clubs, Number 10);
     (Clubs, Jack);
     (Clubs, Queen);
     (Clubs, King);
-    (Diamonds, Ace);
-    (Diamonds, Two);
-    (Diamonds, Three);
-    (Diamonds, Four);
-    (Diamonds, Five);
-    (Diamonds, Six);
-    (Diamonds, Seven);
-    (Diamonds, Eight);
-    (Diamonds, Nine);
-    (Diamonds, Ten);
+    (Diamonds, Number 1);
+    (Diamonds, Number 2);
+    (Diamonds, Number 3);
+    (Diamonds, Number 4);
+    (Diamonds, Number 5);
+    (Diamonds, Number 6);
+    (Diamonds, Number 7);
+    (Diamonds, Number 8);
+    (Diamonds, Number 9);
+    (Diamonds, Number 10);
     (Diamonds, Jack);
     (Diamonds, Queen);
     (Diamonds, King);
-    (Hearts, Ace);
-    (Hearts, Two);
-    (Hearts, Three);
-    (Hearts, Four);
-    (Hearts, Five);
-    (Hearts, Six);
-    (Hearts, Seven);
-    (Hearts, Eight);
-    (Hearts, Nine);
-    (Hearts, Ten);
+    (Hearts, Number 1);
+    (Hearts, Number 2);
+    (Hearts, Number 3);
+    (Hearts, Number 4);
+    (Hearts, Number 5);
+    (Hearts, Number 6);
+    (Hearts, Number 7);
+    (Hearts, Number 8);
+    (Hearts, Number 9);
+    (Hearts, Number 10);
     (Hearts, Jack);
     (Hearts, Queen);
     (Hearts, King);
-    (Spades, Ace);
-    (Spades, Two);
-    (Spades, Three);
-    (Spades, Four);
-    (Spades, Five);
-    (Spades, Six);
-    (Spades, Seven);
-    (Spades, Eight);
-    (Spades, Nine);
-    (Spades, Ten);
+    (Spades, Number 1);
+    (Spades, Number 2);
+    (Spades, Number 3);
+    (Spades, Number 4);
+    (Spades, Number 5);
+    (Spades, Number 6);
+    (Spades, Number 7);
+    (Spades, Number 8);
+    (Spades, Number 9);
+    (Spades, Number 10);
     (Spades, Jack);
     (Spades, Queen);
     (Spades, King);
   ]
 
-let fileValue (c : card) : string =
+let card_to_string c =
   match c with
-  | Clubs, Ace -> "card-images/ace_of_clubs.png"
-  | Clubs, Two -> "card-images/2_of_clubs.png"
-  | Clubs, Three -> "card-images/3_of_clubs.png"
-  | Clubs, Four -> "card-images/4_of_clubs.png"
-  | Clubs, Five -> "card-images/5_of_clubs.png"
-  | Clubs, Six -> "card-images/6_of_clubs.png"
-  | Clubs, Seven -> "card-images/7_of_clubs.png"
-  | Clubs, Eight -> "card-images/8_of_clubs.png"
-  | Clubs, Nine -> "card-images/9_of_clubs.png"
-  | Clubs, Ten -> "card-images/10_of_clubs.png"
-  | Clubs, Jack -> "card-images/jack_of_clubs.png"
-  | Clubs, Queen -> "card-images/queen_of_clubs.png"
-  | Clubs, King -> "card-images/king_of_clubs.png"
-  | Diamonds, Ace -> "card-images/ace_of_diamonds.png"
-  | Diamonds, Two -> "card-images/2_of_diamonds.png"
-  | Diamonds, Three -> "card-images/3_of_diamonds.png"
-  | Diamonds, Four -> "card-images/4_of_diamonds.png"
-  | Diamonds, Five -> "card-images/5_of_diamonds.png"
-  | Diamonds, Six -> "card-images/6_of_diamonds.png"
-  | Diamonds, Seven -> "card-images/7_of_diamonds.png"
-  | Diamonds, Eight -> "card-images/8_of_diamonds.png"
-  | Diamonds, Nine -> "card-images/9_of_diamonds.png"
-  | Diamonds, Ten -> "card-images/10_of_diamonds.png"
-  | Diamonds, Jack -> "card-images/jack_of_diamonds.png"
-  | Diamonds, Queen -> "card-images/queen_of_diamonds.png"
-  | Diamonds, King -> "card-images/king_of_diamonds.png"
-  | Hearts, Ace -> "card-images/ace_of_hearts.png"
-  | Hearts, Two -> "card-images/2_of_hearts.png"
-  | Hearts, Three -> "card-images/3_of_hearts.png"
-  | Hearts, Four -> "card-images/4_of_hearts.png"
-  | Hearts, Five -> "card-images/5_of_hearts.png"
-  | Hearts, Six -> "card-images/6_of_hearts.png"
-  | Hearts, Seven -> "card-images/7_of_hearts.png"
-  | Hearts, Eight -> "card-images/8_of_hearts.png"
-  | Hearts, Nine -> "card-images/9_of_hearts.png"
-  | Hearts, Ten -> "card-images/10_of_hearts.png"
-  | Hearts, Jack -> "card-images/jack_of_hearts.png"
-  | Hearts, Queen -> "card-images/queen_of_hearts.png"
-  | Hearts, King -> "card-images/king_of_hearts.png"
-  | Spades, Ace -> "card-images/ace_of_spades.png"
-  | Spades, Two -> "card-images/2_of_spades.png"
-  | Spades, Three -> "card-images/3_of_spades.png"
-  | Spades, Four -> "card-images/4_of_spades.png"
-  | Spades, Five -> "card-images/5_of_spades.png"
-  | Spades, Six -> "card-images/6_of_spades.png"
-  | Spades, Seven -> "card-images/7_of_spades.png"
-  | Spades, Eight -> "card-images/8_of_spades.png"
-  | Spades, Nine -> "card-images/9_of_spades.png"
-  | Spades, Ten -> "card-images/10_of_spades.png"
-  | Spades, Jack -> "card-images/jack_of_spades.png"
-  | Spades, Queen -> "card-images/queen_of_spades.png"
-  | Spades, King -> "card-images/king_of_spades.png"
+  | Clubs, Number x ->
+      let num = if x = 1 then "Ace" else string_of_int x in
+      num ^ " of Clubs"
+  | Clubs, Jack -> "Jack of Clubs"
+  | Clubs, Queen -> "Queen of Clubs"
+  | Clubs, King -> "King of Clubs"
+  | Diamonds, Number x ->
+      let num = if x = 1 then "Ace" else string_of_int x in
+      num ^ " of Diamonds"
+  | Diamonds, Jack -> "Jack of Diamonds"
+  | Diamonds, Queen -> "Queen of Diamonds"
+  | Diamonds, King -> "King of Diamonds"
+  | Hearts, Number x ->
+      let num = if x = 1 then "Ace" else string_of_int x in
+      num ^ " of Hearts"
+  | Hearts, Jack -> "Jack of Hearts"
+  | Hearts, Queen -> "Queen of Hearts"
+  | Hearts, King -> "King of Hearts"
+  | Spades, Number x ->
+      let num = if x = 1 then "Ace" else string_of_int x in
+      num ^ " of Spades"
+  | Spades, Jack -> "Jack of Spades"
+  | Spades, Queen -> "Queen of Spades"
+  | Spades, King -> "King of Spades"
 
 (** Implementation based on the Fisher-Yates Shuffling Algorithm:
     https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)

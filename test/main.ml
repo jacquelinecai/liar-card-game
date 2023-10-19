@@ -32,16 +32,7 @@ let suit_to_string (s : suit) : string =
 
 let number_to_string (s : number) : string =
   match s with
-  | Ace -> "Ace"
-  | Two -> "Two"
-  | Three -> "Three"
-  | Four -> "Four"
-  | Five -> "Five"
-  | Six -> "Six"
-  | Seven -> "Seven"
-  | Eight -> "Eight"
-  | Nine -> "Nine"
-  | Ten -> "Ten"
+  | Number x -> if x = 1 then "Ace" else string_of_int x
   | Jack -> "Jack"
   | Queen -> "Queen"
   | King -> "King"
@@ -56,35 +47,40 @@ let hand_tests =
   [
     ( "ordering cards test on five cards" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
-        ([ (Clubs, King); (Diamonds, Ace); (Spades, Five); (Diamonds, Five) ]
+        ([
+           (Clubs, King);
+           (Diamonds, Number 1);
+           (Spades, Number 5);
+           (Diamonds, Number 5);
+         ]
         |> Hand.order |> card_to_string_list)
-        [
-          "Ace of Diamonds";
-          "Five of Diamonds";
-          "Five of Spades";
-          "King of Clubs";
-        ] );
+        [ "Ace of Diamonds"; "5 of Diamonds"; "5 of Spades"; "King of Clubs" ]
+    );
     ( "ordering cards test on cards of same number" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
-        ([ (Clubs, Six); (Spades, Six); (Diamonds, Six); (Hearts, Six) ]
+        ([
+           (Clubs, Number 6);
+           (Spades, Number 6);
+           (Diamonds, Number 6);
+           (Hearts, Number 6);
+         ]
         |> Hand.order |> card_to_string_list)
-        [ "Six of Diamonds"; "Six of Clubs"; "Six of Hearts"; "Six of Spades" ]
-    );
+        [ "6 of Diamonds"; "6 of Clubs"; "6 of Hearts"; "6 of Spades" ] );
     ( "assigning unordered deck of cards" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
         (assign 1 3 Hand.unshuffled_deck [] |> Hand.order |> card_to_string_list)
-        [ "Ace of Clubs"; "Two of Clubs"; "Three of Clubs" ] );
+        [ "Ace of Clubs"; "2 of Clubs"; "3 of Clubs" ] );
     ( "assigning unordered deck of cards" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
         (assign 39 45 Hand.unshuffled_deck []
         |> Hand.order |> card_to_string_list)
         [
           "Ace of Spades";
-          "Two of Spades";
-          "Three of Spades";
-          "Four of Spades";
-          "Five of Spades";
-          "Six of Spades";
+          "2 of Spades";
+          "3 of Spades";
+          "4 of Spades";
+          "5 of Spades";
+          "6 of Spades";
           "King of Hearts";
         ] );
   ]

@@ -1,14 +1,5 @@
 type number =
-  | Ace
-  | Two
-  | Three
-  | Four
-  | Five
-  | Six
-  | Seven
-  | Eight
-  | Nine
-  | Ten
+  | Number of int
   | Jack
   | Queen
   | King
@@ -21,6 +12,6 @@ type suit =
 
 type card = suit * number
 
-val fileValue : card -> string
 val card_list : card list
+val card_to_string : card -> string
 val shuffle : card list -> card list

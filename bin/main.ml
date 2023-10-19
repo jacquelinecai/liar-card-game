@@ -1,3 +1,5 @@
+open Liargame.Hand
+
 let () =
   print_endline "\n\nWelcome to BS.\n";
 
@@ -9,4 +11,4 @@ let () =
   done
 ;;
 
-print_endline "Here are the cards:"
+print_endline ("Here are the cards: " ^ deck_to_string player1_hand)
