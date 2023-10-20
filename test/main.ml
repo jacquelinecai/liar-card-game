@@ -47,33 +47,31 @@ let hand_tests =
   [
     ( "ordering cards test on five cards" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
+        [ "Ace of Diamonds"; "5 of Diamonds"; "5 of Spades"; "King of Clubs" ]
         ([
            (Clubs, King);
            (Diamonds, Number 1);
            (Spades, Number 5);
            (Diamonds, Number 5);
          ]
-        |> Hand.order |> card_to_string_list)
-        [ "Ace of Diamonds"; "5 of Diamonds"; "5 of Spades"; "King of Clubs" ]
-    );
+        |> Hand.order |> card_to_string_list) );
     ( "ordering cards test on cards of same number" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
+        [ "6 of Diamonds"; "6 of Clubs"; "6 of Hearts"; "6 of Spades" ]
         ([
            (Clubs, Number 6);
            (Spades, Number 6);
            (Diamonds, Number 6);
            (Hearts, Number 6);
          ]
-        |> Hand.order |> card_to_string_list)
-        [ "6 of Diamonds"; "6 of Clubs"; "6 of Hearts"; "6 of Spades" ] );
+        |> Hand.order |> card_to_string_list) );
     ( "assigning unordered deck of cards" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
+        [ "Ace of Clubs"; "2 of Clubs"; "3 of Clubs" ]
         (assign 1 3 Hand.unshuffled_deck [] |> Hand.order |> card_to_string_list)
-        [ "Ace of Clubs"; "2 of Clubs"; "3 of Clubs" ] );
+    );
     ( "assigning unordered deck of cards" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
-        (assign 39 45 Hand.unshuffled_deck []
-        |> Hand.order |> card_to_string_list)
         [
           "Ace of Spades";
           "2 of Spades";
@@ -82,7 +80,9 @@ let hand_tests =
           "5 of Spades";
           "6 of Spades";
           "King of Hearts";
-        ] );
+        ]
+        (assign 39 45 Hand.unshuffled_deck []
+        |> Hand.order |> card_to_string_list) );
   ]
 
 let suite = "test suite for Liar Card Game" >::: List.flatten [ hand_tests ]
