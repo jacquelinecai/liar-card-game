@@ -11,7 +11,17 @@ let start () =
     if x = "s" then y := true
   done;
 
-  print_endline ("Here are your cards: " ^ deck_to_string player1_hand)
+  print_endline ("Here are your cards: " ^ deck_to_string !player1_hand)
+
+let exit () =
+  print_endline "Exit Prompt";
+  let x = read_line () in
+  if x = "exit" then
+    print_endline
+      "\n\
+       You have successfully quit the Liar Card game. Thank you for playing! \
+       Exiting the session...\n";
+  Stdlib.exit 0
 
 let round = ref 0
 let card_type = ref None
@@ -53,7 +63,7 @@ let choose_cards () =
       How many cards would you like to put down? \n\
      \ \n\
      \    Here are your current cards: "
-    ^ deck_to_string player1_hand);
+    ^ deck_to_string !player1_hand);
   let y = ref None in
   while !y = None do
     let x = String.lowercase_ascii (read_line ()) in
@@ -70,4 +80,5 @@ let () =
   start ();
   choose_card_type ();
   print_endline "Great. This round everyone will be claiming to have ";
-  choose_cards ()
+  choose_cards ();
+  exit ()

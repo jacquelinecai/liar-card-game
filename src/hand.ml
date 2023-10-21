@@ -35,10 +35,10 @@ let rec deck_to_string (deck : card list) : string =
   | [ x ] -> Card.card_to_string x
   | h :: t -> Card.card_to_string h ^ ", " ^ deck_to_string t
 
-let player1_hand = assign 1 13 shuffled_deck [] |> order
-let player2_hand = assign 14 26 shuffled_deck [] |> order
-let player3_hand = assign 27 39 shuffled_deck [] |> order
-let player4_hand = assign 40 52 shuffled_deck [] |> order
+let player1_hand = ref (assign 1 13 shuffled_deck [] |> order)
+let player2_hand = ref (assign 14 26 shuffled_deck [] |> order)
+let player3_hand = ref (assign 27 39 shuffled_deck [] |> order)
+let player4_hand = ref (assign 40 52 shuffled_deck [] |> order)
 
 let rec contains (c : card) (cl : card list) : bool =
   match cl with
