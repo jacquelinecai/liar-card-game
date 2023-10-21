@@ -12,8 +12,11 @@ type playerList = {
   mutable p4 : pass;
 }
 
-let startRound () = { p1 = NotPass; p2 = NotPass; p3 = NotPass; p4 = NotPass }
+let p = { p1 = NotPass; p2 = NotPass; p3 = NotPass; p4 = NotPass }
+
+let startRound (p : playerList) : playerList =
+  { p1 = NotPass; p2 = NotPass; p3 = NotPass; p4 = NotPass }
 
 let endRound (p : playerList) : playerList =
-  if p.p1 = Pass && p.p2 = Pass && p.p3 = Pass && p.p4 = Pass then startRound ()
+  if p.p1 = Pass && p.p2 = Pass && p.p3 = Pass && p.p4 = Pass then startRound p
   else p

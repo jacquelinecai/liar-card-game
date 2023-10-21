@@ -9,5 +9,5 @@ type playerList = {
   mutable p4 : pass;
 }
 
-val startRound : unit -> playerList
+val startRound : playerList -> playerList
 val endRound : playerList -> playerList
