@@ -1,7 +1,7 @@
 open Liargame.Hand
 open Liargame.Card
 
-let () =
+let start () =
   print_endline "\n\nWelcome to BS.\n";
 
   let y = ref false in
@@ -9,10 +9,9 @@ let () =
     print_endline "Press s to start the game: ";
     let x = read_line () in
     if x = "s" then y := true
-  done
-;;
+  done;
 
-print_endline ("Here are the cards: " ^ deck_to_string player1_hand)
+  print_endline ("Here are your cards: " ^ deck_to_string player1_hand)
 
 let round = ref 0
 let card_type = ref None
@@ -22,9 +21,9 @@ let match_card_type c =
   | None -> None
   | Some s -> s
 
-let choose_card_type =
+let choose_card_type () =
   let c = ref None in
-  while !c != None do
+  while !c = None do
     print_endline
       "Choose a card type you are claiming to have: possible options include: \n\
       \    Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, \
@@ -43,17 +42,18 @@ let choose_card_type =
     else if x = "jack" then c := Some (ref Jack)
     else if x = "queen" then c := Some (ref Queen)
     else if x = "king" then c := Some (ref King)
-  done
+  done;
+  card_type := !c
 
-let choose_cards =
+let choose_cards () =
   print_endline
     ("\n\n\
-      Which cards would you like to put down \n\
+      How many cards would you like to put down? \n\
      \ \n\
      \    Here are your current cards: "
     ^ deck_to_string player1_hand);
   let y = ref None in
-  while !y != None do
+  while !y = None do
     let x = String.lowercase_ascii (read_line ()) in
     if x = "1" then
       let () = print_endline "What is the card you would like to place?" in
@@ -63,3 +63,8 @@ let choose_cards =
     else if x = "3" then y := None
     else if x = "4" then y := None
   done
+
+let () =
+  start ();
+  choose_card_type ();
+  choose_cards ()
