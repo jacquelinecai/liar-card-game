@@ -20,8 +20,20 @@ let rec assign (a : int) (b : int) (deck : card list) (acc : card list) :
 
 let rec order (deck : card list) : card list =
   List.sort
-    (fun (s1, n1) (s2, n2) -> if n1 = n2 then compare s1 s2 else compare n1 n2)
+    (fun (s1, n1) (s2, n2) ->
+      if n1 = n2 then compare s1 s2
+      else
+        match (n1, n2) with
+        | Card.Number x, (Card.Jack | Card.Queen | Card.King) -> -1
+        | (Card.Jack | Card.Queen | Card.King), Card.Number x -> 1
+        | _ -> compare n1 n2)
     deck
+
+let rec deck_to_string (deck : card list) : string =
+  match deck with
+  | [] -> ""
+  | [ x ] -> Card.card_to_string x
+  | h :: t -> Card.card_to_string h ^ ", " ^ deck_to_string t
 
 let player1_hand = assign 1 13 shuffled_deck [] |> order
 let player2_hand = assign 14 26 shuffled_deck [] |> order

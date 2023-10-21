@@ -1,0 +1,26 @@
+---
+# Members of the group.
+group:
+  - name: Jacqueline Cai
+    netid: jxc6
+  - name: Selina Lin
+    netid: sxl7
+  - name: Vivian Zhou
+    netid: vz48
+  - name: Yuxuan Lin
+    netid: yl2886
+# PM.
+pm:
+  name: Gabriel Montalvo-Zotter
+  netid: gmm243
+# Gallery entry will be public.
+publish: true
+# Pithy title
+title: "Liar Card Game"
+# OK if this is a Cornell Github link, but public gallery viewers won't be able to see it.
+git-repo: "https://github.coecis.cornell.edu/jxc6/cs3110-final"
+# No demo screencast
+demo-video-url: ""
+# Description of the project.
+desc: >
+  Our project is a single-player Liar Card Game.

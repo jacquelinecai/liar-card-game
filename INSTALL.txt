@@ -1,0 +1,9 @@
+INSTALLATION INSTRUCTIONS FOR LIAR CARD GAME
+
+This system requires OCaml installation. If OCaml and Ubuntu are not installed, it is highly recommended to follow
+the installation instructions on:
+  
+https://cs3110.github.io/textbook/chapters/preface/install.html
+
+to ensure that all necessary packages are correctly installed for the Blackjack
+system.
