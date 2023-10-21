@@ -49,4 +49,4 @@ let rec updateDeck (c : card) (cl : card list) : card list =
   let () = assert (contains c cl) in
   match cl with
   | [] -> []
-  | h :: t -> if h = c then t else updateDeck c cl
+  | h :: t -> if h = c then t else h :: updateDeck c cl

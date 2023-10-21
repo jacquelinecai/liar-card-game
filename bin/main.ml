@@ -17,21 +17,14 @@ print_endline ("Here are the cards: " ^ deck_to_string player1_hand)
 let round = ref 0
 let card_type = ref King
 
-let () =
-  print_endline
-    "\n\n\
-     Choose a card type you claim to have: possible options include: \n\
-    \    Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, \
-     Queen, \n\
-    \    or King.\n\
-    \    \n\
-    \   \n";
+let choose_card_type =
   let y = ref false in
-  let z = ref King in
   while not !y do
-    print_endline "Press s to start the game: ";
+    print_endline "Choose a card type you claim to have: possible options include: \n\
+    \    Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, \
+     Queen, or King";
     let x = String.lowercase_ascii (read_line ()) in
-    if x = "ace" then y := (true) z := Ace
+    if x = "ace" then y := true
     else if x = "two" then y := true
     else if x = "three" then y := true
     else if x = "four" then y := true
@@ -45,3 +38,14 @@ let () =
     else if x = "queen" then y := true
     else if x = "king" then y := true
   done
+
+let choose_cards =
+  print_endline "\n\nHow many cards would you want to put down? (1 to 4) \n";
+  let y = ref false in
+  while not !y do 
+      let x = String.lowercase_ascii (read_line ()) in
+      if x = "1" then y:= true
+      else if x = "2" then y:= true
+      else if x = "3" then y:= true
+      else if x = "4" then y:= true
+    done
