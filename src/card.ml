@@ -78,33 +78,17 @@ let suit_match c =
   | Hearts, _ -> "♥"
   | Spades, _ -> "♠"
 
+let number_match c =
+  match c with
+  | _, Number x -> if x = 1 then "A" else string_of_int x
+  | _, Jack -> "J"
+  | _, Queen -> "Q"
+  | _, King -> "K"
+
 let card_to_string c =
   let suit = suit_match c in
-  match c with
-  | Clubs, Number x ->
-      let num = if x = 1 then "A" else string_of_int x in
-      num ^ " " ^ suit
-  | Clubs, Jack -> "J" ^ " " ^ suit
-  | Clubs, Queen -> "Q" ^ " " ^ suit
-  | Clubs, King -> "K" ^ " " ^ suit
-  | Diamonds, Number x ->
-      let num = if x = 1 then "A" else string_of_int x in
-      num ^ " " ^ suit
-  | Diamonds, Jack -> "J" ^ " " ^ suit
-  | Diamonds, Queen -> "Q" ^ " " ^ suit
-  | Diamonds, King -> "K" ^ " " ^ suit
-  | Hearts, Number x ->
-      let num = if x = 1 then "A" else string_of_int x in
-      num ^ " " ^ suit
-  | Hearts, Jack -> "J" ^ " " ^ suit
-  | Hearts, Queen -> "Q" ^ " " ^ suit
-  | Hearts, King -> "K" ^ " " ^ suit
-  | Spades, Number x ->
-      let num = if x = 1 then "A" else string_of_int x in
-      num ^ " " ^ suit
-  | Spades, Jack -> "J" ^ " " ^ suit
-  | Spades, Queen -> "Q" ^ " " ^ suit
-  | Spades, King -> "K" ^ " " ^ suit
+  let number = number_match c in
+  number ^ " " ^ suit
 
 (** Implementation based on the Fisher-Yates Shuffling Algorithm:
     https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
