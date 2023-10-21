@@ -71,32 +71,40 @@ let card_list : card list =
     (Spades, King);
   ]
 
+let suit_match c =
+  match c with
+  | Clubs, _ -> "♣"
+  | Diamonds, _ -> "♦"
+  | Hearts, _ -> "♥"
+  | Spades, _ -> "♠"
+
 let card_to_string c =
+  let suit = suit_match c in
   match c with
   | Clubs, Number x ->
       let num = if x = 1 then "Ace" else string_of_int x in
-      num ^ " of Clubs"
-  | Clubs, Jack -> "Jack of Clubs"
-  | Clubs, Queen -> "Queen of Clubs"
-  | Clubs, King -> "King of Clubs"
+      num ^ " " ^ suit
+  | Clubs, Jack -> "Jack" ^ " " ^ suit
+  | Clubs, Queen -> "Queen" ^ " " ^ suit
+  | Clubs, King -> "King" ^ " " ^ suit
   | Diamonds, Number x ->
       let num = if x = 1 then "Ace" else string_of_int x in
-      num ^ " of Diamonds"
-  | Diamonds, Jack -> "Jack of Diamonds"
-  | Diamonds, Queen -> "Queen of Diamonds"
-  | Diamonds, King -> "King of Diamonds"
+      num ^ " " ^ suit
+  | Diamonds, Jack -> "Jack" ^ " " ^ suit
+  | Diamonds, Queen -> "Queen" ^ " " ^ suit
+  | Diamonds, King -> "King" ^ " " ^ suit
   | Hearts, Number x ->
       let num = if x = 1 then "Ace" else string_of_int x in
-      num ^ " of Hearts"
-  | Hearts, Jack -> "Jack of Hearts"
-  | Hearts, Queen -> "Queen of Hearts"
-  | Hearts, King -> "King of Hearts"
+      num ^ " " ^ suit
+  | Hearts, Jack -> "Jack" ^ " " ^ suit
+  | Hearts, Queen -> "Queen" ^ " " ^ suit
+  | Hearts, King -> "King" ^ " " ^ suit
   | Spades, Number x ->
       let num = if x = 1 then "Ace" else string_of_int x in
-      num ^ " of Spades"
-  | Spades, Jack -> "Jack of Spades"
-  | Spades, Queen -> "Queen of Spades"
-  | Spades, King -> "King of Spades"
+      num ^ " " ^ suit
+  | Spades, Jack -> "Jack" ^ " " ^ suit
+  | Spades, Queen -> "Queen" ^ " " ^ suit
+  | Spades, King -> "King" ^ " " ^ suit
 
 (** Implementation based on the Fisher-Yates Shuffling Algorithm:
     https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
