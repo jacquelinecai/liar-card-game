@@ -7,7 +7,7 @@ type player =
 type card = Card.card
 
 let unshuffled_deck = Card.card_list
-let shuffled_deck = Card.shuffle Card.card_list
+let shuffled_deck = Card.shuffle unshuffled_deck
 
 let rec assign (a : int) (b : int) (deck : card list) (acc : card list) :
     card list =
