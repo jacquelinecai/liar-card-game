@@ -3,11 +3,11 @@ type pass =
   | NotPass
 
 type playerList = {
-  p1 : pass;
-  p2 : pass;
-  p3 : pass;
-  p4 : pass;
+  mutable p1 : pass;
+  mutable p2 : pass;
+  mutable p3 : pass;
+  mutable p4 : pass;
 }
 
-val startRound : playerList -> playerList
+val startRound : unit -> playerList
 val endRound : playerList -> playerList
