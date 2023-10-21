@@ -39,3 +39,14 @@ let player1_hand = assign 1 13 shuffled_deck [] |> order
 let player2_hand = assign 14 26 shuffled_deck [] |> order
 let player3_hand = assign 27 39 shuffled_deck [] |> order
 let player4_hand = assign 40 52 shuffled_deck [] |> order
+
+let rec contains (c : card) (cl : card list) : bool =
+  match cl with
+  | [] -> false
+  | h :: t -> if h = c then true else contains c t
+
+let rec updateDeck (c : card) (cl : card list) : card list =
+  let () = assert (contains c cl) in
+  match cl with
+  | [] -> []
+  | h :: t -> if h = c then t else updateDeck c cl
