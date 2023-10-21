@@ -45,29 +45,21 @@ let choose_card_type =
     else if x = "king" then c := Some (ref King)
   done
 
-let choose_card_amt =
-  print_endline "\n\nHow many cards would you want to put down? (1 to 4) \n";
-  let y = ref 0 in
-  while !y != 0 do
-    let x = String.lowercase_ascii (read_line ()) in
-    if x = "1" then y := 1
-    else if x = "2" then y := 2
-    else if x = "3" then y := 3
-    else if x = "4" then y := 4
-  done
-
-let choose_card_amt =
+let choose_cards =
   print_endline
     ("\n\n\
       Which cards would you like to put down \n\
      \ \n\
      \    Here are your current cards: "
     ^ deck_to_string player1_hand);
-  let y = ref 0 in
-  while !y != 0 do
+  let y = ref None in
+  while !y != None do
     let x = String.lowercase_ascii (read_line ()) in
-    if x = "1" then y := 1
-    else if x = "2" then y := 2
-    else if x = "3" then y := 3
-    else if x = "4" then y := 4
+    if x = "1" then
+      let () = print_endline "What is the card you would like to place?" in
+      let card = read_line () |> String.uppercase_ascii |> card_to_string in
+      y := Some card
+    else if x = "2" then y := None
+    else if x = "3" then y := None
+    else if x = "4" then y := None
   done

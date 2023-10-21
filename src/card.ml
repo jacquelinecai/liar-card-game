@@ -118,3 +118,23 @@ let shuffle d =
   done;
 
   Array.to_list d_arr
+
+let string_to_card s =
+  match s with
+  | "1D" -> Some (Diamonds, Number 1)
+  | "1H" -> Some (Hearts, Number 1)
+  | "1C" -> Some (Clubs, Number 1)
+  | "1S" -> Some (Hearts, Number 1)
+  | "2D" -> Some (Diamonds, Number 2)
+  | "2H" -> Some (Hearts, Number 2)
+  | "2C" -> Some (Clubs, Number 2)
+  | "2S" -> Some (Hearts, Number 2)
+  | "3D" -> Some (Diamonds, Number 3)
+  | "3H" -> Some (Hearts, Number 3)
+  | "3C" -> Some (Clubs, Number 3)
+  | "3S" -> Some (Hearts, Number 3)
+  | "4D" -> Some (Diamonds, Number 4)
+  | "4H" -> Some (Hearts, Number 4)
+  | "4C" -> Some (Clubs, Number 4)
+  | "4S" -> Some (Hearts, Number 4)
+  | _ -> None
