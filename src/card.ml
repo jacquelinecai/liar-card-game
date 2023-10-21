@@ -75,28 +75,28 @@ let card_to_string c =
   match c with
   | Clubs, Number x ->
       let num = if x = 1 then "Ace" else string_of_int x in
-      num ^ " of Clubs"
-  | Clubs, Jack -> "Jack of Clubs"
-  | Clubs, Queen -> "Queen of Clubs"
-  | Clubs, King -> "King of Clubs"
+      num ^ " ♣"
+  | Clubs, Jack -> "Jack ♣"
+  | Clubs, Queen -> "Queen ♣"
+  | Clubs, King -> "King ♣"
   | Diamonds, Number x ->
       let num = if x = 1 then "Ace" else string_of_int x in
-      num ^ " of Diamonds"
-  | Diamonds, Jack -> "Jack of Diamonds"
-  | Diamonds, Queen -> "Queen of Diamonds"
-  | Diamonds, King -> "King of Diamonds"
+      num ^ " ♦"
+  | Diamonds, Jack -> "Jack ♦"
+  | Diamonds, Queen -> "Queen ♦"
+  | Diamonds, King -> "King ♦"
   | Hearts, Number x ->
       let num = if x = 1 then "Ace" else string_of_int x in
-      num ^ " of Hearts"
-  | Hearts, Jack -> "Jack of Hearts"
-  | Hearts, Queen -> "Queen of Hearts"
-  | Hearts, King -> "King of Hearts"
+      num ^ " ♥"
+  | Hearts, Jack -> "Jack ♥"
+  | Hearts, Queen -> "Queen ♥"
+  | Hearts, King -> "King ♥"
   | Spades, Number x ->
       let num = if x = 1 then "Ace" else string_of_int x in
-      num ^ " of Spades"
-  | Spades, Jack -> "Jack of Spades"
-  | Spades, Queen -> "Queen of Spades"
-  | Spades, King -> "King of Spades"
+      num ^ " ♠"
+  | Spades, Jack -> "Jack ♠"
+  | Spades, Queen -> "Queen ♠"
+  | Spades, King -> "King ♠"
 
 (** Implementation based on the Fisher-Yates Shuffling Algorithm:
     https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
