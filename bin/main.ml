@@ -15,6 +15,7 @@ let start () =
 
 let round = ref 0
 let card_type = ref None
+let card = ref None
 
 let match_card_type c =
   match c with
@@ -42,6 +43,7 @@ let choose_card_type () =
     else if x = "jack" then c := Some (ref Jack)
     else if x = "queen" then c := Some (ref Queen)
     else if x = "king" then c := Some (ref King)
+    else print_endline "That is not a possible card type."
   done;
   card_type := !c
 
@@ -57,8 +59,8 @@ let choose_cards () =
     let x = String.lowercase_ascii (read_line ()) in
     if x = "1" then
       let () = print_endline "What is the card you would like to place?" in
-      let card = read_line () |> String.uppercase_ascii |> string_to_card in
-      y := Some card
+      let c = read_line () |> String.uppercase_ascii |> string_to_card in
+      y := c
     else if x = "2" then y := None
     else if x = "3" then y := None
     else if x = "4" then y := None
@@ -67,4 +69,5 @@ let choose_cards () =
 let () =
   start ();
   choose_card_type ();
+  print_endline "Great. This round everyone will be claiming to have ";
   choose_cards ()
