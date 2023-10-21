@@ -1,4 +1,3 @@
-open Array
 open Random
 
 type number =
@@ -78,33 +77,17 @@ let suit_match c =
   | Hearts, _ -> "♥"
   | Spades, _ -> "♠"
 
+let number_match c =
+  match c with
+  | _, Number x -> if x = 1 then "A" else string_of_int x
+  | _, Jack -> "J"
+  | _, Queen -> "Q"
+  | _, King -> "K"
+
 let card_to_string c =
   let suit = suit_match c in
-  match c with
-  | Clubs, Number x ->
-      let num = if x = 1 then "A" else string_of_int x in
-      num ^ " " ^ suit
-  | Clubs, Jack -> "J" ^ " " ^ suit
-  | Clubs, Queen -> "Q" ^ " " ^ suit
-  | Clubs, King -> "K" ^ " " ^ suit
-  | Diamonds, Number x ->
-      let num = if x = 1 then "A" else string_of_int x in
-      num ^ " " ^ suit
-  | Diamonds, Jack -> "J" ^ " " ^ suit
-  | Diamonds, Queen -> "Q" ^ " " ^ suit
-  | Diamonds, King -> "K" ^ " " ^ suit
-  | Hearts, Number x ->
-      let num = if x = 1 then "A" else string_of_int x in
-      num ^ " " ^ suit
-  | Hearts, Jack -> "J" ^ " " ^ suit
-  | Hearts, Queen -> "Q" ^ " " ^ suit
-  | Hearts, King -> "K" ^ " " ^ suit
-  | Spades, Number x ->
-      let num = if x = 1 then "A" else string_of_int x in
-      num ^ " " ^ suit
-  | Spades, Jack -> "J" ^ " " ^ suit
-  | Spades, Queen -> "Q" ^ " " ^ suit
-  | Spades, King -> "K" ^ " " ^ suit
+  let number = number_match c in
+  number ^ " " ^ suit
 
 (** Implementation based on the Fisher-Yates Shuffling Algorithm:
     https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
@@ -118,3 +101,23 @@ let shuffle d =
   done;
 
   Array.to_list d_arr
+
+let string_to_card s =
+  match s with
+  | "1D" -> Some (Diamonds, Number 1)
+  | "1H" -> Some (Hearts, Number 1)
+  | "1C" -> Some (Clubs, Number 1)
+  | "1S" -> Some (Hearts, Number 1)
+  | "2D" -> Some (Diamonds, Number 2)
+  | "2H" -> Some (Hearts, Number 2)
+  | "2C" -> Some (Clubs, Number 2)
+  | "2S" -> Some (Hearts, Number 2)
+  | "3D" -> Some (Diamonds, Number 3)
+  | "3H" -> Some (Hearts, Number 3)
+  | "3C" -> Some (Clubs, Number 3)
+  | "3S" -> Some (Hearts, Number 3)
+  | "4D" -> Some (Diamonds, Number 4)
+  | "4H" -> Some (Hearts, Number 4)
+  | "4C" -> Some (Clubs, Number 4)
+  | "4S" -> Some (Hearts, Number 4)
+  | _ -> None
