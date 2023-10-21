@@ -14,9 +14,9 @@ val unshuffled_deck : card list
 val assign : int -> int -> card list -> card list -> card list
 val order : card list -> card list
 val deck_to_string : card list -> string
-val player1_hand : card list
-val player2_hand : card list
-val player3_hand : card list
-val player4_hand : card list
+val player1_hand : card list ref
+val player2_hand : card list ref
+val player3_hand : card list ref
+val player4_hand : card list ref
 val contains : card -> card list -> bool
 val updateDeck : card -> card list -> card list
