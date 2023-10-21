@@ -1,4 +1,3 @@
-open Array
 open Random
 
 type number =
