@@ -57,7 +57,7 @@ let choose_cards =
     let x = String.lowercase_ascii (read_line ()) in
     if x = "1" then
       let () = print_endline "What is the card you would like to place?" in
-      let card = read_line () |> String.uppercase_ascii |> card_to_string in
+      let card = read_line () |> String.uppercase_ascii |> string_to_card in
       y := Some card
     else if x = "2" then y := None
     else if x = "3" then y := None
