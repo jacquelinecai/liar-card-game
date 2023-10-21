@@ -116,4 +116,5 @@ let shuffle d =
     d_arr.(j) <- d_arr.(i);
     d_arr.(i) <- temp
   done;
+
   Array.to_list d_arr
