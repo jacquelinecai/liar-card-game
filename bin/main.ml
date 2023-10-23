@@ -6,21 +6,24 @@ let start () =
 
   let y = ref false in
   while not !y do
-    print_endline "Press s to start the game: ";
+    print_endline "Press \"s\" to start the game: ";
     let x = read_line () in
     if x = "s" then y := true
   done;
 
-  print_endline ("Here are your cards: " ^ deck_to_string !player1_hand)
+  print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
 
 let exit () =
-  print_endline "Exit Prompt";
-  let x = read_line () in
-  if x = "exit" then
+  let quit = ref None in
+  while !quit = None do
+    print_endline "Please type \"exit\" to exit the game.";
+    let x = read_line () in
+    if x = "exit" then quit := Some 1;
     print_endline
       "\n\
        You have successfully quit the Liar Card game. Thank you for playing! \
-       Exiting the session...\n";
+       Exiting the session...\n"
+  done;
   Stdlib.exit 0
 
 let round = ref 0
@@ -36,9 +39,9 @@ let choose_card_type () =
   let c = ref None in
   while !c = None do
     print_endline
-      "Choose a card type you are claiming to have: possible options include: \n\
+      "Choose a card type you are claiming to have. Possible options include: \n\
       \    Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, \
-       Queen, or King";
+       Queen, King";
     let x = String.lowercase_ascii (read_line ()) in
     if x = "ace" then c := Some (ref (Number 1))
     else if x = "two" then c := Some (ref (Number 2))
@@ -68,12 +71,53 @@ let choose_cards () =
   while !y = None do
     let x = String.lowercase_ascii (read_line ()) in
     if x = "1" then
-      let () = print_endline "What is the card you would like to place?" in
+      let () =
+        print_endline
+          "What is the card you would like to place?\n\
+           Please type it in the format \"NumberSuit\" \n\
+           where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+           J, Q, K\" \n\
+           and \"Suit\" can take values \"D, C, H, S\"."
+      in
       let c = read_line () |> String.uppercase_ascii |> string_to_card in
       y := c
-    else if x = "2" then y := None
-    else if x = "3" then y := None
-    else if x = "4" then y := None
+    else if x = "2" then
+      let () =
+        print_endline
+          "What are the two cards you would like to place?\n\
+           Please type it in the format \"NumberSuit\" \n\
+           where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+           J, Q, K\" \n\
+           and \"Suit\" can take values \"D, C, H, S\" and separate each card \
+           by spaces."
+      in
+      let c = read_line () |> String.uppercase_ascii |> string_to_card in
+      y := c
+    else if x = "3" then
+      let () =
+        print_endline
+          "What are the three cards you would like to place?\n\
+           Please type it in the format \"NumberSuit\" \n\
+           where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+           J, Q, K\" \n\
+           and \"Suit\" can take values \"D, C, H, S\" and separate each card \
+           by spaces."
+      in
+      let c = read_line () |> String.uppercase_ascii |> string_to_card in
+      y := c
+    else if x = "4" then
+      let () =
+        print_endline
+          "What are the four cards you would like to place?\n\
+           Please type it in the format \"NumberSuit\" \n\
+           where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+           J, Q, K\" \n\
+           and \"Suit\" can take values \"D, C, H, S\" and separate each card \
+           by spaces."
+      in
+      let c = read_line () |> String.uppercase_ascii |> string_to_card in
+      y := c
+    else if x = "0" then y := Some (Diamonds, Number 1)
   done
 
 let () =
