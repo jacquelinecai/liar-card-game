@@ -2,7 +2,7 @@ open Liargame.Hand
 open Liargame.Card
 
 let start () =
-  print_endline "\n\nWelcome to the Liar Card Game.\n";
+  print_endline "\n\nWelcome to the Liar Card Game!\n";
 
   let y = ref false in
   while not !y do
@@ -18,11 +18,12 @@ let exit () =
   while !quit = None do
     print_endline "Please type \"exit\" to exit the game.";
     let x = read_line () in
-    if x = "exit" then quit := Some 1;
-    print_endline
-      "\n\
-       You have successfully quit the Liar Card game. Thank you for playing! \
-       Exiting the session...\n"
+    if x = "exit" then (
+      quit := Some 1;
+      print_endline
+        "\n\
+         You have successfully quit the Liar Card game. Thank you for playing! \
+         Exiting the session...\n")
   done;
   Stdlib.exit 0
 
@@ -61,14 +62,17 @@ let choose_card_type () =
   done;
   card_type := !c
 
-let choose_cards () =
+let num_cards_prompt () =
   print_endline
     ("\n\n\
       How many cards would you like to put down? You may place down up to 4 \
       cards. \n\
      \ \n\
      \    Here are your current cards: "
-    ^ deck_to_string !player1_hand);
+    ^ deck_to_string !player1_hand)
+
+let choose_cards () =
+  num_cards_prompt ();
   let y = ref None in
   while !y = None do
     let x = String.lowercase_ascii (read_line ()) in
@@ -151,15 +155,7 @@ let choose_cards () =
       print_endline
         ("You have chosen to place down " ^ (Option.get !y |> card_to_string)))
     else if x = "0" then y := Some (Diamonds, Number 1)
-    else
-      print_endline
-        ("\n\n\
-          That's not a possible number of cards to put down.\n\
-          How many cards would you like to put down? You may place down up to \
-          4 cards. \n\
-         \ \n\
-         \    Here are your current cards: "
-        ^ deck_to_string !player1_hand)
+    else num_cards_prompt ()
   done
 
 let () =
