@@ -72,54 +72,94 @@ let choose_cards () =
   let y = ref None in
   while !y = None do
     let x = String.lowercase_ascii (read_line ()) in
-    if x = "1" then
-      let () =
-        print_endline
-          "What is the card you would like to place?\n\
-           Please type it in the format \"NumberSuit\" \n\
-           where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
-           J, Q, K\" \n\
-           and \"Suit\" can take values \"D, C, H, S\"."
-      in
-      let c = read_line () |> String.uppercase_ascii |> string_to_card in
-      y := c
-    else if x = "2" then
-      let () =
-        print_endline
-          "What are the two cards you would like to place?\n\
-           Please type it in the format \"NumberSuit\" \n\
-           where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
-           J, Q, K\" \n\
-           and \"Suit\" can take values \"D, C, H, S\" and separate each card \
-           by spaces."
-      in
-      let c = read_line () |> String.uppercase_ascii |> string_to_card in
-      y := c
-    else if x = "3" then
-      let () =
-        print_endline
-          "What are the three cards you would like to place?\n\
-           Please type it in the format \"NumberSuit\" \n\
-           where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
-           J, Q, K\" \n\
-           and \"Suit\" can take values \"D, C, H, S\" and separate each card \
-           by spaces."
-      in
-      let c = read_line () |> String.uppercase_ascii |> string_to_card in
-      y := c
-    else if x = "4" then
-      let () =
-        print_endline
-          "What are the four cards you would like to place?\n\
-           Please type it in the format \"NumberSuit\" \n\
-           where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
-           J, Q, K\" \n\
-           and \"Suit\" can take values \"D, C, H, S\" and separate each card \
-           by spaces."
-      in
-      let c = read_line () |> String.uppercase_ascii |> string_to_card in
-      y := c
+    if x = "1" then (
+      let z = ref None in
+      while !z = None do
+        let () =
+          print_endline
+            "\n\
+             What is the card you would like to place?\n\
+             Please type it in the format \"NumberSuit\" \n\
+             where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+             J, Q, K\" \n\
+             and \"Suit\" can take values \"D, C, H, S\"."
+        in
+        let c = read_line () |> String.uppercase_ascii |> string_to_card in
+        if c <> None then z := Some 1;
+        y := c
+      done;
+      print_endline
+        ("You have chosen to place down " ^ (Option.get !y |> card_to_string)))
+    else if x = "2" then (
+      let z = ref None in
+      while !z = None do
+        let () =
+          print_endline
+            "\n\
+             What are the two cards you would like to place?\n\
+             Please type it in the format \"NumberSuit\" \n\
+             where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+             J, Q, K\" \n\
+             and \"Suit\" can take values \"D, C, H, S\" and separate each \
+             card by spaces.\n\
+             (Note: for MS2, we're only supporting one card at this time)"
+        in
+        let c = read_line () |> String.uppercase_ascii |> string_to_card in
+        if c <> None then z := Some 1;
+        y := c
+      done;
+      print_endline
+        ("You have chosen to place down " ^ (Option.get !y |> card_to_string)))
+    else if x = "3" then (
+      let z = ref None in
+      while !z = None do
+        let () =
+          print_endline
+            "\n\
+             What are the three cards you would like to place?\n\
+             Please type it in the format \"NumberSuit\" \n\
+             where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+             J, Q, K\" \n\
+             and \"Suit\" can take values \"D, C, H, S\" and separate each \
+             card by spaces.\n\
+             (Note: for MS2, we're only supporting one card at this time)"
+        in
+        let c = read_line () |> String.uppercase_ascii |> string_to_card in
+        if c <> None then z := Some 1;
+        y := c
+      done;
+      print_endline
+        ("You have chosen to place down " ^ (Option.get !y |> card_to_string)))
+    else if x = "4" then (
+      let z = ref None in
+      while !z = None do
+        let () =
+          print_endline
+            "\n\
+             What are the four cards you would like to place?\n\
+             Please type it in the format \"NumberSuit\" \n\
+             where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+             J, Q, K\" \n\
+             and \"Suit\" can take values \"D, C, H, S\" and separate each \
+             card by spaces.\n\
+             (Note: for MS2, we're only supporting one card at this time)"
+        in
+        let c = read_line () |> String.uppercase_ascii |> string_to_card in
+        if c <> None then z := Some 1;
+        y := c
+      done;
+      print_endline
+        ("You have chosen to place down " ^ (Option.get !y |> card_to_string)))
     else if x = "0" then y := Some (Diamonds, Number 1)
+    else
+      print_endline
+        ("\n\n\
+          That's not a possible number of cards to put down.\n\
+          How many cards would you like to put down? You may place down up to \
+          4 cards. \n\
+         \ \n\
+         \    Here are your current cards: "
+        ^ deck_to_string !player1_hand)
   done
 
 let () =

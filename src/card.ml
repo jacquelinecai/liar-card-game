@@ -102,58 +102,38 @@ let shuffle d =
 
   Array.to_list d_arr
 
-let string_to_card s =
-  match s with
-  | "AD" -> Some (Diamonds, Number 1)
-  | "AH" -> Some (Hearts, Number 1)
-  | "AC" -> Some (Clubs, Number 1)
-  | "AS" -> Some (Spades, Number 1)
-  | "2D" -> Some (Diamonds, Number 2)
-  | "2H" -> Some (Hearts, Number 2)
-  | "2C" -> Some (Clubs, Number 2)
-  | "2S" -> Some (Spades, Number 2)
-  | "3D" -> Some (Diamonds, Number 3)
-  | "3H" -> Some (Hearts, Number 3)
-  | "3C" -> Some (Clubs, Number 3)
-  | "3S" -> Some (Spades, Number 3)
-  | "4D" -> Some (Diamonds, Number 4)
-  | "4H" -> Some (Hearts, Number 4)
-  | "4C" -> Some (Clubs, Number 4)
-  | "4S" -> Some (Spades, Number 4)
-  | "5D" -> Some (Diamonds, Number 5)
-  | "5H" -> Some (Hearts, Number 5)
-  | "5C" -> Some (Clubs, Number 5)
-  | "5S" -> Some (Spades, Number 5)
-  | "6D" -> Some (Diamonds, Number 6)
-  | "6H" -> Some (Hearts, Number 6)
-  | "6C" -> Some (Clubs, Number 6)
-  | "6S" -> Some (Spades, Number 6)
-  | "7D" -> Some (Diamonds, Number 7)
-  | "7H" -> Some (Hearts, Number 7)
-  | "7C" -> Some (Clubs, Number 7)
-  | "7S" -> Some (Spades, Number 7)
-  | "8D" -> Some (Diamonds, Number 8)
-  | "8H" -> Some (Hearts, Number 8)
-  | "8C" -> Some (Clubs, Number 8)
-  | "8S" -> Some (Spades, Number 8)
-  | "9D" -> Some (Diamonds, Number 9)
-  | "9H" -> Some (Hearts, Number 9)
-  | "9C" -> Some (Clubs, Number 9)
-  | "9S" -> Some (Spades, Number 9)
-  | "10D" -> Some (Diamonds, Number 10)
-  | "10H" -> Some (Hearts, Number 10)
-  | "10C" -> Some (Clubs, Number 10)
-  | "10S" -> Some (Spades, Number 10)
-  | "JD" -> Some (Diamonds, Jack)
-  | "JH" -> Some (Hearts, Jack)
-  | "JC" -> Some (Clubs, Jack)
-  | "JS" -> Some (Spades, Jack)
-  | "QD" -> Some (Diamonds, Queen)
-  | "QH" -> Some (Hearts, Queen)
-  | "QC" -> Some (Clubs, Queen)
-  | "QS" -> Some (Spades, Queen)
-  | "KD" -> Some (Diamonds, King)
-  | "KH" -> Some (Hearts, King)
-  | "KC" -> Some (Clubs, King)
-  | "KS" -> Some (Spades, King)
+let string_suit_match s =
+  let suit = String.sub s 1 1 in
+  match suit with
+  | "D" -> Some Diamonds
+  | "H" -> Some Hearts
+  | "C" -> Some Clubs
+  | "S" -> Some Spades
   | _ -> None
+
+let string_number_match s =
+  let num = String.sub s 0 1 in
+  match num with
+  | "A" -> Some (Number 1)
+  | "2" -> Some (Number 2)
+  | "3" -> Some (Number 3)
+  | "4" -> Some (Number 4)
+  | "5" -> Some (Number 5)
+  | "6" -> Some (Number 6)
+  | "7" -> Some (Number 7)
+  | "8" -> Some (Number 8)
+  | "9" -> Some (Number 9)
+  | "10" -> Some (Number 10)
+  | "J" -> Some Jack
+  | "Q" -> Some Queen
+  | "K" -> Some King
+  | _ -> None
+
+let string_to_card s =
+  if String.length s = 2 then
+    let suit = string_suit_match s in
+    let num = string_number_match s in
+    match (suit, num) with
+    | Some x, Some y -> Some (x, y)
+    | _ -> None
+  else None
