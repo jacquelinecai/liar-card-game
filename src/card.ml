@@ -104,10 +104,10 @@ let shuffle d =
 
 let string_to_card s =
   match s with
-  | "1D" -> Some (Diamonds, Number 1)
-  | "1H" -> Some (Hearts, Number 1)
-  | "1C" -> Some (Clubs, Number 1)
-  | "1S" -> Some (Spades, Number 1)
+  | "AD" -> Some (Diamonds, Number 1)
+  | "AH" -> Some (Hearts, Number 1)
+  | "AC" -> Some (Clubs, Number 1)
+  | "AS" -> Some (Spades, Number 1)
   | "2D" -> Some (Diamonds, Number 2)
   | "2H" -> Some (Hearts, Number 2)
   | "2C" -> Some (Clubs, Number 2)

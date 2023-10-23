@@ -6,4 +6,4 @@ the installation instructions on:
 https://cs3110.github.io/textbook/chapters/preface/install.html
 
 to ensure that all necessary packages are correctly installed for the Liar Card 
-game system.
+Game system.

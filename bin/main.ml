@@ -6,7 +6,7 @@ let start () =
 
   let y = ref false in
   while not !y do
-    print_endline "Press s to start the game: ";
+    print_endline "Press \"s\" to start the game: ";
     let x = read_line () in
     if x = "s" then y := true
   done;
@@ -28,6 +28,7 @@ let exit () =
 
 let round = ref 0
 let card_type = ref None
+let card = ref None
 
 let match_card_type c =
   match c with
@@ -41,7 +42,7 @@ let choose_card_type () =
       "\n\
        Choose a card type you are claiming to have. Possible options include: \n\
       \    Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, \
-       Queen, or King";
+       Queen, King";
     let x = String.lowercase_ascii (read_line ()) in
     if x = "ace" then c := Some (ref (Number 1))
     else if x = "two" then c := Some (ref (Number 2))
@@ -56,6 +57,7 @@ let choose_card_type () =
     else if x = "jack" then c := Some (ref Jack)
     else if x = "queen" then c := Some (ref Queen)
     else if x = "king" then c := Some (ref King)
+    else print_endline "That is not a possible card type."
   done;
   card_type := !c
 
@@ -73,50 +75,51 @@ let choose_cards () =
     if x = "1" then
       let () =
         print_endline
-          "\n\
-           What is the card you would like to place? \n\
-           Please type it in the form \"NumberSuit\" \n\
-           where \"Number\" can take values \"1, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+          "What is the card you would like to place?\n\
+           Please type it in the format \"NumberSuit\" \n\
+           where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
            J, Q, K\" \n\
-           and \"Suite\" can take values \"D, C, H, S\""
+           and \"Suit\" can take values \"D, C, H, S\"."
       in
-      let card = read_line () |> String.uppercase_ascii |> string_to_card in
-      y := card
+      let c = read_line () |> String.uppercase_ascii |> string_to_card in
+      y := c
     else if x = "2" then
       let () =
         print_endline
-          "\n\
-           What are the two cards you would like to place? \n\
-           Please type it in the form \"NumberSuit\" \n\
-           where \"Number\" can take values \"1, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+          "What are the two cards you would like to place?\n\
+           Please type it in the format \"NumberSuit\" \n\
+           where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
            J, Q, K\" \n\
-           and \"Suite\" can take values \"D, C, H, S\""
+           and \"Suit\" can take values \"D, C, H, S\" and separate each card \
+           by spaces."
       in
-      let card = read_line () |> String.uppercase_ascii |> string_to_card in
-      y := card
+      let c = read_line () |> String.uppercase_ascii |> string_to_card in
+      y := c
     else if x = "3" then
       let () =
         print_endline
-          "What are the three cards you would like to place? \n\
-           Please type it in the form \"NumberSuit\" \n\
-           where \"Number\" can take values \"1, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+          "What are the three cards you would like to place?\n\
+           Please type it in the format \"NumberSuit\" \n\
+           where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
            J, Q, K\" \n\
-           and \"Suite\" can take values \"D, C, H, S\""
+           and \"Suit\" can take values \"D, C, H, S\" and separate each card \
+           by spaces."
       in
-      let card = read_line () |> String.uppercase_ascii |> string_to_card in
-      y := card
+      let c = read_line () |> String.uppercase_ascii |> string_to_card in
+      y := c
     else if x = "4" then
       let () =
         print_endline
-          "What are the four cards you would like to place? \n\
-           Please type it in the form \"NumberSuit\" \n\
-           where \"Number\" can take values \"1, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+          "What are the four cards you would like to place?\n\
+           Please type it in the format \"NumberSuit\" \n\
+           where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
            J, Q, K\" \n\
-           and \"Suite\" can take values \"D, C, H, S\""
+           and \"Suit\" can take values \"D, C, H, S\" and separate each card \
+           by spaces."
       in
-      let card = read_line () |> String.uppercase_ascii |> string_to_card in
-      y := card
-    else y := Some (Diamonds, Number 1)
+      let c = read_line () |> String.uppercase_ascii |> string_to_card in
+      y := c
+    else if x = "0" then y := Some (Diamonds, Number 1)
   done
 
 let () =
