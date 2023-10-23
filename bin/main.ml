@@ -2,7 +2,7 @@ open Liargame.Hand
 open Liargame.Card
 
 let start () =
-  print_endline "\n\nWelcome to BS.\n";
+  print_endline "\n\nWelcome to the Liar Card Game.\n";
 
   let y = ref false in
   while not !y do
@@ -11,16 +11,19 @@ let start () =
     if x = "s" then y := true
   done;
 
-  print_endline ("Here are your cards: " ^ deck_to_string !player1_hand)
+  print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
 
 let exit () =
-  print_endline "Exit Prompt";
-  let x = read_line () in
-  if x = "exit" then
+  let quit = ref None in
+  while !quit = None do
+    print_endline "Please type \"exit\" to exit the game.";
+    let x = read_line () in
+    if x = "exit" then quit := Some 1;
     print_endline
       "\n\
        You have successfully quit the Liar Card game. Thank you for playing! \
-       Exiting the session...\n";
+       Exiting the session...\n"
+  done;
   Stdlib.exit 0
 
 let round = ref 0
@@ -35,7 +38,8 @@ let choose_card_type () =
   let c = ref None in
   while !c = None do
     print_endline
-      "Choose a card type you are claiming to have: possible options include: \n\
+      "\n\
+       Choose a card type you are claiming to have. Possible options include: \n\
       \    Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, \
        Queen, or King";
     let x = String.lowercase_ascii (read_line ()) in
@@ -58,7 +62,8 @@ let choose_card_type () =
 let choose_cards () =
   print_endline
     ("\n\n\
-      How many cards would you like to put down? \n\
+      How many cards would you like to put down? You may place down up to 4 \
+      cards. \n\
      \ \n\
      \    Here are your current cards: "
     ^ deck_to_string !player1_hand);
@@ -66,12 +71,52 @@ let choose_cards () =
   while !y = None do
     let x = String.lowercase_ascii (read_line ()) in
     if x = "1" then
-      let () = print_endline "What is the card you would like to place?" in
+      let () =
+        print_endline
+          "\n\
+           What is the card you would like to place? \n\
+           Please type it in the form \"NumberSuit\" \n\
+           where \"Number\" can take values \"1, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+           J, Q, K\" \n\
+           and \"Suite\" can take values \"D, C, H, S\""
+      in
       let card = read_line () |> String.uppercase_ascii |> string_to_card in
-      y := Some card
-    else if x = "2" then y := None
-    else if x = "3" then y := None
-    else if x = "4" then y := None
+      y := card
+    else if x = "2" then
+      let () =
+        print_endline
+          "\n\
+           What are the two cards you would like to place? \n\
+           Please type it in the form \"NumberSuit\" \n\
+           where \"Number\" can take values \"1, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+           J, Q, K\" \n\
+           and \"Suite\" can take values \"D, C, H, S\""
+      in
+      let card = read_line () |> String.uppercase_ascii |> string_to_card in
+      y := card
+    else if x = "3" then
+      let () =
+        print_endline
+          "What are the three cards you would like to place? \n\
+           Please type it in the form \"NumberSuit\" \n\
+           where \"Number\" can take values \"1, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+           J, Q, K\" \n\
+           and \"Suite\" can take values \"D, C, H, S\""
+      in
+      let card = read_line () |> String.uppercase_ascii |> string_to_card in
+      y := card
+    else if x = "4" then
+      let () =
+        print_endline
+          "What are the four cards you would like to place? \n\
+           Please type it in the form \"NumberSuit\" \n\
+           where \"Number\" can take values \"1, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
+           J, Q, K\" \n\
+           and \"Suite\" can take values \"D, C, H, S\""
+      in
+      let card = read_line () |> String.uppercase_ascii |> string_to_card in
+      y := card
+    else y := Some (Diamonds, Number 1)
   done
 
 let () =
