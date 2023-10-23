@@ -8,3 +8,4 @@ https://cs3110.github.io/textbook/chapters/preface/install.html
 to ensure that all necessary packages are correctly installed for the Liar Card 
 Game system.
 
+In order to run game, please navigate to the right directory that contains the downloaded file of the game in the terminal. Then, run make play to start the game.
