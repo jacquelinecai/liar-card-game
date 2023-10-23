@@ -79,6 +79,5 @@ let choose_cards () =
 let () =
   start ();
   choose_card_type ();
-  print_endline "Great. This round everyone will be claiming to have ";
   choose_cards ();
   exit ()
