@@ -66,7 +66,7 @@ let num_cards_prompt () =
   print_endline
     ("\n\n\
       How many cards would you like to put down? You may place down up to 4 \
-      cards. \n\
+      cards. (Note: for MS2, we're only supporting one card at this time.) \n\
      \ \n\
      \    Here are your current cards: "
     ^ deck_to_string !player1_hand)
