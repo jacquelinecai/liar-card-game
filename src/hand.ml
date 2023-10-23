@@ -45,8 +45,9 @@ let rec contains (c : card) (cl : card list) : bool =
   | [] -> false
   | h :: t -> if h = c then true else contains c t
 
-let rec updateDeck (c : card) (cl : card list) : card list =
-  let () = assert (contains c cl) in
-  match cl with
-  | [] -> []
-  | h :: t -> if h = c then t else h :: updateDeck c cl
+let rec updateDeck (c : card) (cl : card list) (acc : card list) : card list =
+  if contains c cl then
+    match cl with
+    | [] -> []
+    | h :: t -> if h = c then acc @ t else updateDeck c t (h :: acc)
+  else failwith "Not in deck"

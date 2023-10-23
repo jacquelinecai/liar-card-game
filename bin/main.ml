@@ -16,7 +16,7 @@ let start () =
 let exit () =
   let quit = ref None in
   while !quit = None do
-    print_endline "Please type \"exit\" to exit the game.";
+    print_endline "\nPlease type \"exit\" to exit the game.";
     let x = read_line () in
     if x = "exit" then (
       quit := Some 1;
@@ -45,19 +45,19 @@ let choose_card_type () =
       \    Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, \
        Queen, King";
     let x = String.lowercase_ascii (read_line ()) in
-    if x = "ace" then c := Some (ref (Number 1))
-    else if x = "two" then c := Some (ref (Number 2))
-    else if x = "three" then c := Some (ref (Number 3))
-    else if x = "four" then c := Some (ref (Number 4))
-    else if x = "five" then c := Some (ref (Number 5))
-    else if x = "six" then c := Some (ref (Number 6))
-    else if x = "seven" then c := Some (ref (Number 7))
-    else if x = "eight" then c := Some (ref (Number 8))
-    else if x = "nine" then c := Some (ref (Number 9))
-    else if x = "ten" then c := Some (ref (Number 10))
-    else if x = "jack" then c := Some (ref Jack)
-    else if x = "queen" then c := Some (ref Queen)
-    else if x = "king" then c := Some (ref King)
+    if x = "ace" then c := Some (Number 1)
+    else if x = "two" then c := Some (Number 2)
+    else if x = "three" then c := Some (Number 3)
+    else if x = "four" then c := Some (Number 4)
+    else if x = "five" then c := Some (Number 5)
+    else if x = "six" then c := Some (Number 6)
+    else if x = "seven" then c := Some (Number 7)
+    else if x = "eight" then c := Some (Number 8)
+    else if x = "nine" then c := Some (Number 9)
+    else if x = "ten" then c := Some (Number 10)
+    else if x = "jack" then c := Some Jack
+    else if x = "queen" then c := Some Queen
+    else if x = "king" then c := Some King
     else print_endline "That is not a possible card type."
   done;
   card_type := !c
@@ -93,7 +93,10 @@ let choose_cards () =
         y := c
       done;
       print_endline
-        ("You have chosen to place down " ^ (Option.get !y |> card_to_string)))
+        ("You have chosen to place down "
+        ^ (Option.get !y |> card_to_string)
+        ^ " and you claimed to place down one "
+        ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
     else if x = "2" then (
       let z = ref None in
       while !z = None do
@@ -113,7 +116,10 @@ let choose_cards () =
         y := c
       done;
       print_endline
-        ("You have chosen to place down " ^ (Option.get !y |> card_to_string)))
+        ("You have chosen to place down "
+        ^ (Option.get !y |> card_to_string)
+        ^ " and you claimed to place down one "
+        ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
     else if x = "3" then (
       let z = ref None in
       while !z = None do
@@ -133,7 +139,10 @@ let choose_cards () =
         y := c
       done;
       print_endline
-        ("You have chosen to place down " ^ (Option.get !y |> card_to_string)))
+        ("You have chosen to place down "
+        ^ (Option.get !y |> card_to_string)
+        ^ " and you claimed to place down one "
+        ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
     else if x = "4" then (
       let z = ref None in
       while !z = None do
@@ -153,10 +162,19 @@ let choose_cards () =
         y := c
       done;
       print_endline
-        ("You have chosen to place down " ^ (Option.get !y |> card_to_string)))
+        ("You have chosen to place down "
+        ^ (Option.get !y |> card_to_string)
+        ^ " and you claimed to place down one "
+        ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
     else if x = "0" then y := Some (Diamonds, Number 1)
     else num_cards_prompt ()
-  done
+  done;
+  card := !y;
+  print_endline "test";
+  try
+    player1_hand := updateDeck (Option.get !card) !player1_hand [];
+    print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
+  with Failure x -> print_endline "You do not have that card!"
 
 let () =
   start ();

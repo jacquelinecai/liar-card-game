@@ -72,21 +72,21 @@ let card_list : card list =
 
 let suit_match c =
   match c with
-  | Clubs, _ -> "♣"
-  | Diamonds, _ -> "♦"
-  | Hearts, _ -> "♥"
-  | Spades, _ -> "♠"
+  | Clubs -> "♣"
+  | Diamonds -> "♦"
+  | Hearts -> "♥"
+  | Spades -> "♠"
 
 let number_match c =
   match c with
-  | _, Number x -> if x = 1 then "A" else string_of_int x
-  | _, Jack -> "J"
-  | _, Queen -> "Q"
-  | _, King -> "K"
+  | Number x -> if x = 1 then "A" else string_of_int x
+  | Jack -> "J"
+  | Queen -> "Q"
+  | King -> "K"
 
 let card_to_string c =
-  let suit = suit_match c in
-  let number = number_match c in
+  let suit = suit_match (fst c) in
+  let number = number_match (snd c) in
   number ^ " " ^ suit
 
 (** Implementation based on the Fisher-Yates Shuffling Algorithm:

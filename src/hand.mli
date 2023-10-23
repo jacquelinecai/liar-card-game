@@ -19,4 +19,4 @@ val player2_hand : card list ref
 val player3_hand : card list ref
 val player4_hand : card list ref
 val contains : card -> card list -> bool
-val updateDeck : card -> card list -> card list
+val updateDeck : card -> card list -> card list -> card list
