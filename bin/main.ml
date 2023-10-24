@@ -66,7 +66,7 @@ let num_cards_prompt () =
   print_endline
     ("\n\n\
       How many cards would you like to put down? You may place down up to 4 \
-      cards. (Note: for MS2, we're only supporting one card at this time.) \n\
+      cards. \n(Note: for MS2, we're only supporting one card at this time.) \n\
      \ \n\
      \    Here are your current cards: "
     ^ deck_to_string !player1_hand)
@@ -174,7 +174,7 @@ let choose_cards () =
   try
     player1_hand := updateDeck (Option.get !card) !player1_hand [];
     print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
-  with Failure x -> print_endline "You do not have that card!"
+  with InvalidCard -> print_endline "You do not have that card!"
 
 let () =
   start ();
