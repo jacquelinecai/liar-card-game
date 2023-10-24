@@ -1,1 +1,5 @@
-(lang dune 3.9)
+(lang dune 3.10)
+
+(generate_opam_files true)
+
+(name LiarCardGame)
