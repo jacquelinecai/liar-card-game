@@ -1,10 +1,10 @@
+open Card
+
 type player =
   | Player1
   | Player2
   | Player3
   | Player4
-
-type card = Card.card
 
 val shuffled_deck : card list
 

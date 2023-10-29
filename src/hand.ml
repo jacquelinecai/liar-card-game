@@ -1,13 +1,13 @@
+open Card
+
 type player =
   | Player1
   | Player2
   | Player3
   | Player4
 
-type card = Card.card
-
-let unshuffled_deck = Card.card_list
-let shuffled_deck = Card.shuffle unshuffled_deck
+let unshuffled_deck = card_list
+let shuffled_deck = shuffle unshuffled_deck
 
 let rec assign (a : int) (b : int) (deck : card list) (acc : card list) :
     card list =
@@ -24,16 +24,16 @@ let rec order (deck : card list) : card list =
       if n1 = n2 then compare s1 s2
       else
         match (n1, n2) with
-        | Card.Number x, (Card.Jack | Card.Queen | Card.King) -> -1
-        | (Card.Jack | Card.Queen | Card.King), Card.Number x -> 1
+        | Number x, (Jack | Queen | King) -> -1
+        | (Jack | Queen | King), Number x -> 1
         | _ -> compare n1 n2)
     deck
 
 let rec deck_to_string (deck : card list) : string =
   match deck with
   | [] -> ""
-  | [ x ] -> Card.card_to_string x
-  | h :: t -> Card.card_to_string h ^ ", " ^ deck_to_string t
+  | [ x ] -> card_to_string x
+  | h :: t -> card_to_string h ^ ", " ^ deck_to_string t
 
 let player1_hand = ref (assign 1 13 shuffled_deck [] |> order)
 let player2_hand = ref (assign 14 26 shuffled_deck [] |> order)

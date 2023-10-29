@@ -2,6 +2,7 @@ open OUnit2
 open Liargame
 open Card
 open Hand
+open Game
 
 (** From A2: [pp_string s] pretty-prints card [c]. *)
 let pp_string c = "\"" ^ c ^ "\""
@@ -85,5 +86,20 @@ let hand_tests =
         |> Hand.order |> card_to_string_list) );
   ]
 
-let suite = "test suite for Liar Card Game" >::: List.flatten [ hand_tests ]
+  let game_tests = 
+    [
+      ("card status on 4 empty card lists" >:: fun _ -> 
+        assert_equal (0, 0, 0, 0) (card_status [] [] [] []));
+      ("card status on initially player hands" >:: fun _ ->
+        assert_equal (13, 13, 13, 13) 
+        (card_status !player1_hand !player2_hand !player3_hand !player4_hand));
+      ("check winner on first player" >:: fun _ -> 
+        assert_equal 1 
+        (card_status [] !player2_hand !player3_hand !player4_hand |> check_winner));
+      ("check winner with all empty hands" >:: fun _ ->
+        assert_raises InvalidCardAmount 
+        (fun () -> card_status [] [] [] [] |> check_winner))
+    ]
+
+let suite = "test suite for Liar Card Game" >::: List.flatten [ hand_tests; game_tests ]
 let () = run_test_tt_main suite
