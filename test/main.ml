@@ -83,6 +83,44 @@ let hand_tests =
         ]
         (assign 39 45 Hand.unshuffled_deck []
         |> Hand.order |> card_to_string_list) );
+
+        ( "contains test on a card in the deck" >:: fun _ ->
+          assert_equal 
+          true
+            (contains (Hearts,King) (assign  39 45 Hand.unshuffled_deck [])  )
+        );
+        ( "contains test on first card in the deck" >:: fun _ ->
+          assert_equal 
+          true
+            (contains (Clubs,Number 1) (assign  1 5 Hand.unshuffled_deck [])  )
+        );
+        ( "contains test on a card not in the deck" >:: fun _ ->
+          assert_equal 
+          false
+            (contains (Spades, Number 10) (assign  1 5 Hand.unshuffled_deck [])  )
+        );
+        ( "updateDeck test on a card in the deck" >:: fun _ ->
+          assert_equal ~printer:(pp_list pp_string)
+          [
+          "Ace of Spades";
+          "2 of Spades";
+          "3 of Spades";
+          "4 of Spades";
+          "5 of Spades";
+          "6 of Spades";
+        ]
+            (updateDeck (Hearts,King) (assign  39 45 Hand.unshuffled_deck []) |> Hand.order |> card_to_string_list)  
+        );
+        ( "updateDeck test on first card in the deck" >:: fun _ ->
+          assert_equal ~printer:(pp_list pp_string)
+          ["2 of Clubs"; "3 of Clubs"; "4 of Clubs"; "5 of Clubs"]
+            (updateDeck (Clubs,Number 1) (assign  1 5 Hand.unshuffled_deck [])|> Hand.order |> card_to_string_list)
+        );
+        ( "updateDeck test on a card not in the deck" >:: fun _ ->
+          assert_equal ~printer:(pp_list pp_string)
+          ["Ace of Clubs";"2 of Clubs"; "3 of Clubs"; "4 of Clubs"; "5 of Clubs"]
+            (updateDeck (Spades, Number 10) (assign  1 5 Hand.unshuffled_deck [])|> Hand.order |> card_to_string_list)
+        );
   ]
 
 let suite = "test suite for Liar Card Game" >::: List.flatten [ hand_tests ]
