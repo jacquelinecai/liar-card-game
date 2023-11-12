@@ -111,6 +111,11 @@ let hand_tests =
         [ "2 of Clubs"; "3 of Clubs"; "4 of Clubs"; "5 of Clubs" ]
         (updateDeck (Clubs, Number 1) (assign 1 5 Hand.unshuffled_deck []) []
         |> Hand.order |> card_to_string_list) );
+    ( "updateDeck test on card in the middle of the deck" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [ "Ace of Clubs"; "2 of Clubs"; "4 of Clubs"; "5 of Clubs" ]
+        (updateDeck (Clubs, Number 3) (assign 1 5 Hand.unshuffled_deck []) []
+        |> Hand.order |> card_to_string_list) );
     ( "updateDeck test on a card not in the deck" >:: fun _ ->
       assert_raises InvalidCard (fun () ->
           updateDeck (Spades, Number 10) (assign 1 5 Hand.unshuffled_deck []) [])

@@ -1,6 +1,5 @@
-open Liargame.Hand
+open Liargame
 open Liargame.Card
-open Liargame.Round
 open Liargame.Game
 open Liargame.Table
 
@@ -16,7 +15,7 @@ let start () =
 
   print_endline
     ("\nIn this game you will be Player 1. Here are your cards: "
-    ^ deck_to_string !player1_hand)
+    ^ Hand.deck_to_string !Hand.player1_hand)
 
 let exit () =
   let quit = ref None in
@@ -34,7 +33,8 @@ let exit () =
 
 let winner () =
   let status =
-    card_status !player1_hand !player2_hand !player3_hand !player4_hand
+    card_status !Hand.player1_hand !Hand.player2_hand !Hand.player3_hand
+      !Hand.player4_hand
   in
   let win = check_winner status in
   match win with
@@ -48,11 +48,11 @@ let winner () =
 let round = ref 0
 let card_type = ref None
 let card = ref None
-let curr_player = ref (order ())
+let curr_player = ref (Round.order ())
 let table = empty_table
 
 let current_round () =
-  print_endline ("For this round the card will be " ^ card_round ())
+  print_endline ("For this round the card will be " ^ Round.card_round ())
 
 let player_order () = print_endline (!curr_player ^ "'s turn.")
 
@@ -64,7 +64,7 @@ let num_cards_prompt () =
       (Note: for MS2, we're only supporting one card at this time.) \n\
      \ \n\
      \    Here are your current cards: "
-    ^ deck_to_string !player1_hand)
+    ^ Hand.deck_to_string !Hand.player1_hand)
 
 let choose_cards () =
   num_cards_prompt ();
@@ -166,10 +166,13 @@ let choose_cards () =
     else num_cards_prompt ()
   done;
   card := !y;
-  print_endline "test";
-  (try player1_hand := updateDeck (Option.get !card) !player1_hand []
-   with InvalidCard -> print_endline "You do not have that card!");
-  print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
+  (try
+     Hand.player1_hand :=
+       Hand.updateDeck (Option.get !card) !Hand.player1_hand []
+   with Hand.InvalidCard -> print_endline "You do not have that card!");
+  print_endline
+    ("\nHere are your cards: "
+    ^ (Hand.order !Hand.player1_hand |> Hand.deck_to_string))
 
 let next_player () =
   match !curr_player with
@@ -177,6 +180,7 @@ let next_player () =
   | "Player 2" -> "Player 3"
   | "Player 3" -> "Player 4"
   | "Player 4" -> "Player 1"
+  | _ -> ""
 
 let choose_card_type () =
   let c = ref None in
@@ -203,6 +207,7 @@ let choose_card_type () =
     else print_endline "That is not a possible card type."
   done;
   card_type := !c;
+  current_round ();
   choose_cards ()
 
 let pass_or_play () =
@@ -219,7 +224,7 @@ let pass_or_play () =
   match !a with
   | "play" -> choose_card_type ()
   | _ ->
-      let () = change_to_pass !curr_player in
+      let () = Round.change_to_pass !curr_player in
       let () = curr_player := next_player () in
       player_order ()
 
@@ -229,7 +234,6 @@ let pass_or_play () =
 
 let () =
   start ();
-  current_round ();
   player_order ();
   pass_or_play ();
   winner ();

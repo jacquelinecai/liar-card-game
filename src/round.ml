@@ -70,6 +70,7 @@ let change_to_pass plyr =
   | "Player 2" -> p.p2 <- Pass
   | "Player 3" -> p.p3 <- Pass
   | "Player 4" -> p.p4 <- Pass
+  | _ -> ()
 
 let order () =
   let y = Random.int 4 in
