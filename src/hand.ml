@@ -12,24 +12,24 @@ let shuffled_deck = shuffle unshuffled_deck
 (** [assign a b deck acc] returns a new card list from index a to b of an
     existing card list *)
 let rec assign (a : int) (b : int) (deck : card list) (acc : card list) :
-    card list =
+  card list =
   match deck with
   | [] -> acc
   | h :: t ->
-      let card_number = List.length unshuffled_deck - List.length t in
-      if card_number >= a && card_number <= b then assign a b t (h :: acc)
-      else assign a b t acc
+    let card_number = List.length unshuffled_deck - List.length t in
+    if card_number >= a && card_number <= b then assign a b t (h :: acc)
+    else assign a b t acc
 
 (** [order deck] returns the card list in order based on number and suit *)
 let rec order (deck : card list) : card list =
   List.sort
     (fun (s1, n1) (s2, n2) ->
-      if n1 = n2 then compare s1 s2
-      else
-        match (n1, n2) with
-        | Number x, (Jack | Queen | King) -> -1
-        | (Jack | Queen | King), Number x -> 1
-        | _ -> compare n1 n2)
+       if n1 = n2 then compare s1 s2
+       else
+         match (n1, n2) with
+         | Number x, (Jack | Queen | King) -> -1
+         | (Jack | Queen | King), Number x -> 1
+         | _ -> compare n1 n2)
     deck
 
 (** [deck_to_string deck] returns a string of each card in the card list*)
@@ -55,10 +55,20 @@ let rec contains (c : card) (cl : card list) : bool =
 
 exception InvalidCard
 
-(**[updateDeck c cl acc] returns the card list without the card c *)
+(**[updateDeck c cl []] returns the card list without the card c *)
 let rec updateDeck (c : card) (cl : card list) (acc : card list) : card list =
   if contains c cl then
     match cl with
     | [] -> []
     | h :: t -> if h = c then acc @ t else updateDeck c t (h :: acc)
   else raise InvalidCard
+
+(**[updateDeckWithCardList clr cl] returns the card list without the cards from clr *)
+let rec updateDeckWithCardList (clr : card list) (cl : card list) : card list =
+  match clr with
+  |[] -> cl
+  |h::t -> let newDeck = updateDeck h cl [] in
+    updateDeckWithCardList t newDeck
+
+
+

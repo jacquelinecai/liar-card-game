@@ -23,3 +23,5 @@ val contains : card -> card list -> bool
 exception InvalidCard
 
 val updateDeck : card -> card list -> card list -> card list
+val updateDeckWithCardList : card list -> card list -> card list
+

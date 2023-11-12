@@ -137,3 +137,20 @@ let string_to_card s =
     | Some x, Some y -> Some (x, y)
     | _ -> None
   else None
+
+exception InvalidCard
+
+let rec stringlist_to_card_list sl = 
+  match sl with
+  |[] -> []
+  |h::t -> 
+    ( match string_to_card h with
+      |None -> raise InvalidCard
+      |Some x -> x :: stringlist_to_card_list t )
+
+
+let rec cardlist_to_string (cl: card list) = 
+  match cl with
+  |[] -> ""
+  |h:: [] -> card_to_string h 
+  |h::t -> card_to_string h ^ ", " ^ cardlist_to_string t
