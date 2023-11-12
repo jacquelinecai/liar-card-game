@@ -2,6 +2,7 @@ open Liargame.Hand
 open Liargame.Card
 open Liargame.Round
 open Liargame.Game
+open Liargame.Table
 
 let start () =
   print_endline "\n\nWelcome to the Liar Card Game!\n";
@@ -48,6 +49,7 @@ let round = ref 0
 let card_type = ref None
 let card = ref None
 let curr_player = ref (order ())
+let table = empty_table
 
 let current_round () =
   print_endline ("For this round the card will be " ^ card_round ())
@@ -83,7 +85,8 @@ let choose_cards () =
         in
         let c = read_line () |> String.uppercase_ascii |> string_to_card in
         if c <> None then z := Some 1;
-        y := c
+        y := c;
+        adding_card_to_table table c
       done;
       print_endline
         ("You have chosen to place down "
@@ -219,6 +222,10 @@ let pass_or_play () =
       let () = change_to_pass !curr_player in
       let () = curr_player := next_player () in
       player_order ()
+
+(* let callout () = print_endline "Do you want to call BS? Please input yes or
+   no." let response = read_line () |> String.lowercase_ascii in if response =
+   "yes" then *)
 
 let () =
   start ();

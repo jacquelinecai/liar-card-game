@@ -3,6 +3,7 @@ open Liargame
 open Card
 open Hand
 open Game
+open Table
 
 (** From A2: [pp_string s] pretty-prints card [c]. *)
 let pp_string c = "\"" ^ c ^ "\""
@@ -134,5 +135,36 @@ let game_tests =
 
 let suite =
   "test suite for Liar Card Game" >::: List.flatten [ hand_tests; game_tests ]
+
+let table1 = { table_cards = []; discard_pile = [] }
+let add_one_card = modify_table_cards table1 [ (Diamonds, Jack) ]
+let table2 = { table_cards = []; discard_pile = [] }
+
+let add_two_cards =
+  modify_table_cards table2 [ (Spades, Queen); (Hearts, Number 3) ]
+
+let table3 = { table_cards = []; discard_pile = [] }
+
+let add_three_cards =
+  modify_table_cards table3
+    [ (Spades, Queen); (Hearts, Number 3); (Clubs, Number 5) ]
+
+let table_tests =
+  [
+    ( "adding one card to the table" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) [ "Jack of Diamonds" ]
+        (peek_at_table table1 |> card_to_string_list) );
+    ( "adding two cards to the table" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [ "Queen of Spades"; "3 of Hearts" ]
+        (peek_at_table table2 |> card_to_string_list) );
+    ( "adding three cards to the table" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [ "Queen of Spades"; "3 of Hearts"; "5 of Clubs" ]
+        (peek_at_table table3 |> card_to_string_list) );
+  ]
+
+let suite =
+  "test suite for Liar Card Game" >::: List.flatten [ hand_tests; table_tests ]
 
 let () = run_test_tt_main suite
