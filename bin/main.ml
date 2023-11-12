@@ -1,26 +1,27 @@
-open Liargame
 open Liargame.Card
 open Liargame.Game
 open Liargame.Table
+open Liargame.Hand
+open Liargame.Round
 
 let start () =
-  print_endline "\n\nWelcome to the Liar Card Game!\n";
-
   let y = ref false in
   while not !y do
-    print_endline "Press \"s\" to start the game: ";
+    print_endline "\nPress \"s\" to start the game: ";
+    print_string "> ";
     let x = read_line () in
     if x = "s" then y := true
   done;
 
   print_endline
-    ("\nIn this game you will be Player 1. Here are your cards: "
-     ^ Hand.deck_to_string !Hand.player1_hand)
+    ("\nIn this game you will be Player 1. Here are your cards: \n"
+    ^ deck_to_string !player1_hand)
 
 let exit () =
   let quit = ref None in
   while !quit = None do
     print_endline "\nPlease type \"exit\" to exit the game.";
+    print_string "> ";
     let x = read_line () in
     if x = "exit" then (
       quit := Some 1;
@@ -33,26 +34,25 @@ let exit () =
 
 let winner () =
   let status =
-    card_status !Hand.player1_hand !Hand.player2_hand !Hand.player3_hand
-      !Hand.player4_hand
+    card_status !player1_hand !player2_hand !player3_hand !player4_hand
   in
   let win = check_winner status in
   match win with
   | 0 -> print_string ""
   | _ ->
-    print_endline
-      ("\nPlayer " ^ string_of_int win
+      print_endline
+        ("\nPlayer " ^ string_of_int win
        ^ " has gotten rid of their cards and wins the game!");
-    exit ()
+      exit ()
 
 let round = ref 0
 let card_type = ref None
 let card = ref None
-let curr_player = ref (Round.order ())
+let curr_player = ref (player_order ())
 let table = empty_table
 
 let current_round () =
-  print_endline ("For this round the card will be " ^ Round.card_round ())
+  print_endline ("For this round the card will be " ^ card_round ())
 
 let player_order () = print_endline (!curr_player ^ "'s turn.")
 
@@ -64,17 +64,14 @@ let num_cards_prompt () =
       (Note: for MS2, we're only supporting one card at this time.) \n\
      \ \n\
      \    Here are your current cards: "
-     ^ Hand.deck_to_string !Hand.player1_hand)
+    ^ deck_to_string !player1_hand);
+  print_string "> "
 
-(* let choose_cards () =
-   num_cards_prompt ();
-   let y = ref None in
-   while !y = None do
-    let x = String.lowercase_ascii (read_line ()) in
-    let cards_placed = ((String.split_on_char ('-') x) |> stringlist_to_card_list)
-    in y := Some cards_placed
-   done;
-   print_endline ("You have chosen to place down " ^ (Option.get !y |> cardlist_to_string)) *)
+(* let choose_cards () = num_cards_prompt (); let y = ref None in while !y =
+   None do let x = String.lowercase_ascii (read_line ()) in let cards_placed =
+   ((String.split_on_char ('-') x) |> stringlist_to_card_list) in y := Some
+   cards_placed done; print_endline ("You have chosen to place down " ^
+   (Option.get !y |> cardlist_to_string)) *)
 
 let choose_cards () =
   num_cards_prompt ();
@@ -91,7 +88,8 @@ let choose_cards () =
              Please type it in the format \"NumberSuit\" \n\
              where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
              J, Q, K\" \n\
-             and \"Suit\" can take values \"D, C, H, S\"."
+             and \"Suit\" can take values \"D, C, H, S\".";
+          print_string "> "
         in
         let c = read_line () |> String.uppercase_ascii |> string_to_card in
         if c <> None then z := Some 1;
@@ -100,9 +98,9 @@ let choose_cards () =
       done;
       print_endline
         ("You have chosen to place down "
-         ^ (Option.get !y |> card_to_string)
-         ^ " and you claimed to place down one "
-         ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
+        ^ (Option.get !y |> card_to_string)
+        ^ " and you claimed to place down one "
+        ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
     else if x = "2" then (
       let z = ref None in
       while !z = None do
@@ -114,8 +112,8 @@ let choose_cards () =
              where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
              J, Q, K\" \n\
              and \"Suit\" can take values \"D, C, H, S\" and separate each \
-             card by spaces.\n\
-             (Note: for MS2, we're only supporting one card at this time)"
+             card by spaces.";
+          print_string "> "
         in
         let c = read_line () |> String.uppercase_ascii |> string_to_card in
         if c <> None then z := Some 1;
@@ -123,9 +121,9 @@ let choose_cards () =
       done;
       print_endline
         ("You have chosen to place down "
-         ^ (Option.get !y |> card_to_string)
-         ^ " and you claimed to place down one "
-         ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
+        ^ (Option.get !y |> card_to_string)
+        ^ " and you claimed to place down one "
+        ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
     else if x = "3" then (
       let z = ref None in
       while !z = None do
@@ -137,8 +135,8 @@ let choose_cards () =
              where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
              J, Q, K\" \n\
              and \"Suit\" can take values \"D, C, H, S\" and separate each \
-             card by spaces.\n\
-             (Note: for MS2, we're only supporting one card at this time)"
+             card by spaces.";
+          print_string "> "
         in
         let c = read_line () |> String.uppercase_ascii |> string_to_card in
         if c <> None then z := Some 1;
@@ -146,9 +144,9 @@ let choose_cards () =
       done;
       print_endline
         ("You have chosen to place down "
-         ^ (Option.get !y |> card_to_string)
-         ^ " and you claimed to place down one "
-         ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
+        ^ (Option.get !y |> card_to_string)
+        ^ " and you claimed to place down one "
+        ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
     else if x = "4" then (
       let z = ref None in
       while !z = None do
@@ -160,8 +158,8 @@ let choose_cards () =
              where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
              J, Q, K\" \n\
              and \"Suit\" can take values \"D, C, H, S\" and separate each \
-             card by spaces.\n\
-             (Note: for MS2, we're only supporting one card at this time)"
+             card by spaces.";
+          print_string "> "
         in
         let c = read_line () |> String.uppercase_ascii |> string_to_card in
         if c <> None then z := Some 1;
@@ -169,20 +167,17 @@ let choose_cards () =
       done;
       print_endline
         ("You have chosen to place down "
-         ^ (Option.get !y |> card_to_string)
-         ^ " and you claimed to place down one "
-         ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
+        ^ (Option.get !y |> card_to_string)
+        ^ " and you claimed to place down one "
+        ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
     else if x = "0" then y := Some (Diamonds, Number 1)
     else num_cards_prompt ()
   done;
   card := !y;
-  (try
-     Hand.player1_hand :=
-       Hand.updateDeck (Option.get !card) !Hand.player1_hand []
-   with Hand.InvalidCard -> print_endline "You do not have that card!");
+  (try player1_hand := updateDeck (Option.get !card) !player1_hand []
+   with InvalidCard -> print_endline "You do not have that card!");
   print_endline
-    ("\nHere are your cards: "
-     ^ (Hand.order !Hand.player1_hand |> Hand.deck_to_string))
+    ("\nHere are your cards: " ^ (order !player1_hand |> deck_to_string))
 
 let next_player () =
   match !curr_player with
@@ -198,34 +193,28 @@ let choose_card_type () =
     print_endline
       "\n\
        Choose a card type you are claiming to have. Possible options include: \n\
-      \    Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, \
-       Queen, King";
+      \    A, 2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K";
+    print_string "> ";
     let x = String.lowercase_ascii (read_line ()) in
-    if x = "ace" then c := Some (Number 1)
-    else if x = "two" then c := Some (Number 2)
-    else if x = "three" then c := Some (Number 3)
-    else if x = "four" then c := Some (Number 4)
-    else if x = "five" then c := Some (Number 5)
-    else if x = "six" then c := Some (Number 6)
-    else if x = "seven" then c := Some (Number 7)
-    else if x = "eight" then c := Some (Number 8)
-    else if x = "nine" then c := Some (Number 9)
-    else if x = "ten" then c := Some (Number 10)
-    else if x = "jack" then c := Some Jack
-    else if x = "queen" then c := Some Queen
-    else if x = "king" then c := Some King
-    else print_endline "That is not a possible card type."
+    try c := Some (Number (int_of_string x))
+    with Failure s ->
+      if x = "a" then c := Some (Number 1)
+      else if x = "j" then c := Some Jack
+      else if x = "q" then c := Some Queen
+      else if x = "k" then c := Some King
+      else print_endline "That is not a possible card type."
   done;
   card_type := !c;
   current_round ();
   choose_cards ()
 
-let pass_or_play () =
+let pass_or_play st =
   let a = ref "" in
   while !a = "" do
     print_endline
       "You can choose to pass or play a card. Type 'pass' or 'play' to \
        continue.";
+    print_string "> ";
     let x = String.lowercase_ascii (read_line ()) in
     if x = "pass" then a := "pass"
     else if x = "play" then a := "play"
@@ -234,17 +223,49 @@ let pass_or_play () =
   match !a with
   | "play" -> choose_card_type ()
   | _ ->
-    let () = Round.change_to_pass !curr_player in
-    let () = curr_player := next_player () in
-    player_order ()
+      let () = change_to_pass !curr_player in
+      let () = curr_player := next_player () in
+      player_order ()
 
 (* let callout () = print_endline "Do you want to call BS? Please input yes or
    no." let response = read_line () |> String.lowercase_ascii in if response =
    "yes" then *)
 
+let rec main_prompt st = pass_or_play st |> main_prompt
+
+let main () =
+  print_endline "\n\nWelcome to the Liar Card Game!\n";
+  print_endline
+    "You will be playing against 3 other bots. Here's the rules for this game: ";
+  print_endline
+    "1) You start off the game. At the start of each round, the selected \
+     player will choose the card type they claim to place down";
+  print_endline
+    "2) Each player will have the option of passing the round or placing down \
+     up to 4 cards";
+  print_endline
+    "3) If at any point during the game, you believe that the other players \
+     have lied in their card placement, instantiate the BS callout. If you're \
+     correct in your assumption, that player will collect all the cards on the \
+     table. If you're incorrect in your assumption, you must collect all the \
+     cards on the table.";
+  print_endline
+    "4) Each round ends when all players decide to pass or someone has \
+     collected all the cards on the table. If all players choose to pass, the \
+     current cards on the table will be discarded.";
+  print_endline
+    "5) Each subsequent round starts with the next player if everyone passes \
+     or the player who was correct in the BS callout.";
+  print_endline
+    "6) Continue battling your way through the liar game and the player who \
+     gets rid of their cards first wins!";
+  start ();
+  main_prompt ()
+
 let () =
   start ();
   player_order ();
   pass_or_play ();
+  (* main (); *)
   winner ();
   exit ()
