@@ -70,10 +70,8 @@ let num_cards_prompt () =
   print_endline
     ("\n\n\
       How many cards would you like to put down? You may place down up to 4 \
-      cards. \n\
-      (Note: for MS2, we're only supporting one card at this time.) \n\
-     \ \n\
-     \    Here are your current cards: "
+      cards.\n\
+      Here are your current cards: "
     ^ deck_to_string !player1_hand);
   print_string "> "
 
@@ -227,6 +225,37 @@ let callout () =
      let () = bs_curr_player := next_bs_player () in
      bs_player_callout ());
   print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
+
+let rec main_prompt st = pass_or_play st |> main_prompt
+
+let main () =
+  print_endline "\n\nWelcome to the Liar Card Game!\n";
+  print_endline
+    "You will be playing against 3 other bots. Here's the rules for this game: ";
+  print_endline
+    "1) You start off the game. At the start of each round, the selected \
+     player will choose the card type they claim to place down";
+  print_endline
+    "2) Each player will have the option of passing the round or placing down \
+     up to 4 cards";
+  print_endline
+    "3) If at any point during the game, you believe that the other players \
+     have lied in their card placement, instantiate the BS callout. If you're \
+     correct in your assumption, that player will collect all the cards on the \
+     table. If you're incorrect in your assumption, you must collect all the \
+     cards on the table.";
+  print_endline
+    "4) Each round ends when all players decide to pass or someone has \
+     collected all the cards on the table. If all players choose to pass, the \
+     current cards on the table will be discarded.";
+  print_endline
+    "5) Each subsequent round starts with the next player if everyone passes \
+     or the player who was correct in the BS callout.";
+  print_endline
+    "6) Continue battling your way through the liar game and the player who \
+     gets rid of their cards first wins!";
+  start ();
+  main_prompt ()
 
 let rec main_prompt st = pass_or_play st |> main_prompt
 

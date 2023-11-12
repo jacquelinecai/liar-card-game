@@ -70,6 +70,8 @@ let change_to_pass plyr =
   | "Player 2" -> p.p2 <- Pass
   | "Player 3" -> p.p3 <- Pass
   | "Player 4" -> p.p4 <- Pass
+  | _ -> ()
+
 let player_order () =
   let y = Random.int 4 in
   match y with
@@ -78,7 +80,5 @@ let player_order () =
   | 2 -> "Player 3"
   | _ -> "Player 4"
 
-
 (* let order () = let y = Random.int 4 in match y with | 0 -> "Player 1" | 1 ->
    "Player 2" | 2 -> "Player 3" | _ -> "Player 4" *)
-

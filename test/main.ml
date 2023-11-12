@@ -243,7 +243,4 @@ let suite =
   "test suite for Liar Card Game"
   >::: List.flatten [ hand_tests; game_tests; table_tests ]
 
-let suite =
-  "test suite for Liar Card Game" >::: List.flatten [ hand_tests; game_tests ]
-
 let () = run_test_tt_main suite
