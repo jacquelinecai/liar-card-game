@@ -19,5 +19,7 @@ val player2_hand : card list ref
 val player3_hand : card list ref
 val player4_hand : card list ref
 val contains : card -> card list -> bool
+
 exception InvalidCard
+
 val updateDeck : card -> card list -> card list -> card list
