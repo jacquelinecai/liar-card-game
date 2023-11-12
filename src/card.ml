@@ -72,21 +72,21 @@ let card_list : card list =
 
 let suit_match c =
   match c with
-  | Clubs, _ -> "♣"
-  | Diamonds, _ -> "♦"
-  | Hearts, _ -> "♥"
-  | Spades, _ -> "♠"
+  | Clubs -> "♣"
+  | Diamonds -> "♦"
+  | Hearts -> "♥"
+  | Spades -> "♠"
 
 let number_match c =
   match c with
-  | _, Number x -> if x = 1 then "A" else string_of_int x
-  | _, Jack -> "J"
-  | _, Queen -> "Q"
-  | _, King -> "K"
+  | Number x -> if x = 1 then "A" else string_of_int x
+  | Jack -> "J"
+  | Queen -> "Q"
+  | King -> "K"
 
 let card_to_string c =
-  let suit = suit_match c in
-  let number = number_match c in
+  let suit = suit_match (fst c) in
+  let number = number_match (snd c) in
   number ^ " " ^ suit
 
 (** Implementation based on the Fisher-Yates Shuffling Algorithm:
@@ -102,22 +102,38 @@ let shuffle d =
 
   Array.to_list d_arr
 
-let string_to_card s =
-  match s with
-  | "1D" -> Some (Diamonds, Number 1)
-  | "1H" -> Some (Hearts, Number 1)
-  | "1C" -> Some (Clubs, Number 1)
-  | "1S" -> Some (Hearts, Number 1)
-  | "2D" -> Some (Diamonds, Number 2)
-  | "2H" -> Some (Hearts, Number 2)
-  | "2C" -> Some (Clubs, Number 2)
-  | "2S" -> Some (Hearts, Number 2)
-  | "3D" -> Some (Diamonds, Number 3)
-  | "3H" -> Some (Hearts, Number 3)
-  | "3C" -> Some (Clubs, Number 3)
-  | "3S" -> Some (Hearts, Number 3)
-  | "4D" -> Some (Diamonds, Number 4)
-  | "4H" -> Some (Hearts, Number 4)
-  | "4C" -> Some (Clubs, Number 4)
-  | "4S" -> Some (Hearts, Number 4)
+let string_suit_match s =
+  let suit = String.sub s 1 1 in
+  match suit with
+  | "D" -> Some Diamonds
+  | "H" -> Some Hearts
+  | "C" -> Some Clubs
+  | "S" -> Some Spades
   | _ -> None
+
+let string_number_match s =
+  let num = String.sub s 0 1 in
+  match num with
+  | "A" -> Some (Number 1)
+  | "2" -> Some (Number 2)
+  | "3" -> Some (Number 3)
+  | "4" -> Some (Number 4)
+  | "5" -> Some (Number 5)
+  | "6" -> Some (Number 6)
+  | "7" -> Some (Number 7)
+  | "8" -> Some (Number 8)
+  | "9" -> Some (Number 9)
+  | "10" -> Some (Number 10)
+  | "J" -> Some Jack
+  | "Q" -> Some Queen
+  | "K" -> Some King
+  | _ -> None
+
+let string_to_card s =
+  if String.length s = 2 then
+    let suit = string_suit_match s in
+    let num = string_number_match s in
+    match (suit, num) with
+    | Some x, Some y -> Some (x, y)
+    | _ -> None
+  else None
