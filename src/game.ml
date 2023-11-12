@@ -18,4 +18,4 @@ let check_winner c =
   | x, 0, y, z -> check_invalid x y z 2
   | x, y, 0, z -> check_invalid x y z 3
   | x, y, z, 0 -> check_invalid x y z 4
-  | _, _, _, _ -> 0
+  | _ -> 0

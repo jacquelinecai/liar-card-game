@@ -164,10 +164,9 @@ let choose_cards () =
   done;
   card := !y;
   print_endline "test";
-  try
-    player1_hand := updateDeck (Option.get !card) !player1_hand [];
-    print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
-  with InvalidCard -> print_endline "You do not have that card!"
+  (try player1_hand := updateDeck (Option.get !card) !player1_hand []
+   with InvalidCard -> print_endline "You do not have that card!");
+  print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
 
 let next_player () =
   match !curr_player with
