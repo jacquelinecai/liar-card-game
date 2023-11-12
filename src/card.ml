@@ -140,17 +140,28 @@ let string_to_card s =
 
 exception InvalidCard
 
-let rec stringlist_to_card_list sl = 
+let rec stringlist_to_card_list(sl: string list) : card option list = 
   match sl with
   |[] -> []
-  |h::t -> 
-    ( match string_to_card h with
-      |None -> raise InvalidCard
-      |Some x -> x :: stringlist_to_card_list t )
+  |h::t ->  string_to_card h :: stringlist_to_card_list t
 
 
 let rec cardlist_to_string (cl: card list) = 
   match cl with
   |[] -> ""
-  |h:: [] -> card_to_string h 
+  |h:: [] -> "and " ^ card_to_string h 
   |h::t -> card_to_string h ^ ", " ^ cardlist_to_string t
+
+let rec valid (cl: card option list) : bool = 
+  match cl with
+  |[] -> true
+  |h::t -> (match h with 
+      |None -> false
+      |Some c -> (true && (valid t)))
+
+let rec toCardList (cl: card option list) : card list = 
+  match cl with
+  |[] -> []
+  |h::t -> (match h with 
+      |None -> raise InvalidCard (*Should never be raised*)
+      |Some c -> c :: toCardList t )

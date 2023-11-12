@@ -15,7 +15,7 @@ let start () =
 
   print_endline
     ("\nIn this game you will be Player 1. Here are your cards: \n"
-    ^ deck_to_string !player1_hand)
+     ^ deck_to_string !player1_hand)
 
 let exit () =
   let quit = ref None in
@@ -40,10 +40,10 @@ let winner () =
   match win with
   | 0 -> print_string ""
   | _ ->
-      print_endline
-        ("\nPlayer " ^ string_of_int win
+    print_endline
+      ("\nPlayer " ^ string_of_int win
        ^ " has gotten rid of their cards and wins the game!");
-      exit ()
+    exit ()
 
 let round = ref 0
 let card_type = ref None
@@ -64,14 +64,26 @@ let num_cards_prompt () =
       (Note: for MS2, we're only supporting one card at this time.) \n\
      \ \n\
      \    Here are your current cards: "
-    ^ deck_to_string !player1_hand);
+     ^ deck_to_string !player1_hand);
   print_string "> "
 
-(* let choose_cards () = num_cards_prompt (); let y = ref None in while !y =
-   None do let x = String.lowercase_ascii (read_line ()) in let cards_placed =
-   ((String.split_on_char ('-') x) |> stringlist_to_card_list) in y := Some
-   cards_placed done; print_endline ("You have chosen to place down " ^
-   (Option.get !y |> cardlist_to_string)) *)
+(* let choose_cards () =
+   let () = print_endline ("\n
+        What cards would you like to place? \n\
+                          \ \n\ Example: 4D-4C
+        Here are your current cards: "
+                          ^ Hand.deck_to_string !Hand.player1_hand) in
+   let y = ref None in
+   while !y = None do
+    let x = String.uppercase_ascii (read_line ()) in
+    let cards_placed = ((String.split_on_char ('-') x) |> stringlist_to_card_list) in
+    if (valid cards_placed) then y := Some cards_placed
+    else print_endline ("One or more of your cards are not valid. Try again ")
+   done;
+   let amt = (List.length (Option.get !y)) in
+   print_endline ("You have chosen to place down " ^ string_of_int amt ^ " cards: "^
+                 (Option.get !y |> toCardList |> cardlist_to_string )^ " and you have claimed to place down "
+                 ^ string_of_int amt ^ " "^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1) *)
 
 let choose_cards () =
   num_cards_prompt ();
@@ -98,9 +110,9 @@ let choose_cards () =
       done;
       print_endline
         ("You have chosen to place down "
-        ^ (Option.get !y |> card_to_string)
-        ^ " and you claimed to place down one "
-        ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
+         ^ (Option.get !y |> card_to_string)
+         ^ " and you claimed to place down one "
+         ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
     else if x = "2" then (
       let z = ref None in
       while !z = None do
@@ -121,9 +133,9 @@ let choose_cards () =
       done;
       print_endline
         ("You have chosen to place down "
-        ^ (Option.get !y |> card_to_string)
-        ^ " and you claimed to place down one "
-        ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
+         ^ (Option.get !y |> card_to_string)
+         ^ " and you claimed to place down one "
+         ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
     else if x = "3" then (
       let z = ref None in
       while !z = None do
@@ -144,9 +156,9 @@ let choose_cards () =
       done;
       print_endline
         ("You have chosen to place down "
-        ^ (Option.get !y |> card_to_string)
-        ^ " and you claimed to place down one "
-        ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
+         ^ (Option.get !y |> card_to_string)
+         ^ " and you claimed to place down one "
+         ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
     else if x = "4" then (
       let z = ref None in
       while !z = None do
@@ -167,9 +179,9 @@ let choose_cards () =
       done;
       print_endline
         ("You have chosen to place down "
-        ^ (Option.get !y |> card_to_string)
-        ^ " and you claimed to place down one "
-        ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
+         ^ (Option.get !y |> card_to_string)
+         ^ " and you claimed to place down one "
+         ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
     else if x = "0" then y := Some (Diamonds, Number 1)
     else num_cards_prompt ()
   done;
@@ -223,9 +235,9 @@ let pass_or_play st =
   match !a with
   | "play" -> choose_card_type ()
   | _ ->
-      let () = change_to_pass !curr_player in
-      let () = curr_player := next_player () in
-      player_order ()
+    let () = change_to_pass !curr_player in
+    let () = curr_player := next_player () in
+    player_order ()
 
 (* let callout () = print_endline "Do you want to call BS? Please input yes or
    no." let response = read_line () |> String.lowercase_ascii in if response =
