@@ -12,6 +12,7 @@ let main_player =
   | 1 -> "Player 2"
   | 2 -> "Player 3"
   | _ -> "Player 4"
+
 let start () =
   let y = ref false in
   while not !y do
@@ -20,10 +21,9 @@ let start () =
     let x = read_line () in
     if x = "s" then y := true
   done;
-    print_endline
+  print_endline
     ("\nIn this game you will be " ^ main_player ^ ". Here are your cards: "
     ^ deck_to_string !player1_hand)
- 
 
 let exit () =
   let quit = ref None in
@@ -48,21 +48,23 @@ let winner () =
   match win with
   | 0 -> print_string ""
   | _ ->
-    print_endline
-      ("\nPlayer " ^ string_of_int win
+      print_endline
+        ("\nPlayer " ^ string_of_int win
        ^ " has gotten rid of their cards and wins the game!");
-    exit ()
+      exit ()
 
 let round = ref 0
 let card_type = ref None
 let card = ref None
 let curr_player = ref (player_order ())
+let bs_curr_player = ref (player_order ())
 let table = empty_table
 
 let current_round () =
   print_endline ("For this round the card will be " ^ card_round ())
 
 let player_order () = print_endline (!curr_player ^ "'s turn.")
+let bs_player_callout () = print_endline (!bs_curr_player ^ "'s callout turn")
 
 let num_cards_prompt () =
   print_endline
@@ -72,31 +74,39 @@ let num_cards_prompt () =
       (Note: for MS2, we're only supporting one card at this time.) \n\
      \ \n\
      \    Here are your current cards: "
-     ^ deck_to_string !player1_hand);
+    ^ deck_to_string !player1_hand);
   print_string "> "
 
 let choose_cards () =
-  let () = print_endline ("\n
-        What cards would you like to place? \n\
-                          \ \n\ Example: 4D-4C
-        Here are your current cards: "
-                          ^ deck_to_string !player1_hand) in
+  let () =
+    print_endline
+      ("\n\n\
+       \        What cards would you like to place? \n\
+       \ \n\
+       \ Example: 4D-4C\n\
+       \        Here are your current cards: "
+      ^ deck_to_string !player1_hand)
+  in
   let y = ref None in
   while !y = None do
     let x = String.uppercase_ascii (read_line ()) in
-    let cards_placed = ((String.split_on_char ('-') x) |> stringlist_to_card_list) in
-    if (valid cards_placed !player1_hand) then y := Some cards_placed 
-    else print_endline ("One or more of your cards are not valid. Try again.")
+    let cards_placed = String.split_on_char '-' x |> stringlist_to_card_list in
+    if valid cards_placed !player1_hand then y := Some cards_placed
+    else print_endline "One or more of your cards are not valid. Try again."
   done;
-  let amt = (List.length (Option.get !y)) in
-  let () = print_endline ("You have chosen to place down " ^ string_of_int amt ^ " cards: "^
-                          (Option.get !y |> toCardList |> cardlist_to_string )^ " and you have claimed to place down "
-                          ^ string_of_int amt ^ " "^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1) in 
+  let amt = List.length (Option.get !y) in
+  let () =
+    print_endline
+      ("You have chosen to place down " ^ string_of_int amt ^ " cards: "
+      ^ (Option.get !y |> toCardList |> cardlist_to_string)
+      ^ " and you have claimed to place down " ^ string_of_int amt ^ " "
+      ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1)
+  in
   adding_cards_to_table table (Option.get !y |> toCardList);
-  player1_hand := updateDeckWithCardList (Option.get !y |> toCardList) !player1_hand;
+  player1_hand :=
+    updateDeckWithCardList (Option.get !y |> toCardList) !player1_hand;
   print_endline
     ("\nHere are your current cards: " ^ (order !player1_hand |> deck_to_string))
-
 
 let next_player () =
   match !curr_player with
@@ -104,6 +114,14 @@ let next_player () =
   | "Player 2" -> "Player 3"
   | "Player 3" -> "Player 4"
   | "Player 4" -> "Player 1"
+  | _ -> ""
+
+let next_bs_player () =
+  match !bs_curr_player with
+  | "Player 1" -> "Player 2"
+  | "Player 2" -> "Player 3"
+  | "Player 3" -> "Player 4"
+  | "Player 4" -> "Done"
   | _ -> ""
 
 let choose_card_type () =
@@ -126,33 +144,31 @@ let choose_card_type () =
   card_type := !c;
   current_round ();
   choose_cards ()
-  
-  let bot_cards () =
-    let curr_player_cards =
-      match !curr_player with
-      | "Player 2" -> player2_hand
-      | "Player 3" -> player3_hand
-      | "Player 4" -> player4_hand
-    in
-    let length = List.length !curr_player_cards in
-    let index = Random.int length in
-    List.nth !curr_player_cards index
-   
-   
-   let check_round () =
-    if is_end p then
-      let x = end_round p in
-      match !curr_player with
-      | "Player 1" -> choose_card_type ()
-      | _ -> card_type := Some (snd (bot_cards ()))
-   
-   
-   let pass_chosen () =
-    let () = change_to_pass !curr_player in
-    let () = curr_player := next_player () in
-    let () = player_order () in
-    check_round ()
-   
+
+let bot_cards () =
+  let curr_player_cards =
+    match !curr_player with
+    | "Player 2" -> player2_hand
+    | "Player 3" -> player3_hand
+    | "Player 4" -> player4_hand
+  in
+  let length = List.length !curr_player_cards in
+  let index = Random.int length in
+  List.nth !curr_player_cards index
+
+let check_round () =
+  if is_end p then
+    let x = end_round p in
+    match !curr_player with
+    | "Player 1" -> choose_card_type ()
+    | _ -> card_type := Some (snd (bot_cards ()))
+
+let pass_chosen () =
+  let () = change_to_pass !curr_player in
+  let () = curr_player := next_player () in
+  let () = player_order () in
+  check_round ()
+
 let pass_or_play st =
   let a = ref "" in
   while !a = "" do
@@ -168,13 +184,49 @@ let pass_or_play st =
   match !a with
   | "play" -> choose_card_type ()
   | _ ->
-    let () = change_to_pass !curr_player in
-    let () = curr_player := next_player () in
-    player_order ()
+      let () = change_to_pass !curr_player in
+      let () = curr_player := next_player () in
+      player_order ()
 
-(* let callout () = print_endline "Do you want to call BS? Please input yes or
-   no." let response = read_line () |> String.lowercase_ascii in if response =
-   "yes" then *)
+let match_card_type =
+  match !card_type with
+  | None -> Number 0
+  | Some value -> value
+
+let match_player_with_hand player =
+  match player with
+  | "Player 1" -> player1_hand
+  | "Player 2" -> player2_hand
+  | "Player 3" -> player3_hand
+  | "Player 4" -> player4_hand
+  | _ -> failwith "will not happen"
+
+let callout () =
+  print_endline "Do you want to call BS? Please input yes or no.";
+  let response = read_line () |> String.lowercase_ascii in
+  (if response = "yes" then (
+     print_endline
+       ("Here are the cards in the table: "
+       ^ deck_to_string (peek_at_table table)
+       ^ ". The player was not lying.");
+     let table_list = peek_at_table table in
+     match table_list with
+     | (suit, number) :: t ->
+         if number = match_card_type then
+           (* Hand.player1_hand := table_list @ !Hand.player1_hand *)
+           match_player_with_hand !bs_curr_player
+           := table_list @ !(match_player_with_hand !bs_curr_player)
+         else
+           match_player_with_hand !curr_player
+           := table_list @ !(match_player_with_hand !curr_player)
+     | [] -> failwith "should not happen")
+   else if next_bs_player () = "Done" then
+     let () = curr_player := next_player () in
+     player_order ()
+   else
+     let () = bs_curr_player := next_bs_player () in
+     bs_player_callout ());
+  print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
 
 let rec main_prompt st = pass_or_play st |> main_prompt
 
@@ -211,7 +263,7 @@ let () =
   start ();
   player_order ();
   pass_or_play ();
+  callout ();
   (* main (); *)
   winner ();
   exit ()
-

@@ -21,8 +21,8 @@ val card_round : unit -> string
 val start_round : playerList -> playerList
 val end_round : playerList -> playerList
 val randomize : unit -> pass
+val player_order : unit -> string
 
 (* val order : unit -> string *)
 val change_to_pass : string -> unit
 val number_match : number -> string
-
