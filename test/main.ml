@@ -73,6 +73,7 @@ let hand_tests =
             (assign 1 3 Hand.unshuffled_deck [] |> Hand.order |> card_to_string_list)
     );
     ( "assigning unordered deck of cards" >:: fun _ ->
+<<<<<<< Updated upstream
           assert_equal ~printer:(pp_list pp_string)
             [
               "Ace of Spades";
@@ -153,11 +154,59 @@ let hand_tests =
          ((String.split_on_char ('-') "7C-7D") |> stringlist_to_card_list |> toCardList ));
 
 
+=======
+      assert_equal ~printer:(pp_list pp_string)
+        [
+          "Ace of Spades";
+          "2 of Spades";
+          "3 of Spades";
+          "4 of Spades";
+          "5 of Spades";
+          "6 of Spades";
+          "King of Hearts";
+        ]
+        (assign 39 45 Hand.unshuffled_deck []
+        |> Hand.order |> card_to_string_list) );
+    ( "contains test on a card in the deck" >:: fun _ ->
+      assert_equal true
+        (contains (Hearts, King) (assign 39 45 Hand.unshuffled_deck [])) );
+    ( "contains test on first card in the deck" >:: fun _ ->
+      assert_equal true
+        (contains (Clubs, Number 1) (assign 1 5 Hand.unshuffled_deck [])) );
+    ( "contains test on a card not in the deck" >:: fun _ ->
+      assert_equal false
+        (contains (Spades, Number 10) (assign 1 5 Hand.unshuffled_deck [])) );
+    ( "updateDeck test on a card in the deck" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [
+          "Ace of Spades";
+          "2 of Spades";
+          "3 of Spades";
+          "4 of Spades";
+          "5 of Spades";
+          "6 of Spades";
+        ]
+        (updateDeck (Hearts, King) (assign 39 45 Hand.unshuffled_deck [])
+        |> Hand.order |> card_to_string_list) );
+    ( "updateDeck test on first card in the deck" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [ "2 of Clubs"; "3 of Clubs"; "4 of Clubs"; "5 of Clubs" ]
+        (updateDeck (Clubs, Number 1) (assign 1 5 Hand.unshuffled_deck [])
+        |> Hand.order |> card_to_string_list) );
+    ( "updateDeck test on a card not in the deck" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [
+          "Ace of Clubs"; "2 of Clubs"; "3 of Clubs"; "4 of Clubs"; "5 of Clubs";
+        ]
+        (updateDeck (Spades, Number 10) (assign 1 5 Hand.unshuffled_deck [])
+        |> Hand.order |> card_to_string_list) );
+>>>>>>> Stashed changes
   ]
 
 let game_tests =
   [
     ( "card status on 4 empty card lists" >:: fun _ ->
+<<<<<<< Updated upstream
           assert_equal (0, 0, 0, 0) (card_status [] [] [] []) );
     ( "card status on initially player hands" >:: fun _ ->
           assert_equal (13, 13, 13, 13)
@@ -206,5 +255,22 @@ let table_tests =
 let suite =
   "test suite for Liar Card Game"
   >::: List.flatten [ hand_tests; game_tests; table_tests ]
+=======
+      assert_equal (0, 0, 0, 0) (card_status [] [] [] []) );
+    ( "card status on initially player hands" >:: fun _ ->
+      assert_equal (13, 13, 13, 13)
+        (card_status !player1_hand !player2_hand !player3_hand !player4_hand) );
+    ( "check winner on first player" >:: fun _ ->
+      assert_equal 1
+        (card_status [] !player2_hand !player3_hand !player4_hand
+        |> check_winner) );
+    ( "check winner with all empty hands" >:: fun _ ->
+      assert_raises InvalidCardAmount (fun () ->
+          card_status [] [] [] [] |> check_winner) );
+  ]
+
+let suite =
+  "test suite for Liar Card Game" >::: List.flatten [ hand_tests; game_tests ]
+>>>>>>> Stashed changes
 
 let () = run_test_tt_main suite

@@ -4,6 +4,14 @@ open Liargame.Table
 open Liargame.Hand
 open Liargame.Round
 
+let main_player =
+  let y = Random.int 4 in
+  print_endline (string_of_int y);
+  match y with
+  | 0 -> "Player 1"
+  | 1 -> "Player 2"
+  | 2 -> "Player 3"
+  | _ -> "Player 4"
 let start () =
   let y = ref false in
   while not !y do
@@ -12,10 +20,10 @@ let start () =
     let x = read_line () in
     if x = "s" then y := true
   done;
-
-  print_endline
-    ("\nIn this game you will be Player 1. Here are your cards: \n"
-     ^ deck_to_string !player1_hand)
+    print_endline
+    ("\nIn this game you will be " ^ main_player ^ ". Here are your cards: "
+    ^ deck_to_string !player1_hand)
+ 
 
 let exit () =
   let quit = ref None in
@@ -118,7 +126,33 @@ let choose_card_type () =
   card_type := !c;
   current_round ();
   choose_cards ()
-
+  
+  let bot_cards () =
+    let curr_player_cards =
+      match !curr_player with
+      | "Player 2" -> player2_hand
+      | "Player 3" -> player3_hand
+      | "Player 4" -> player4_hand
+    in
+    let length = List.length !curr_player_cards in
+    let index = Random.int length in
+    List.nth !curr_player_cards index
+   
+   
+   let check_round () =
+    if is_end p then
+      let x = end_round p in
+      match !curr_player with
+      | "Player 1" -> choose_card_type ()
+      | _ -> card_type := Some (snd (bot_cards ()))
+   
+   
+   let pass_chosen () =
+    let () = change_to_pass !curr_player in
+    let () = curr_player := next_player () in
+    let () = player_order () in
+    check_round ()
+   
 let pass_or_play st =
   let a = ref "" in
   while !a = "" do
@@ -180,3 +214,4 @@ let () =
   (* main (); *)
   winner ();
   exit ()
+

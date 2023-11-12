@@ -14,10 +14,15 @@ type playerList = {
 
 (* List of ordered card numbers *)
 val cList : number list
+val p : playerList
+val is_end : playerList -> bool
 val curr_round : int ref
 val card_round : unit -> string
 val start_round : playerList -> playerList
 val end_round : playerList -> playerList
 val randomize : unit -> pass
-val player_order : unit -> string
+
+(* val order : unit -> string *)
 val change_to_pass : string -> unit
+val number_match : number -> string
+
