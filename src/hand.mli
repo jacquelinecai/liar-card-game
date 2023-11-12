@@ -1,5 +1,5 @@
 open Card
-
+type card = Card.card
 type player =
   | Player1
   | Player2
@@ -18,7 +18,6 @@ val player1_hand : card list ref
 val player2_hand : card list ref
 val player3_hand : card list ref
 val player4_hand : card list ref
-val contains : card -> card list -> bool
 
 exception InvalidCard
 

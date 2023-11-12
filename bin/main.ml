@@ -67,129 +67,28 @@ let num_cards_prompt () =
      ^ deck_to_string !player1_hand);
   print_string "> "
 
-(* let choose_cards () =
-   let () = print_endline ("\n
+let choose_cards () =
+  let () = print_endline ("\n
         What cards would you like to place? \n\
                           \ \n\ Example: 4D-4C
         Here are your current cards: "
-                          ^ Hand.deck_to_string !Hand.player1_hand) in
-   let y = ref None in
-   while !y = None do
-    let x = String.uppercase_ascii (read_line ()) in
-    let cards_placed = ((String.split_on_char ('-') x) |> stringlist_to_card_list) in
-    if (valid cards_placed) then y := Some cards_placed
-    else print_endline ("One or more of your cards are not valid. Try again ")
-   done;
-   let amt = (List.length (Option.get !y)) in
-   print_endline ("You have chosen to place down " ^ string_of_int amt ^ " cards: "^
-                 (Option.get !y |> toCardList |> cardlist_to_string )^ " and you have claimed to place down "
-                 ^ string_of_int amt ^ " "^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1) *)
-
-let choose_cards () =
-  num_cards_prompt ();
+                          ^ deck_to_string !player1_hand) in
   let y = ref None in
   while !y = None do
-    let x = String.lowercase_ascii (read_line ()) in
-    if x = "1" then (
-      let z = ref None in
-      while !z = None do
-        let () =
-          print_endline
-            "\n\
-             What is the card you would like to place?\n\
-             Please type it in the format \"NumberSuit\" \n\
-             where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
-             J, Q, K\" \n\
-             and \"Suit\" can take values \"D, C, H, S\".";
-          print_string "> "
-        in
-        let c = read_line () |> String.uppercase_ascii |> string_to_card in
-        if c <> None then z := Some 1;
-        y := c;
-        adding_card_to_table table c
-      done;
-      print_endline
-        ("You have chosen to place down "
-         ^ (Option.get !y |> card_to_string)
-         ^ " and you claimed to place down one "
-         ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
-    else if x = "2" then (
-      let z = ref None in
-      while !z = None do
-        let () =
-          print_endline
-            "\n\
-             What are the two cards you would like to place?\n\
-             Please type it in the format \"NumberSuit\" \n\
-             where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
-             J, Q, K\" \n\
-             and \"Suit\" can take values \"D, C, H, S\" and separate each \
-             card by spaces.";
-          print_string "> "
-        in
-        let c = read_line () |> String.uppercase_ascii |> string_to_card in
-        if c <> None then z := Some 1;
-        y := c
-      done;
-      print_endline
-        ("You have chosen to place down "
-         ^ (Option.get !y |> card_to_string)
-         ^ " and you claimed to place down one "
-         ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
-    else if x = "3" then (
-      let z = ref None in
-      while !z = None do
-        let () =
-          print_endline
-            "\n\
-             What are the three cards you would like to place?\n\
-             Please type it in the format \"NumberSuit\" \n\
-             where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
-             J, Q, K\" \n\
-             and \"Suit\" can take values \"D, C, H, S\" and separate each \
-             card by spaces.";
-          print_string "> "
-        in
-        let c = read_line () |> String.uppercase_ascii |> string_to_card in
-        if c <> None then z := Some 1;
-        y := c
-      done;
-      print_endline
-        ("You have chosen to place down "
-         ^ (Option.get !y |> card_to_string)
-         ^ " and you claimed to place down one "
-         ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
-    else if x = "4" then (
-      let z = ref None in
-      while !z = None do
-        let () =
-          print_endline
-            "\n\
-             What are the four cards you would like to place?\n\
-             Please type it in the format \"NumberSuit\" \n\
-             where \"Number\" can take values \"A, 2, 3, 4, 5, 6, 7, 8, 9, 10, \
-             J, Q, K\" \n\
-             and \"Suit\" can take values \"D, C, H, S\" and separate each \
-             card by spaces.";
-          print_string "> "
-        in
-        let c = read_line () |> String.uppercase_ascii |> string_to_card in
-        if c <> None then z := Some 1;
-        y := c
-      done;
-      print_endline
-        ("You have chosen to place down "
-         ^ (Option.get !y |> card_to_string)
-         ^ " and you claimed to place down one "
-         ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1))
-    else if x = "0" then y := Some (Diamonds, Number 1)
-    else num_cards_prompt ()
+    let x = String.uppercase_ascii (read_line ()) in
+    let cards_placed = ((String.split_on_char ('-') x) |> stringlist_to_card_list) in
+    if (valid cards_placed !player1_hand) then y := Some cards_placed 
+    else print_endline ("One or more of your cards are not valid. Try again.")
   done;
-  card := !y;
-  (try player1_hand := updateDeck (Option.get !card) !player1_hand []
-   with InvalidCard -> print_endline "You do not have that card!");
+  let amt = (List.length (Option.get !y)) in
+  let () = print_endline ("You have chosen to place down " ^ string_of_int amt ^ " cards: "^
+                          (Option.get !y |> toCardList |> cardlist_to_string )^ " and you have claimed to place down "
+                          ^ string_of_int amt ^ " "^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1) in 
+  adding_cards_to_table table (Option.get !y |> toCardList);
+  player1_hand := updateDeckWithCardList (Option.get !y |> toCardList) !player1_hand;
   print_endline
-    ("\nHere are your cards: " ^ (order !player1_hand |> deck_to_string))
+    ("\nHere are your current cards: " ^ (order !player1_hand |> deck_to_string))
+
 
 let next_player () =
   match !curr_player with

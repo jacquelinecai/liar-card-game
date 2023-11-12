@@ -1,5 +1,6 @@
 open Random
 
+
 type number =
   | Number of int
   | Jack
@@ -152,12 +153,19 @@ let rec cardlist_to_string (cl: card list) =
   |h:: [] -> "and " ^ card_to_string h 
   |h::t -> card_to_string h ^ ", " ^ cardlist_to_string t
 
-let rec valid (cl: card option list) : bool = 
+(** [contains c cl] returns true if the card list contains the card, else
+    returns false *)
+let rec contains (c : card) (cl : card list) : bool =
+  match cl with
+  | [] -> false
+  | h :: t -> if h = c then true else contains c t
+
+let rec valid (cl: card option list) (yourCards:card list):  bool = 
   match cl with
   |[] -> true
   |h::t -> (match h with 
       |None -> false
-      |Some c -> (true && (valid t)))
+      |Some c -> (true && (contains c yourCards) && (valid t yourCards)))
 
 let rec toCardList (cl: card option list) : card list = 
   match cl with
