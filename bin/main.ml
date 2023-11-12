@@ -1,6 +1,8 @@
 open Liargame.Hand
 open Liargame.Card
 open Liargame.Round
+open Liargame.Game
+
 let start () =
   print_endline "\n\nWelcome to the Liar Card Game!\n";
 
@@ -26,6 +28,18 @@ let exit () =
          Exiting the session...\n")
   done;
   Stdlib.exit 0
+
+let winner () =
+  let status =
+    card_status !player1_hand !player2_hand !player3_hand !player4_hand
+  in
+  let win = check_winner status in
+  match win with
+  | 0 -> print_string ""
+  | _ ->
+      print_endline
+        ("\nPlayer " ^ string_of_int win
+       ^ " has gotten rid of their cards and wins the game!")
 
 let round = ref 0
 let card_type = ref None
@@ -159,6 +173,7 @@ let next_player () = match !curr_player with
     |"Player 2" -> "Player 3"
     |"Player 3"->"Player 4"
     |"Player 4"->"Player 1"
+
 let choose_card_type () =
   let c = ref None in
   while !c = None do
@@ -201,4 +216,5 @@ let () =
   current_round ();
   player_order ();
   pass_or_play ();
+  winner ();
   exit ()
