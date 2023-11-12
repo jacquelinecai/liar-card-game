@@ -1,7 +1,5 @@
 open Card
 
-type card = Card.card
-
 type player =
   | Player1
   | Player2
@@ -47,6 +45,51 @@ let player1_hand = ref (assign 1 13 shuffled_deck [] |> order)
 let player2_hand = ref (assign 14 26 shuffled_deck [] |> order)
 let player3_hand = ref (assign 27 39 shuffled_deck [] |> order)
 let player4_hand = ref (assign 40 52 shuffled_deck [] |> order)
+
+(** [contains c cl] returns true if cl contains c, else returns false *)
+let rec contains (c : card) (cl : card list) : bool =
+  match cl with
+  | [] -> false
+  | h :: t -> if h = c then true else contains c t
+
+(** [containsNum n cl] returns true if cl contains the card number n, else
+    returns false *)
+let rec containsNum (n : number) (cl : card list) : bool =
+  match cl with
+  | [] -> false
+  | h :: t -> if snd h = n then true else containsNum n t
+
+(** [numCards n cl acc] returns the number of cards in cl that have a number n *)
+let rec numCards (n : number) (cl : card list) (acc : int) : int =
+  match cl with
+  | [] -> acc
+  | h :: t -> if snd h = n then numCards n t (acc + 1) else numCards n t acc
+
+(** [nCards n amt cl acc] returns a card list with amt number of number n cards
+    in cl *)
+let rec nCards (n : number) (amt : int) (cl : card list) (acc : card list) :
+    card list =
+  if amt > 0 then
+    match cl with
+    | [] -> acc
+    | h :: t ->
+        if snd h = n then nCards n (amt - 1) t (h :: acc)
+        else nCards n amt t acc
+  else acc
+
+(** [getRandCards lst idx deck acc] returns the cards of deck from the indices
+    in lst *)
+let rec getRandCards (lst : int list) (idx : int) (deck : card list)
+    (acc : card list) : card list =
+  if List.length lst > 0 then
+    let sorted = List.sort Stdlib.compare lst in
+    match deck with
+    | [] -> acc
+    | h :: t ->
+        if idx = List.hd sorted then
+          getRandCards (List.tl sorted) (idx + 1) t (h :: acc)
+        else getRandCards sorted (idx + 1) t acc
+  else acc
 
 exception InvalidCard
 

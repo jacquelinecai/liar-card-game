@@ -149,6 +149,7 @@ let bot_cards () =
     | "Player 2" -> player2_hand
     | "Player 3" -> player3_hand
     | "Player 4" -> player4_hand
+    | _ -> failwith "Impossible"
   in
   let length = List.length !curr_player_cards in
   let index = Random.int length in

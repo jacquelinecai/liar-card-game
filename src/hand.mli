@@ -1,5 +1,5 @@
 open Card
-type card = Card.card
+
 type player =
   | Player1
   | Player2
@@ -18,9 +18,13 @@ val player1_hand : card list ref
 val player2_hand : card list ref
 val player3_hand : card list ref
 val player4_hand : card list ref
+val contains : card -> card list -> bool
+val containsNum : number -> card list -> bool
+val numCards : number -> card list -> int -> int
+val nCards : number -> int -> card list -> card list -> card list
+val getRandCards : int list -> int -> card list -> card list -> card list
 
 exception InvalidCard
 
 val updateDeck : card -> card list -> card list -> card list
 val updateDeckWithCardList : card list -> card list -> card list
-

@@ -24,3 +24,4 @@ val randomize : unit -> pass
 val player_order : unit -> string
 val change_to_pass : string -> unit
 val number_match : number -> string
+val bot_play : number -> int -> card list -> card list option

@@ -80,5 +80,34 @@ let player_order () =
   | 2 -> "Player 3"
   | _ -> "Player 4"
 
-(* let order () = let y = Random.int 4 in match y with | 0 -> "Player 1" | 1 ->
-   "Player 2" | 2 -> "Player 3" | _ -> "Player 4" *)
+let rec rand_seq num l acc =
+  if num > 0 then (
+    let x = ref (Random.int (l - num)) in
+    while List.exists (fun y -> !x = y) acc do
+      x := Random.int (l - num)
+    done;
+    rand_seq (num - 1) l (!x :: acc))
+  else acc
+
+(** [bot_play n num pl] facilitates the game play of the bots by first checking
+    if pl contains any cards with number n. If so, return [Some cl] where cl
+    contains the cards with number n that the bot wants to put down. The number
+    of cards the bot places down is determined by a random number between 1 and
+    the number of n cards the bot has. Else, the bot will randomly decide
+    between playing and passing, where if the bot chooses to play, return
+    [Some cl] where the number of cards placed down is determined by a random
+    number between 1 and (4 - num). If num >= 4, then 1 card is placed down. If
+    the bot chooses to pass, return [None]. *)
+let bot_play n num cl =
+  if containsNum n cl then
+    let x = Random.int (numCards n cl 0) + 1 in
+    Some (nCards n x cl [])
+  else if Random.bool () then
+    let amt = 4 - num in
+    if amt <= 0 then
+      let idx = Random.int (List.length cl) in
+      Some (getRandCards [ idx ] 0 cl [])
+    else
+      let x = Random.int amt + 1 in
+      Some (getRandCards (rand_seq x (List.length cl) []) 0 cl [])
+  else None
