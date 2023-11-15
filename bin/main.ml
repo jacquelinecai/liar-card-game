@@ -56,8 +56,8 @@ let winner () =
 let round = ref 0
 let card_type = ref None
 let card = ref None
-let curr_player = ref (player_order ())
-let bs_curr_player = ref (player_order ())
+let curr_player = ref "Player 1"
+let bs_curr_player = ref "Player 2"
 let table = empty_table
 
 let current_round () =
@@ -115,12 +115,14 @@ let next_player () =
   | _ -> ""
 
 let next_bs_player () =
-  match !bs_curr_player with
-  | "Player 1" -> "Player 2"
-  | "Player 2" -> "Player 3"
-  | "Player 3" -> "Player 4"
-  | "Player 4" -> "Done"
-  | _ -> ""
+  if !bs_curr_player = !curr_player then "Done"
+  else
+    match !bs_curr_player with
+    | "Player 1" -> "Player 2"
+    | "Player 2" -> "Player 3"
+    | "Player 3" -> "Player 4"
+    | "Player 4" -> "Player 1"
+    | _ -> ""
 
 let choose_card_type () =
   let c = ref None in
@@ -155,9 +157,39 @@ let bot_cards () =
   let index = Random.int length in
   List.nth !curr_player_cards index
 
+let bot_actions () =
+  let play =
+    match !curr_player with
+    | "Player 2" ->
+        bot_play (Option.get !card_type) (table_size table) !player2_hand
+    | "Player 3" ->
+        bot_play (Option.get !card_type) (table_size table) !player3_hand
+    | "Player 4" ->
+        bot_play (Option.get !card_type) (table_size table) !player4_hand
+    | _ -> None
+  in
+  match play with
+  | None -> change_to_pass !curr_player
+  | Some x ->
+      (match !curr_player with
+      | "Player 2" ->
+          player2_hand := updateDeckWithCardList x !player2_hand;
+          adding_cards_to_table table x
+      | "Player 3" ->
+          player3_hand := updateDeckWithCardList x !player3_hand;
+          adding_cards_to_table table x
+      | "Player 4" ->
+          player4_hand := updateDeckWithCardList x !player4_hand;
+          adding_cards_to_table table x
+      | _ -> ());
+      print_endline
+        (!curr_player ^ " claimed they placed down "
+        ^ (List.length x |> string_of_int)
+        ^ " "
+        ^ number_match (Option.get !card_type))
+
 let check_round () =
   if is_end p then
-    let x = end_round p in
     match !curr_player with
     | "Player 1" -> choose_card_type ()
     | _ -> card_type := Some (snd (bot_cards ()))
@@ -184,8 +216,13 @@ let pass_or_play st =
   | "play" -> choose_card_type ()
   | _ ->
       let () = change_to_pass !curr_player in
-      let () = curr_player := next_player () in
-      player_order ()
+      let () =
+        curr_player := next_player ();
+        bs_curr_player := next_bs_player ()
+      in
+      player_order ();
+      if !card_type = None then card_type := Some (snd (bot_cards ()));
+      bot_actions ()
 
 let match_card_type =
   match !card_type with
@@ -254,139 +291,14 @@ let main () =
      or the player who was correct in the BS callout.";
   print_endline
     "6) Continue battling your way through the liar game and the player who \
-     gets rid of their cards first wins!";
-  start ();
-  main_prompt ()
-
-let rec main_prompt st = pass_or_play st |> main_prompt
-
-let main () =
-  print_endline "\n\nWelcome to the Liar Card Game!\n";
-  print_endline
-    "You will be playing against 3 other bots. Here's the rules for this game: ";
-  print_endline
-    "1) You start off the game. At the start of each round, the selected \
-     player will choose the card type they claim to place down";
-  print_endline
-    "2) Each player will have the option of passing the round or placing down \
-     up to 4 cards";
-  print_endline
-    "3) If at any point during the game, you believe that the other players \
-     have lied in their card placement, instantiate the BS callout. If you're \
-     correct in your assumption, that player will collect all the cards on the \
-     table. If you're incorrect in your assumption, you must collect all the \
-     cards on the table.";
-  print_endline
-    "4) Each round ends when all players decide to pass or someone has \
-     collected all the cards on the table. If all players choose to pass, the \
-     current cards on the table will be discarded.";
-  print_endline
-    "5) Each subsequent round starts with the next player if everyone passes \
-     or the player who was correct in the BS callout.";
-  print_endline
-    "6) Continue battling your way through the liar game and the player who \
-     gets rid of their cards first wins!";
-  start ();
-  main_prompt ()
-
-let rec main_prompt st = pass_or_play st |> main_prompt
-
-let main () =
-  print_endline "\n\nWelcome to the Liar Card Game!\n";
-  print_endline
-    "You will be playing against 3 other bots. Here's the rules for this game: ";
-  print_endline
-    "1) You start off the game. At the start of each round, the selected \
-     player will choose the card type they claim to place down";
-  print_endline
-    "2) Each player will have the option of passing the round or placing down \
-     up to 4 cards";
-  print_endline
-    "3) If at any point during the game, you believe that the other players \
-     have lied in their card placement, instantiate the BS callout. If you're \
-     correct in your assumption, that player will collect all the cards on the \
-     table. If you're incorrect in your assumption, you must collect all the \
-     cards on the table.";
-  print_endline
-    "4) Each round ends when all players decide to pass or someone has \
-     collected all the cards on the table. If all players choose to pass, the \
-     current cards on the table will be discarded.";
-  print_endline
-    "5) Each subsequent round starts with the next player if everyone passes \
-     or the player who was correct in the BS callout.";
-  print_endline
-    "6) Continue battling your way through the liar game and the player who \
-     gets rid of their cards first wins!";
-  start ();
-  main_prompt ()
-
-let rec main_prompt st = pass_or_play st |> main_prompt
-
-let main () =
-  print_endline "\n\nWelcome to the Liar Card Game!\n";
-  print_endline
-    "You will be playing against 3 other bots. Here's the rules for this game: ";
-  print_endline
-    "1) You start off the game. At the start of each round, the selected \
-     player will choose the card type they claim to place down";
-  print_endline
-    "2) Each player will have the option of passing the round or placing down \
-     up to 4 cards";
-  print_endline
-    "3) If at any point during the game, you believe that the other players \
-     have lied in their card placement, instantiate the BS callout. If you're \
-     correct in your assumption, that player will collect all the cards on the \
-     table. If you're incorrect in your assumption, you must collect all the \
-     cards on the table.";
-  print_endline
-    "4) Each round ends when all players decide to pass or someone has \
-     collected all the cards on the table. If all players choose to pass, the \
-     current cards on the table will be discarded.";
-  print_endline
-    "5) Each subsequent round starts with the next player if everyone passes \
-     or the player who was correct in the BS callout.";
-  print_endline
-    "6) Continue battling your way through the liar game and the player who \
-     gets rid of their cards first wins!";
-  start ();
-  main_prompt ()
-
-let rec main_prompt st = pass_or_play st |> main_prompt
-
-let main () =
-  print_endline "\n\nWelcome to the Liar Card Game!\n";
-  print_endline
-    "You will be playing against 3 other bots. Here's the rules for this game: ";
-  print_endline
-    "1) You start off the game. At the start of each round, the selected \
-     player will choose the card type they claim to place down";
-  print_endline
-    "2) Each player will have the option of passing the round or placing down \
-     up to 4 cards";
-  print_endline
-    "3) If at any point during the game, you believe that the other players \
-     have lied in their card placement, instantiate the BS callout. If you're \
-     correct in your assumption, that player will collect all the cards on the \
-     table. If you're incorrect in your assumption, you must collect all the \
-     cards on the table.";
-  print_endline
-    "4) Each round ends when all players decide to pass or someone has \
-     collected all the cards on the table. If all players choose to pass, the \
-     current cards on the table will be discarded.";
-  print_endline
-    "5) Each subsequent round starts with the next player if everyone passes \
-     or the player who was correct in the BS callout.";
-  print_endline
-    "6) Continue battling your way through the liar game and the player who \
-     gets rid of their cards first wins!";
-  start ();
-  main_prompt ()
+     gets rid of their cards first wins!"
+(* start (); main_prompt () *)
 
 let () =
+  main ();
   start ();
   player_order ();
   pass_or_play ();
   callout ();
-  (* main (); *)
   winner ();
   exit ()
