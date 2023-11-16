@@ -18,7 +18,6 @@ val player1_hand : card list ref
 val player2_hand : card list ref
 val player3_hand : card list ref
 val player4_hand : card list ref
-val contains : card -> card list -> bool
 val containsNum : number -> card list -> bool
 val numCards : number -> card list -> int -> int
 val nCards : number -> int -> card list -> card list -> card list

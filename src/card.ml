@@ -1,6 +1,5 @@
 open Random
 
-
 type number =
   | Number of int
   | Jack
@@ -95,6 +94,7 @@ let card_to_string c =
 let shuffle d =
   let d_arr = Array.of_list d in
   for i = 51 downto 0 do
+    let () = Random.self_init () in
     let j = Random.int (i + 1) in
     let temp = d_arr.(j) in
     d_arr.(j) <- d_arr.(i);
@@ -141,17 +141,16 @@ let string_to_card s =
 
 exception InvalidCard
 
-let rec stringlist_to_card_list(sl: string list) : card option list = 
+let rec stringlist_to_card_list (sl : string list) : card option list =
   match sl with
-  |[] -> []
-  |h::t ->  string_to_card h :: stringlist_to_card_list t
+  | [] -> []
+  | h :: t -> string_to_card h :: stringlist_to_card_list t
 
-
-let rec cardlist_to_string (cl: card list) = 
+let rec cardlist_to_string (cl : card list) =
   match cl with
-  |[] -> ""
-  |h:: [] -> "and " ^ card_to_string h 
-  |h::t -> card_to_string h ^ ", " ^ cardlist_to_string t
+  | [] -> ""
+  | h :: [] -> card_to_string h
+  | h :: t -> card_to_string h ^ ", " ^ cardlist_to_string t
 
 (** [contains c cl] returns true if the card list contains the card, else
     returns false *)
@@ -160,16 +159,18 @@ let rec contains (c : card) (cl : card list) : bool =
   | [] -> false
   | h :: t -> if h = c then true else contains c t
 
-let rec valid (cl: card option list) (yourCards:card list):  bool = 
+let rec valid (cl : card option list) (yourCards : card list) : bool =
   match cl with
-  |[] -> true
-  |h::t -> (match h with 
-      |None -> false
-      |Some c -> (true && (contains c yourCards) && (valid t yourCards)))
+  | [] -> true
+  | h :: t -> (
+      match h with
+      | None -> false
+      | Some c -> true && contains c yourCards && valid t yourCards)
 
-let rec toCardList (cl: card option list) : card list = 
+let rec toCardList (cl : card option list) : card list =
   match cl with
-  |[] -> []
-  |h::t -> (match h with 
-      |None -> raise InvalidCard (*Should never be raised*)
-      |Some c -> c :: toCardList t )
+  | [] -> []
+  | h :: t -> (
+      match h with
+      | None -> raise InvalidCard (*Should never be raised*)
+      | Some c -> c :: toCardList t)

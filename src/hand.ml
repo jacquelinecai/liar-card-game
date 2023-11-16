@@ -46,12 +46,6 @@ let player2_hand = ref (assign 14 26 shuffled_deck [] |> order)
 let player3_hand = ref (assign 27 39 shuffled_deck [] |> order)
 let player4_hand = ref (assign 40 52 shuffled_deck [] |> order)
 
-(** [contains c cl] returns true if cl contains c, else returns false *)
-let rec contains (c : card) (cl : card list) : bool =
-  match cl with
-  | [] -> false
-  | h :: t -> if h = c then true else contains c t
-
 (** [containsNum n cl] returns true if cl contains the card number n, else
     returns false *)
 let rec containsNum (n : number) (cl : card list) : bool =

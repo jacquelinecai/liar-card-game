@@ -5,6 +5,7 @@ open Liargame.Hand
 open Liargame.Round
 
 let main_player =
+  let () = Random.self_init () in
   let y = Random.int 4 in
   print_endline (string_of_int y);
   match y with
@@ -23,7 +24,7 @@ let start () =
   done;
   print_endline
     ("\nIn this game you will be " ^ main_player ^ ". Here are your cards: "
-    ^ deck_to_string !player1_hand)
+    ^ (!player1_hand |> deck_to_string))
 
 let exit () =
   let quit = ref None in
@@ -100,7 +101,9 @@ let choose_cards () =
       ("You have chosen to place down " ^ string_of_int amt ^ " cards: "
       ^ (Option.get !y |> toCardList |> cardlist_to_string)
       ^ " and you have claimed to place down " ^ string_of_int amt ^ " "
-      ^ String.sub (card_to_string (Diamonds, Option.get !card_type)) 0 1)
+      ^
+      let cStr = card_to_string (Diamonds, Option.get !card_type) in
+      if String.length cStr = 2 then String.sub cStr 0 1 else "10")
   in
   adding_cards_to_table table (Option.get !y |> toCardList);
   player1_hand :=
@@ -116,7 +119,7 @@ let next_player () =
   | "Player 4" -> "Player 1"
   | _ -> ""
 
-let next_bs_player =
+let next_bs_player () =
   if !bs_curr_player = !curr_player then "Done"
   else
     match !bs_curr_player with
@@ -220,7 +223,7 @@ let pass_or_play st =
       let () = change_to_pass !curr_player in
       let () =
         curr_player := next_player ();
-        bs_curr_player := next_bs_player
+        bs_curr_player := next_bs_player ()
       in
       player_order ();
       if !card_type = None then card_type := Some (snd (bot_cards ()));
@@ -235,40 +238,39 @@ let match_player_with_hand player =
   | _ -> failwith "will not happen"
 
 let callout () =
-  while !bs_curr_player <> "Done" && next_bs_player <> "Done" do
+  while !bs_curr_player <> "Done" && next_bs_player () <> "Done" do
     if !bs_curr_player = "Player 1" then begin
       print_endline "Do you want to call BS? Please input yes or no.";
       let response = read_line () |> String.lowercase_ascii in
-      (if response = "yes" then
-         let table_list = peek_at_table table in
-         match table_list with
-         | (suit, number) :: t ->
-             if number = Option.get !card_type then (
-               print_endline
-                 ("Here are the cards in the table: "
-                 ^ deck_to_string (peek_at_table table |> order)
-                 ^ ". The player was not lying.");
-               match_player_with_hand !bs_curr_player
-               := table_list @ !(match_player_with_hand !bs_curr_player))
-             else (
-               print_endline
-                 ("Here are the cards in the table: "
-                 ^ deck_to_string (peek_at_table table |> order)
-                 ^ ". The player was lying.");
-               match_player_with_hand !curr_player
-               := table_list @ !(match_player_with_hand !curr_player))
-         | [] -> failwith "should not happen"
-       else if next_bs_player = "Done" then
-         let () = curr_player := next_player () in
-         player_order ()
-       else
-         let () = bs_curr_player := next_bs_player in
-         bs_player_callout ());
+      if response = "yes" then
+        let table_list = peek_at_table table in
+        match table_list with
+        | (suit, number) :: t ->
+            if number = Option.get !card_type then (
+              print_endline
+                ("Here are the cards in the table: "
+                ^ deck_to_string (peek_at_table table |> order)
+                ^ ". " ^ !curr_player ^ " was not lying.");
+              match_player_with_hand !bs_curr_player
+              := table_list @ !(match_player_with_hand !bs_curr_player) |> order)
+            else (
+              print_endline
+                ("Here are the cards in the table: "
+                ^ deck_to_string (peek_at_table table |> order)
+                ^ ". " ^ !curr_player ^ " was lying.");
+              match_player_with_hand !curr_player
+              := table_list @ !(match_player_with_hand !curr_player) |> order)
+        | [] -> failwith "should not happen"
+      else if next_bs_player () = "Done" then
+        let () = curr_player := next_player () in
+        player_order ()
+      else bs_curr_player := next_bs_player ();
       print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
     end
-    else
-      let bot_bs = Random.bool () in
-      if bot_bs then begin
+    else (
+      bs_player_callout ();
+      let _ = Random.self_init () in
+      if Random.bool () then begin
         print_endline (!bs_curr_player ^ " calls BS.");
         let table_list = peek_at_table table in
         match table_list with
@@ -277,29 +279,28 @@ let callout () =
               print_endline
                 ("Here are the cards in the table: "
                 ^ deck_to_string (peek_at_table table |> order)
-                ^ ". The player was not lying.");
+                ^ ". " ^ !curr_player ^ " was not lying.");
               let () =
                 match_player_with_hand !bs_curr_player
                 := table_list @ !(match_player_with_hand !bs_curr_player)
+                   |> order
               in
               bs_curr_player := "Done")
             else (
               print_endline
                 ("Here are the cards in the table: "
                 ^ deck_to_string (peek_at_table table |> order)
-                ^ ". The player was lying.");
+                ^ ". " ^ !curr_player ^ " was lying.");
               let () =
                 match_player_with_hand !curr_player
-                := table_list @ !(match_player_with_hand !curr_player)
+                := table_list @ !(match_player_with_hand !curr_player) |> order
               in
               bs_curr_player := "Done")
         | [] -> failwith "should not happen"
       end
-      else
-        let () = bs_curr_player := next_bs_player in
-        bs_player_callout ()
+      else bs_curr_player := next_bs_player ())
   done;
-  print_endline !bs_curr_player
+  print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
 
 let rec main_prompt st = pass_or_play st |> main_prompt
 
@@ -328,7 +329,13 @@ let main () =
      or the player who was correct in the BS callout.";
   print_endline
     "6) Continue battling your way through the liar game and the player who \
-     gets rid of their cards first wins!"
+     gets rid of their cards first wins!";
+  let () = Random.self_init () in
+  let s = shuffle card_list in
+  player1_hand := assign 1 13 s [] |> order;
+  player2_hand := assign 14 26 s [] |> order;
+  player3_hand := assign 27 39 s [] |> order;
+  player4_hand := assign 40 52 s [] |> order
 (* start (); main_prompt () *)
 
 let () =

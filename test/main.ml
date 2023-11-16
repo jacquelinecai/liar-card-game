@@ -174,7 +174,7 @@ let hand_tests =
            (assign 1 5 unshuffled_deck [])
         |> order |> card_to_string_list) );
     ( "card list to string" >:: fun _ ->
-      assert_equal ~printer:pp_string "K ♣, and 5 ♦"
+      assert_equal ~printer:pp_string "K ♣, 5 ♦"
         ([ (Clubs, King); (Diamonds, Number 5) ] |> cardlist_to_string) );
     ( "string to card list" >:: fun _ ->
       assert_equal
