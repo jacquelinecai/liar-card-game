@@ -61,7 +61,9 @@ let bs_curr_player = ref "Player 2"
 let table = empty_table
 
 let current_round () =
-  print_endline ("For this round the card will be " ^ card_round ())
+  print_endline
+    ("For this round the card will be "
+    ^ (Option.get !card_type |> number_match))
 
 let player_order () = print_endline (!curr_player ^ "'s turn.")
 let bs_player_callout () = print_endline (!bs_curr_player ^ "'s callout turn")
@@ -114,7 +116,7 @@ let next_player () =
   | "Player 4" -> "Player 1"
   | _ -> ""
 
-let next_bs_player () =
+let next_bs_player =
   if !bs_curr_player = !curr_player then "Done"
   else
     match !bs_curr_player with
@@ -218,16 +220,11 @@ let pass_or_play st =
       let () = change_to_pass !curr_player in
       let () =
         curr_player := next_player ();
-        bs_curr_player := next_bs_player ()
+        bs_curr_player := next_bs_player
       in
       player_order ();
       if !card_type = None then card_type := Some (snd (bot_cards ()));
       bot_actions ()
-
-let match_card_type =
-  match !card_type with
-  | None -> Number 0
-  | Some value -> value
 
 let match_player_with_hand player =
   match player with
@@ -238,31 +235,71 @@ let match_player_with_hand player =
   | _ -> failwith "will not happen"
 
 let callout () =
-  print_endline "Do you want to call BS? Please input yes or no.";
-  let response = read_line () |> String.lowercase_ascii in
-  (if response = "yes" then (
-     print_endline
-       ("Here are the cards in the table: "
-       ^ deck_to_string (peek_at_table table)
-       ^ ". The player was not lying.");
-     let table_list = peek_at_table table in
-     match table_list with
-     | (suit, number) :: t ->
-         if number = match_card_type then
-           (* Hand.player1_hand := table_list @ !Hand.player1_hand *)
-           match_player_with_hand !bs_curr_player
-           := table_list @ !(match_player_with_hand !bs_curr_player)
-         else
-           match_player_with_hand !curr_player
-           := table_list @ !(match_player_with_hand !curr_player)
-     | [] -> failwith "should not happen")
-   else if next_bs_player () = "Done" then
-     let () = curr_player := next_player () in
-     player_order ()
-   else
-     let () = bs_curr_player := next_bs_player () in
-     bs_player_callout ());
-  print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
+  while !bs_curr_player <> "Done" && next_bs_player <> "Done" do
+    if !bs_curr_player = "Player 1" then begin
+      print_endline "Do you want to call BS? Please input yes or no.";
+      let response = read_line () |> String.lowercase_ascii in
+      (if response = "yes" then
+         let table_list = peek_at_table table in
+         match table_list with
+         | (suit, number) :: t ->
+             if number = Option.get !card_type then (
+               print_endline
+                 ("Here are the cards in the table: "
+                 ^ deck_to_string (peek_at_table table |> order)
+                 ^ ". The player was not lying.");
+               match_player_with_hand !bs_curr_player
+               := table_list @ !(match_player_with_hand !bs_curr_player))
+             else (
+               print_endline
+                 ("Here are the cards in the table: "
+                 ^ deck_to_string (peek_at_table table |> order)
+                 ^ ". The player was lying.");
+               match_player_with_hand !curr_player
+               := table_list @ !(match_player_with_hand !curr_player))
+         | [] -> failwith "should not happen"
+       else if next_bs_player = "Done" then
+         let () = curr_player := next_player () in
+         player_order ()
+       else
+         let () = bs_curr_player := next_bs_player in
+         bs_player_callout ());
+      print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
+    end
+    else
+      let bot_bs = Random.bool () in
+      if bot_bs then begin
+        print_endline (!bs_curr_player ^ " calls BS.");
+        let table_list = peek_at_table table in
+        match table_list with
+        | (suit, number) :: t ->
+            if number = Option.get !card_type then (
+              print_endline
+                ("Here are the cards in the table: "
+                ^ deck_to_string (peek_at_table table |> order)
+                ^ ". The player was not lying.");
+              let () =
+                match_player_with_hand !bs_curr_player
+                := table_list @ !(match_player_with_hand !bs_curr_player)
+              in
+              bs_curr_player := "Done")
+            else (
+              print_endline
+                ("Here are the cards in the table: "
+                ^ deck_to_string (peek_at_table table |> order)
+                ^ ". The player was lying.");
+              let () =
+                match_player_with_hand !curr_player
+                := table_list @ !(match_player_with_hand !curr_player)
+              in
+              bs_curr_player := "Done")
+        | [] -> failwith "should not happen"
+      end
+      else
+        let () = bs_curr_player := next_bs_player in
+        bs_player_callout ()
+  done;
+  print_endline !bs_curr_player
 
 let rec main_prompt st = pass_or_play st |> main_prompt
 
