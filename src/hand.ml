@@ -66,7 +66,7 @@ let rec numCards (n : number) (cl : card list) (acc : int) : int =
   | h :: t -> if snd h = n then numCards n t (acc + 1) else numCards n t acc
 
 (** [nCards n amt cl acc] returns a card list with amt number of number n cards
-    in cl *)
+    in cl. Requires that [amt < numCards n cl acc] *)
 let rec nCards (n : number) (amt : int) (cl : card list) (acc : card list) :
     card list =
   if amt > 0 then
