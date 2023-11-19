@@ -176,5 +176,5 @@ let rec toCardList (cl : card option list) : card list =
   | [] -> []
   | h :: t -> (
       match h with
-      | None -> raise InvalidCard (*Should never be raised*)
+      | None -> raise InvalidCard (* Should never be raised *)
       | Some c -> c :: toCardList t)

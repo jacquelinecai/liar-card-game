@@ -224,9 +224,16 @@ let game_tests =
   [
     ( "card status on 4 empty card lists" >:: fun _ ->
       assert_equal (0, 0, 0, 0) (card_status [] [] [] []) );
-    ( "card status on initially player hands" >:: fun _ ->
+    ( "card status on initial player hands" >:: fun _ ->
       assert_equal (13, 13, 13, 13)
         (card_status !player1_hand !player2_hand !player3_hand !player4_hand) );
+    ( "card status during middle of game" >:: fun _ ->
+      assert_equal (4, 6, 14, 2)
+        (card_status
+           (assign 1 4 unshuffled_deck [])
+           (assign 5 10 unshuffled_deck [])
+           ((Diamonds, Number 10) :: !player3_hand)
+           [ (Diamonds, King); (Hearts, Number 1) ]) );
     ( "check winner on first player" >:: fun _ ->
       assert_equal 1
         (card_status [] !player2_hand !player3_hand !player4_hand
