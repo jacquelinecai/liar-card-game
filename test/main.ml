@@ -173,22 +173,86 @@ let hand_tests =
            ]
            (assign 1 5 unshuffled_deck [])
         |> order |> card_to_string_list) );
+    ( "updateDeckWithCardList test on first three card in the deck" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [ "4 of Clubs"; "5 of Clubs" ]
+        (updateDeckWithCardList
+           [ (Clubs, Number 1); (Clubs, Number 2); (Clubs, Number 3) ]
+           (assign 1 5 unshuffled_deck [])
+        |> order |> card_to_string_list) );
+    ( "updateDeckWithCardList test on empty list" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [
+          "Ace of Clubs"; "2 of Clubs"; "3 of Clubs"; "4 of Clubs"; "5 of Clubs";
+        ]
+        (updateDeckWithCardList [] (assign 1 5 unshuffled_deck [])
+        |> order |> card_to_string_list) );
+    ( "updateDeckWithCardList test on empty list" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) [ "Ace of Clubs" ]
+        (updateDeckWithCardList [] (assign 1 1 unshuffled_deck [])
+        |> order |> card_to_string_list) );
     ( "card list to string" >:: fun _ ->
       assert_equal ~printer:pp_string "K ♣, 5 ♦"
         ([ (Clubs, King); (Diamonds, Number 5) ] |> cardlist_to_string) );
-    ( "string to card list" >:: fun _ ->
+    ( "string to card list1" >:: fun _ ->
       assert_equal
         [ Some (Clubs, King); Some (Diamonds, Number 5) ]
         (String.split_on_char '-' "KC-5D" |> stringlist_to_card_list) );
-    ( "string to card list" >:: fun _ ->
+    ( "string to card list2" >:: fun _ ->
       assert_equal
         [ Some (Clubs, Number 7); Some (Diamonds, Number 7) ]
         (String.split_on_char '-' "7C-7D" |> stringlist_to_card_list) );
-    ( "string to card list" >:: fun _ ->
+    ( "string to card list3" >:: fun _ ->
       assert_equal
         [ (Clubs, Number 7); (Diamonds, Number 7) ]
         (String.split_on_char '-' "7C-7D"
         |> stringlist_to_card_list |> toCardList) );
+    ( "string to card random list4" >:: fun _ ->
+      assert_equal
+        [
+          (Clubs, Number 7);
+          (Diamonds, Number 7);
+          (Diamonds, Number 5);
+          (Diamonds, Number 8);
+          (Spades, Number 9);
+        ]
+        (String.split_on_char '-' (String.uppercase_ascii "7C-7D-5D-8d-9s")
+        |> stringlist_to_card_list |> toCardList) );
+    ( "string to card random list5" >:: fun _ ->
+      assert_equal
+        [
+          (Clubs, Jack);
+          (Diamonds, Queen);
+          (Diamonds, King);
+          (Diamonds, Number 1);
+          (Spades, Number 2);
+        ]
+        (String.split_on_char '-' (String.uppercase_ascii "JC-QD-KD-aD-2s")
+        |> stringlist_to_card_list |> toCardList) );
+    ( "string to card list1" >:: fun _ ->
+      assert_raises Invalid (fun () ->
+          String.split_on_char '-' (String.uppercase_ascii "p")
+          |> stringlist_to_card_list |> toCardList) );
+    ( "string to card list1" >:: fun _ ->
+      assert_raises Invalid (fun () ->
+          String.split_on_char '-' (String.uppercase_ascii "JC-QD-KD-aD-2z")
+          |> stringlist_to_card_list |> toCardList) );
+    ( "valid test on not valid list" >:: fun _ ->
+      assert_equal false (valid [ None ] unshuffled_deck) );
+    ( "valid test on not valid list" >:: fun _ ->
+      assert_equal false
+        (valid
+           [ Some (Clubs, Number 1); Some (Hearts, King); None ]
+           unshuffled_deck) );
+    ( "valid test on not valid list" >:: fun _ ->
+      assert_equal true
+        (valid [ Some (Clubs, Number 1); Some (Hearts, King) ] unshuffled_deck)
+    );
+    ( "valid test on cards not in list" >:: fun _ ->
+      assert_equal false
+        (valid
+           [ Some (Clubs, Number 1); Some (Hearts, King) ]
+           [ (Clubs, Number 2); (Hearts, Number 3) ]) );
     ( "contains test on a card in the deck" >:: fun _ ->
       assert_equal true
         (contains (Hearts, King) (assign 39 45 unshuffled_deck [])) );
