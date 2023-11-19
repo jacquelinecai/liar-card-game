@@ -240,32 +240,66 @@ let game_tests =
           card_status [] [] [] [] |> check_winner) );
   ]
 
+let empty_table = { table_cards = []; discard_pile = [] }
 let table1 = { table_cards = []; discard_pile = [] }
-let add_one_card = modify_table_cards table1 [ (Diamonds, Jack) ]
+let add_one_card = adding_cards_to_table table1 [ (Diamonds, Jack) ]
 let table2 = { table_cards = []; discard_pile = [] }
 
 let add_two_cards =
-  modify_table_cards table2 [ (Spades, Queen); (Hearts, Number 3) ]
+  adding_cards_to_table table2 [ (Spades, Queen); (Hearts, Number 3) ]
 
 let table3 = { table_cards = []; discard_pile = [] }
 
 let add_three_cards =
-  modify_table_cards table3
+  adding_cards_to_table table3
     [ (Spades, Queen); (Hearts, Number 3); (Clubs, Number 5) ]
 
 let table_tests =
   [
+    ( "empty table table cards" >:: fun _ ->
+      assert_equal [] empty_table.table_cards );
+    ( "empty table discard pile" >:: fun _ ->
+      assert_equal [] empty_table.discard_pile );
     ( "adding one card to the table" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string) [ "Jack of Diamonds" ]
         (peek_at_table table1 |> card_to_string_list) );
     ( "adding two cards to the table" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
-        [ "Queen of Spades"; "3 of Hearts" ]
+        [ "3 of Hearts"; "Queen of Spades" ]
         (peek_at_table table2 |> card_to_string_list) );
     ( "adding three cards to the table" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
-        [ "Queen of Spades"; "3 of Hearts"; "5 of Clubs" ]
+        [ "5 of Clubs"; "3 of Hearts"; "Queen of Spades" ]
         (peek_at_table table3 |> card_to_string_list) );
+    ("table size of 1" >:: fun _ -> assert_equal 1 (table_size table1));
+    ("table size of 2" >:: fun _ -> assert_equal 2 (table_size table2));
+    ("table size of 3" >:: fun _ -> assert_equal 3 (table_size table3));
+    ( "discard a pile of size 1" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) [ "Jack of Diamonds" ]
+        (discard_cards table1;
+         peek_at_discard_pile table1 |> card_to_string_list) );
+    ( "discard a pile of size 1 checking table" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) []
+        (discard_cards table1;
+         peek_at_table table1 |> card_to_string_list) );
+    ( "discard a pile of size 2" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [ "3 of Hearts"; "Queen of Spades" ]
+        (discard_cards table2;
+         peek_at_discard_pile table2 |> card_to_string_list) );
+    ( "discard a pile of size 2 checking table" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) []
+        (discard_cards table2;
+         peek_at_table table2 |> card_to_string_list) );
+    ( "discard a pile of size 3" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [ "5 of Clubs"; "3 of Hearts"; "Queen of Spades" ]
+        (discard_cards table3;
+         peek_at_discard_pile table3 |> card_to_string_list) );
+    ( "discard a pile of size 3 checking table" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) []
+        (discard_cards table3;
+         peek_at_table table3 |> card_to_string_list) );
   ]
 
 let suite =

@@ -26,6 +26,7 @@ let rec adding_cards_to_table (t : table) (cl : card list) =
       adding_cards_to_table t tl
 
 let peek_at_table (t : table) : card list = t.table_cards
+let peek_at_discard_pile (t : table) : card list = t.discard_pile
 let table_size (t : table) : int = List.length t.table_cards
 
 let discard_cards (t : table) =
