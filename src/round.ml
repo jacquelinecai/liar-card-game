@@ -98,6 +98,7 @@ let rec rand_seq num l acc =
     number between 1 and (4 - num). If num >= 4, then 1 card is placed down. If
     the bot chooses to pass, return [None]. *)
 let bot_play n num cl =
+  let () = Random.self_init () in
   if containsNum n cl then
     let x = Random.int (numCards n cl 0) + 1 in
     Some (nCards n x cl [])
