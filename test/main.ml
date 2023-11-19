@@ -326,15 +326,40 @@ let add_three_cards =
   adding_cards_to_table table3
     [ (Spades, Queen); (Hearts, Number 3); (Clubs, Number 5) ]
 
+let option_table4 = { table_cards = []; discard_pile = [] }
+
+let add_card_option =
+  adding_card_to_table option_table4 (Some (Hearts, Number 9))
+
+let add_card_option_none = adding_card_to_table option_table4 None
+let table5 = { table_cards = []; discard_pile = [] }
+
+let modify_table =
+  modify_table_cards table5
+    [ (Clubs, Number 1); (Spades, Queen); (Diamonds, Number 10) ]
+
 let table_tests =
   [
     ( "empty table table cards" >:: fun _ ->
       assert_equal [] empty_table.table_cards );
     ( "empty table discard pile" >:: fun _ ->
       assert_equal [] empty_table.discard_pile );
+    ( "modify table by 3" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [ "Ace of Clubs"; "Queen of Spades"; "10 of Diamonds" ]
+        (peek_at_table table5 |> card_to_string_list) );
+    ( "do not modify table" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [ "Ace of Clubs"; "Queen of Spades"; "10 of Diamonds" ]
+        (modify_table_cards table5 [];
+         peek_at_table table5 |> card_to_string_list) );
     ( "adding one card to the table" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string) [ "Jack of Diamonds" ]
         (peek_at_table table1 |> card_to_string_list) );
+    ( "adding no cards to the table" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) [ "Jack of Diamonds" ]
+        (adding_cards_to_table table1 [];
+         peek_at_table table1 |> card_to_string_list) );
     ( "adding two cards to the table" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
         [ "3 of Hearts"; "Queen of Spades" ]
@@ -343,9 +368,24 @@ let table_tests =
       assert_equal ~printer:(pp_list pp_string)
         [ "5 of Clubs"; "3 of Hearts"; "Queen of Spades" ]
         (peek_at_table table3 |> card_to_string_list) );
+    ( "adding card option to the table" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) [ "9 of Hearts" ]
+        (peek_at_table option_table4 |> card_to_string_list) );
+    ( "adding none card option to the table" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) [ "9 of Hearts" ]
+        (peek_at_table option_table4 |> card_to_string_list) );
+    ("table size of 0" >:: fun _ -> assert_equal 0 (table_size empty_table));
     ("table size of 1" >:: fun _ -> assert_equal 1 (table_size table1));
     ("table size of 2" >:: fun _ -> assert_equal 2 (table_size table2));
     ("table size of 3" >:: fun _ -> assert_equal 3 (table_size table3));
+    ( "discard a pile of size 0" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) []
+        (discard_cards empty_table;
+         peek_at_discard_pile empty_table |> card_to_string_list) );
+    ( "discard a pile of size 0 checking table" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) []
+        (discard_cards empty_table;
+         peek_at_table empty_table |> card_to_string_list) );
     ( "discard a pile of size 1" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string) [ "Jack of Diamonds" ]
         (discard_cards table1;
