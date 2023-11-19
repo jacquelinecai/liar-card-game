@@ -4,6 +4,7 @@ open Card
 open Hand
 open Game
 open Table
+open Round
 
 (** From A2: [pp_string s] pretty-prints card [c]. *)
 let pp_string c = "\"" ^ c ^ "\""
@@ -373,8 +374,50 @@ let table_tests =
          peek_at_table table3 |> card_to_string_list) );
   ]
 
+let all_pass x =
+  if x then
+    let () = change_to_pass "Player 3" in
+    let () = change_to_pass "Player 1" in
+    let () = change_to_pass "Player 2" in
+    change_to_pass "Player 4"
+  else ()
+
+let round_tests =
+  [
+    ( "testing number_match with a number" >:: fun _ ->
+      assert_equal ~printer:pp_string (number_match (Number 10)) "10" );
+    ( "testing number_match with Jack" >:: fun _ ->
+      assert_equal ~printer:pp_string (number_match Jack) "J" );
+    ( "testing number_match with Ace" >:: fun _ ->
+      assert_equal ~printer:pp_string (number_match (Number 1)) "A" );
+    ( "testing pass_list" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) (pass_list p)
+        [ "NotPass"; "NotPass"; "NotPass"; "NotPass" ] );
+    ( "testing change_to_pass with Player 2" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        (let () = change_to_pass "Player 2" in
+         pass_list p)
+        [ "NotPass"; "Pass"; "NotPass"; "NotPass" ] );
+    ( "testing change_to_pass when all players pass" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        (let () = all_pass true in
+         pass_list p)
+        [ "Pass"; "Pass"; "Pass"; "Pass" ] );
+    ( "testing is_end when all players pass" >:: fun _ ->
+      assert_equal ~printer:string_of_bool
+        (let () = all_pass true in
+         is_end p)
+        true );
+    ( "testing end_round when all players pass" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        (let () = all_pass true in
+         let () = end_round p in
+         pass_list p)
+        [ "NotPass"; "NotPass"; "NotPass"; "NotPass" ] );
+  ]
+
 let suite =
   "test suite for Liar Card Game"
-  >::: List.flatten [ hand_tests; game_tests; table_tests ]
+  >::: List.flatten [ hand_tests; game_tests; table_tests; round_tests ]
 
 let () = run_test_tt_main suite
