@@ -7,11 +7,16 @@ type pass =
   | NotPass
 
 type playerList = {
-  mutable p1 : pass;
-  mutable p2 : pass;
-  mutable p3 : pass;
-  mutable p4 : pass;
+  mutable p1 : pass ref;
+  mutable p2 : pass ref;
+  mutable p3 : pass ref;
+  mutable p4 : pass ref;
 }
+
+let pass_to_string x =
+  match x with
+  | Pass -> "Pass"
+  | NotPass -> "NotPass"
 
 let number_match c =
   match c with
@@ -20,44 +25,38 @@ let number_match c =
   | Queen -> "Q"
   | King -> "K"
 
-let p = { p1 = NotPass; p2 = NotPass; p3 = NotPass; p4 = NotPass }
+let p =
+  { p1 = ref NotPass; p2 = ref NotPass; p3 = ref NotPass; p4 = ref NotPass }
+
 let player1 = p.p1
 let player2 = p.p2
 let player3 = p.p3
 let player4 = p.p4
 
-let cList =
-  [
-    Number 1;
-    Number 2;
-    Number 3;
-    Number 4;
-    Number 5;
-    Number 6;
-    Number 7;
-    Number 8;
-    Number 9;
-    Number 10;
-    Jack;
-    Queen;
-    King;
-  ]
+let pass_list (p : playerList) : string list =
+  match p with
+  | { p1; p2; p3; p4 } ->
+      [
+        pass_to_string !p1;
+        pass_to_string !p2;
+        pass_to_string !p3;
+        pass_to_string !p4;
+      ]
 
-let curr_round = ref 0
-let card_round () = number_match (List.nth cList !curr_round)
+let start_round (p : playerList) : unit =
+  p.p1 := NotPass;
+  p.p2 := NotPass;
+  p.p3 := NotPass;
+  p.p4 := NotPass
 
-let increment () =
-  if !curr_round = 11 then curr_round := 0 else curr_round := !curr_round + 1
-
-let start_round (p : playerList) : playerList =
-  { p1 = NotPass; p2 = NotPass; p3 = NotPass; p4 = NotPass }
-
-let end_round (p : playerList) : playerList =
-  if p.p1 = Pass && p.p2 = Pass && p.p3 = Pass && p.p4 = Pass then start_round p
-  else p
+let end_round (p : playerList) : unit =
+  if p.p1 = ref Pass && p.p2 = ref Pass && p.p3 = ref Pass && p.p4 = ref Pass
+  then start_round p
+  else ()
 
 let is_end (p : playerList) : bool =
-  if p.p1 = Pass && p.p2 = Pass && p.p3 = Pass && p.p4 = Pass then true
+  if p.p1 = ref Pass && p.p2 = ref Pass && p.p3 = ref Pass && p.p4 = ref Pass
+  then true
   else false
 
 let randomize () =
@@ -66,10 +65,10 @@ let randomize () =
 
 let change_to_pass plyr =
   match plyr with
-  | "Player 1" -> p.p1 <- Pass
-  | "Player 2" -> p.p2 <- Pass
-  | "Player 3" -> p.p3 <- Pass
-  | "Player 4" -> p.p4 <- Pass
+  | "Player 1" -> p.p1 := Pass
+  | "Player 2" -> p.p2 := Pass
+  | "Player 3" -> p.p3 := Pass
+  | "Player 4" -> p.p4 := Pass
   | _ -> ()
 
 let player_order () =
