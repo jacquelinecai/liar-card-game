@@ -14,6 +14,16 @@ let main_player =
   | 2 -> "Player 3"
   | _ -> "Player 4"
 
+let main = main_player
+
+let main_player_cards =
+  match main with
+  | "Player 1" -> player1_hand
+  | "Player 2" -> player2_hand
+  | "Player 3" -> player3_hand
+  | "Player 4" -> player4_hand
+  | _ -> failwith "impossible"
+
 let start () =
   let y = ref false in
   while not !y do
@@ -23,8 +33,8 @@ let start () =
     if x = "s" then y := true
   done;
   print_endline
-    ("\nIn this game you will be " ^ main_player ^ ". Here are your cards: "
-    ^ (!player1_hand |> deck_to_string))
+    ("\nIn this game you will be " ^ main ^ ". Here are your cards: "
+    ^ (!main_player_cards |> deck_to_string))
 
 let exit () =
   let quit = ref None in
@@ -41,6 +51,8 @@ let exit () =
   done;
   Stdlib.exit 0
 
+let winner_status = ref false
+
 let winner () =
   let status =
     card_status !player1_hand !player2_hand !player3_hand !player4_hand
@@ -52,6 +64,7 @@ let winner () =
       print_endline
         ("\nPlayer " ^ string_of_int win
        ^ " has gotten rid of their cards and wins the game!");
+      winner_status := true;
       exit ()
 
 let round = ref 0
@@ -75,7 +88,7 @@ let num_cards_prompt () =
       How many cards would you like to put down? You may place down up to 4 \
       cards.\n\
       Here are your current cards: "
-    ^ deck_to_string !player1_hand);
+    ^ deck_to_string !main_player_cards);
   print_string "> "
 
 let choose_cards () =
@@ -86,13 +99,13 @@ let choose_cards () =
        \ \n\
        \ Example: 4D-4C\n\
        \        Here are your current cards: "
-      ^ deck_to_string !player1_hand)
+      ^ deck_to_string !main_player_cards)
   in
   let y = ref None in
   while !y = None do
     let x = String.uppercase_ascii (read_line ()) in
     let cards_placed = String.split_on_char '-' x |> stringlist_to_card_list in
-    if valid cards_placed !player1_hand then y := Some cards_placed
+    if valid cards_placed !main_player_cards then y := Some cards_placed
     else print_endline "One or more of your cards are not valid. Try again."
   done;
   let amt = List.length (Option.get !y) in
@@ -106,10 +119,11 @@ let choose_cards () =
       if String.length cStr = 2 then String.sub cStr 0 1 else "10")
   in
   adding_cards_to_table table (Option.get !y |> toCardList);
-  player1_hand :=
-    updateDeckWithCardList (Option.get !y |> toCardList) !player1_hand;
+  main_player_cards :=
+    updateDeckWithCardList (Option.get !y |> toCardList) !main_player_cards;
   print_endline
-    ("\nHere are your current cards: " ^ (order !player1_hand |> deck_to_string))
+    ("\nHere are your current cards: "
+    ^ (order !main_player_cards |> deck_to_string))
 
 let next_player () =
   match !curr_player with
@@ -119,10 +133,10 @@ let next_player () =
   | "Player 4" -> "Player 1"
   | _ -> ""
 
-let next_bs_player () =
-  if !bs_curr_player = !curr_player then "Done"
+let next_bs_player cp =
+  if cp = !curr_player then "Done"
   else
-    match !bs_curr_player with
+    match cp with
     | "Player 1" -> "Player 2"
     | "Player 2" -> "Player 3"
     | "Player 3" -> "Player 4"
@@ -153,6 +167,7 @@ let choose_card_type () =
 let bot_cards () =
   let curr_player_cards =
     match !curr_player with
+    | "Player 1" -> player1_hand
     | "Player 2" -> player2_hand
     | "Player 3" -> player3_hand
     | "Player 4" -> player4_hand
@@ -165,6 +180,8 @@ let bot_cards () =
 let bot_actions () =
   let play =
     match !curr_player with
+    | "Player 1" ->
+        bot_play (Option.get !card_type) (table_size table) !player1_hand
     | "Player 2" ->
         bot_play (Option.get !card_type) (table_size table) !player2_hand
     | "Player 3" ->
@@ -177,6 +194,9 @@ let bot_actions () =
   | None -> change_to_pass !curr_player
   | Some x ->
       (match !curr_player with
+      | "Player 1" ->
+          player1_hand := updateDeckWithCardList x !player1_hand;
+          adding_cards_to_table table x
       | "Player 2" ->
           player2_hand := updateDeckWithCardList x !player2_hand;
           adding_cards_to_table table x
@@ -191,7 +211,8 @@ let bot_actions () =
         (!curr_player ^ " claimed they placed down "
         ^ (List.length x |> string_of_int)
         ^ " "
-        ^ number_match (Option.get !card_type))
+        ^ number_match (Option.get !card_type));
+      curr_player := next_player ()
 
 let check_round () =
   if is_end p then
@@ -206,28 +227,33 @@ let pass_chosen () =
   check_round ()
 
 let pass_or_play st =
-  let a = ref "" in
-  while !a = "" do
-    print_endline
-      "You can choose to pass or play a card. Type 'pass' or 'play' to \
-       continue.";
-    print_string "> ";
-    let x = String.lowercase_ascii (read_line ()) in
-    if x = "pass" then a := "pass"
-    else if x = "play" then a := "play"
-    else print_endline "Please try again. Type 'pass' or 'play' to continue."
-  done;
-  match !a with
-  | "play" -> choose_card_type ()
-  | _ ->
-      let () = change_to_pass !curr_player in
-      let () =
-        curr_player := next_player ();
-        bs_curr_player := next_bs_player ()
-      in
-      player_order ();
-      if !card_type = None then card_type := Some (snd (bot_cards ()));
-      bot_actions ()
+  if !curr_player = main then begin
+    let a = ref "" in
+    while !a = "" do
+      print_endline
+        "You can choose to pass or play a card. Type 'pass' or 'play' to \
+         continue.";
+      print_string "> ";
+      let x = String.lowercase_ascii (read_line ()) in
+      if x = "pass" then a := "pass"
+      else if x = "play" then a := "play"
+      else print_endline "Please try again. Type 'pass' or 'play' to continue."
+    done;
+    match !a with
+    | "play" -> choose_card_type ()
+    | _ ->
+        let () = change_to_pass !curr_player in
+        let () =
+          curr_player := next_player ();
+          bs_curr_player := next_bs_player !bs_curr_player
+        in
+        player_order ();
+        if !card_type = None then card_type := Some (snd (bot_cards ()));
+        bot_actions ()
+  end
+  else (
+    if !card_type = None then card_type := Some (snd (bot_cards ()));
+    bot_actions ())
 
 let match_player_with_hand player =
   match player with
@@ -238,8 +264,8 @@ let match_player_with_hand player =
   | _ -> failwith "will not happen"
 
 let callout () =
-  while !bs_curr_player <> "Done" && next_bs_player () <> "Done" do
-    if !bs_curr_player = "Player 1" then begin
+  while !bs_curr_player <> "Done" && next_bs_player !bs_curr_player <> "Done" do
+    if !bs_curr_player = main then begin
       print_endline "Do you want to call BS? Please input yes or no.";
       let response = read_line () |> String.lowercase_ascii in
       if response = "yes" then
@@ -252,21 +278,27 @@ let callout () =
                 ^ deck_to_string (peek_at_table table |> order)
                 ^ ". " ^ !curr_player ^ " was not lying.");
               match_player_with_hand !bs_curr_player
-              := table_list @ !(match_player_with_hand !bs_curr_player) |> order)
+              := table_list @ !(match_player_with_hand !bs_curr_player) |> order;
+              bs_curr_player := next_bs_player !curr_player;
+              table.table_cards <- [])
             else (
               print_endline
                 ("Here are the cards in the table: "
                 ^ deck_to_string (peek_at_table table |> order)
                 ^ ". " ^ !curr_player ^ " was lying.");
               match_player_with_hand !curr_player
-              := table_list @ !(match_player_with_hand !curr_player) |> order)
+              := table_list @ !(match_player_with_hand !curr_player) |> order;
+              curr_player := !bs_curr_player;
+              bs_curr_player := next_bs_player !curr_player;
+              table.table_cards <- [])
         | [] -> failwith "should not happen"
-      else if next_bs_player () = "Done" then
+      else if next_bs_player !bs_curr_player = "Done" then
         let () = curr_player := next_player () in
         player_order ()
-      else bs_curr_player := next_bs_player ();
+      else bs_curr_player := next_bs_player !bs_curr_player;
       print_endline
-        ("\nHere are your cards: " ^ (order !player1_hand |> deck_to_string))
+        ("\nHere are your cards: "
+        ^ (order !main_player_cards |> deck_to_string))
     end
     else (
       bs_player_callout ();
@@ -299,10 +331,10 @@ let callout () =
               bs_curr_player := "Done")
         | [] -> failwith "should not happen"
       end
-      else bs_curr_player := next_bs_player ())
+      else bs_curr_player := next_bs_player !bs_curr_player)
   done;
   print_endline
-    ("\nHere are your cards: " ^ (order !player1_hand |> deck_to_string))
+    ("\nHere are your cards: " ^ (order !main_player_cards |> deck_to_string))
 
 let rec main_prompt st = pass_or_play st |> main_prompt
 
@@ -338,13 +370,14 @@ let main () =
   player2_hand := assign 14 26 s [] |> order;
   player3_hand := assign 27 39 s [] |> order;
   player4_hand := assign 40 52 s [] |> order
-(* start (); main_prompt () *)
 
 let () =
   main ();
   start ();
-  player_order ();
-  pass_or_play ();
-  callout ();
-  winner ();
+  while !winner_status = false do
+    player_order ();
+    pass_or_play ();
+    callout ();
+    winner ()
+  done;
   exit ()
