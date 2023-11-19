@@ -124,7 +124,6 @@ let string_number_match s =
   | "7" -> Some (Number 7)
   | "8" -> Some (Number 8)
   | "9" -> Some (Number 9)
-  | "10" -> Some (Number 10)
   | "J" -> Some Jack
   | "Q" -> Some Queen
   | "K" -> Some King
@@ -136,6 +135,11 @@ let string_to_card s =
     let num = string_number_match s in
     match (suit, num) with
     | Some x, Some y -> Some (x, y)
+    | _ -> None
+  else if String.length s = 3 && String.sub s 0 2 = "10" then
+    let suit = string_suit_match (String.sub s 1 2) in
+    match suit with
+    | Some x -> Some (x, Number 10)
     | _ -> None
   else None
 
