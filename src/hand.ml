@@ -91,7 +91,7 @@ exception InvalidCard
 let rec updateDeck (c : card) (cl : card list) (acc : card list) : card list =
   if contains c cl then
     match cl with
-    | [] -> []
+    | [] -> acc
     | h :: t -> if h = c then acc @ t else updateDeck c t (h :: acc)
   else raise InvalidCard
 

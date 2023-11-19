@@ -265,7 +265,8 @@ let callout () =
         let () = curr_player := next_player () in
         player_order ()
       else bs_curr_player := next_bs_player ();
-      print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
+      print_endline
+        ("\nHere are your cards: " ^ (order !player1_hand |> deck_to_string))
     end
     else (
       bs_player_callout ();
@@ -277,7 +278,7 @@ let callout () =
         | (suit, number) :: t ->
             if number = Option.get !card_type then (
               print_endline
-                ("Here are the cards in the table: "
+                ("Here are the cards on the table: "
                 ^ deck_to_string (peek_at_table table |> order)
                 ^ ". " ^ !curr_player ^ " was not lying.");
               let () =
@@ -288,7 +289,7 @@ let callout () =
               bs_curr_player := "Done")
             else (
               print_endline
-                ("Here are the cards in the table: "
+                ("Here are the cards on the table: "
                 ^ deck_to_string (peek_at_table table |> order)
                 ^ ". " ^ !curr_player ^ " was lying.");
               let () =
@@ -300,7 +301,8 @@ let callout () =
       end
       else bs_curr_player := next_bs_player ())
   done;
-  print_endline ("\nHere are your cards: " ^ deck_to_string !player1_hand)
+  print_endline
+    ("\nHere are your cards: " ^ (order !player1_hand |> deck_to_string))
 
 let rec main_prompt st = pass_or_play st |> main_prompt
 

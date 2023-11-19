@@ -12,6 +12,8 @@ type suit =
 
 type card = suit * number
 
+exception Invalid
+
 val card_list : card list
 val card_to_string : card -> string
 val shuffle : card list -> card list
