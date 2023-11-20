@@ -82,21 +82,11 @@ let current_round () =
 let player_order () = print_endline (!curr_player ^ "'s turn.")
 let bs_player_callout () = print_endline (!bs_curr_player ^ "'s callout turn")
 
-let num_cards_prompt () =
-  print_endline
-    ("\n\n\
-      How many cards would you like to put down? You may place down up to 4 \
-      cards.\n\
-      Here are your current cards: "
-    ^ deck_to_string !main_player_cards);
-  print_string "> "
-
 let choose_cards () =
   let () =
     print_endline
       ("\n\n\
-       \        What cards would you like to place? \n\
-       \ \n\
+        What cards would you like to place? \n\
        \ Example: 4D-4C\n\
         Here are your current cards: "
       ^ deck_to_string !main_player_cards);
