@@ -60,6 +60,7 @@ let is_end (p : playerList) : bool =
   else false
 
 let randomize () =
+  let () = Random.self_init () in
   let x = Random.bool () in
   if x then Pass else NotPass
 
@@ -72,6 +73,7 @@ let change_to_pass plyr =
   | _ -> ()
 
 let player_order () =
+  let () = Random.self_init () in
   let y = Random.int 4 in
   match y with
   | 0 -> "Player 1"
@@ -81,6 +83,7 @@ let player_order () =
 
 let rec rand_seq num l acc =
   if num > 0 then (
+    let () = Random.self_init () in
     let x = ref (Random.int (l - num)) in
     while List.exists (fun y -> !x = y) acc do
       x := Random.int (l - num)
