@@ -69,7 +69,6 @@ let winner () =
 
 let round = ref 0
 let card_type = ref None
-let card = ref None
 let curr_player = ref "Player 1"
 let bs_curr_player = ref "Player 2"
 let table = empty_table
@@ -88,7 +87,7 @@ let choose_cards () =
       ("\n\n\
         What cards would you like to place? \n\
        \ Example: 4D-4C\n\
-        Here are your current cards: "
+        Current cards: "
       ^ deck_to_string !main_player_cards);
     print_string "> "
   in
@@ -149,6 +148,11 @@ let choose_card_type () =
       "\n\
        Choose a card type you are claiming to have. Possible options include: \n\
       \    A, 2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K";
+    print_endline
+      ("Suggested card type: "
+      ^
+      let suggested = suggested_card_type !main_player_cards in
+      number_match suggested);
     print_string "> ";
     let x = String.lowercase_ascii (read_line ()) in
     try c := Some (Number (int_of_string x))
@@ -232,6 +236,18 @@ let pass_or_play () =
       print_endline
         "You can choose to pass or play a card. Type 'pass' or 'play' to \
          continue.";
+      print_endline
+        ("Suggested play: "
+        ^
+        let suggested =
+          if !card_type <> None then
+            suggested_play (Option.get !card_type) (table_size table)
+              !main_player_cards
+          else Some []
+        in
+        match suggested with
+        | None -> "pass"
+        | Some x -> "play");
       print_string "> ";
       let x = String.lowercase_ascii (read_line ()) in
       if x = "pass" then a := "pass"
@@ -293,8 +309,7 @@ let callout () =
             bs_curr_player := "Done"
         | [] -> failwith "should not happen");
         print_endline
-          ("\nHere are your cards: "
-          ^ (order !main_player_cards |> deck_to_string)))
+          ("\nCurrent cards: " ^ (order !main_player_cards |> deck_to_string)))
       else if next_bs_player () = "Done" then
         let () = curr_player := next_player () in
         player_order ()
@@ -331,7 +346,7 @@ let callout () =
         bs_curr_player := next_bs_player ()))
   done;
   print_endline
-    ("\nHere are your cards: " ^ (order !main_player_cards |> deck_to_string));
+    ("\nCurrent cards: " ^ (order !main_player_cards |> deck_to_string));
   curr_player := next_player ();
   card_type := None
 

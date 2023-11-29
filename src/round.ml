@@ -91,15 +91,51 @@ let rec rand_seq num l acc =
     rand_seq (num - 1) l (!x :: acc))
   else acc
 
+(** [hash_contains hash n] returns None if [n] is not contained in [hash].
+    Otherwise, return [Some num] where [num] is the associated int for number
+    [n]. *)
+let rec hash_contains hash n =
+  match hash with
+  | [] -> None
+  | (n', num) :: t -> if n' = n then Some num else hash_contains t n
+
+(** [choose_type pl acc] returns an updated tuple list (modeling a hashmap) that
+    represents the current count of card number types in [pl]. *)
+let rec choose_type cl acc =
+  match cl with
+  | [] -> acc
+  | h :: t -> (
+      let x = hash_contains acc (snd h) in
+      match x with
+      | None -> choose_type t ((snd h, 1) :: acc)
+      | Some x -> choose_type t ((snd h, x + 1) :: acc))
+
+(** [suggested_card_type pl] returns a number [n] that occurs the most in [pl]. *)
+let suggested_card_type cl =
+  List.sort (fun (_, x) (_, x') -> Stdlib.compare x' x) (choose_type cl [])
+  |> List.hd |> fst
+
+(** [suggested_play n num pl] facilitates the game play of the human player by
+    evaluating [pl] to identify if the player has any cards with number [n]. If
+    so, return [Some x] where [x] represents a list of all number [n] cards in
+    [pl] for the player to choose from. If [pl] does not contains cards with
+    number [n], *)
+let suggested_play n num cl =
+  if containsNum n cl then
+    let x = numCards n cl 0 in
+    Some (nCards n x cl [])
+  else None
+
 (** [bot_play n num pl] facilitates the game play of the bots by first checking
-    if pl contains any cards with number n. If so, return [Some cl] where cl
-    contains the cards with number n that the bot wants to put down. The number
-    of cards the bot places down is determined by a random number between 1 and
-    the number of n cards the bot has. Else, the bot will randomly decide
-    between playing and passing, where if the bot chooses to play, return
+    if [pl] contains any cards with number [n]. If so, return [Some cl] where cl
+    contains the cards with number [n] that the bot wants to put down. The
+    number of cards the bot places down is determined by a random number between
+    1 and the number of [n] cards the bot has. Else, the bot will randomly
+    decide between playing and passing, where if the bot chooses to play, return
     [Some cl] where the number of cards placed down is determined by a random
-    number between 1 and (4 - num). If num >= 4, then 1 card is placed down. If
-    the bot chooses to pass, return [None]. *)
+    number between [1] and [(4 - num)], where [num] is the current number of
+    cards on the table. If [num >= 4], then 1 card is placed down. If the bot
+    chooses to pass, return [None]. *)
 let bot_play n num cl =
   let () = Random.self_init () in
   if containsNum n cl then
