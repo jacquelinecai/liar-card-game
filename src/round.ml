@@ -28,6 +28,9 @@ let number_match c =
 let p =
   { p1 = ref NotPass; p2 = ref NotPass; p3 = ref NotPass; p4 = ref NotPass }
 
+let bs_pass =
+  { p1 = ref NotPass; p2 = ref NotPass; p3 = ref NotPass; p4 = ref NotPass }
+
 let player1 = p.p1
 let player2 = p.p2
 let player3 = p.p3
@@ -64,12 +67,12 @@ let randomize () =
   let x = Random.bool () in
   if x then Pass else NotPass
 
-let change_to_pass plyr =
+let change_to_pass plyr pList =
   match plyr with
-  | "Player 1" -> p.p1 := Pass
-  | "Player 2" -> p.p2 := Pass
-  | "Player 3" -> p.p3 := Pass
-  | "Player 4" -> p.p4 := Pass
+  | "Player 1" -> pList.p1 := Pass
+  | "Player 2" -> pList.p2 := Pass
+  | "Player 3" -> pList.p3 := Pass
+  | "Player 4" -> pList.p4 := Pass
   | _ -> ()
 
 let player_order () =
@@ -99,7 +102,7 @@ let rec hash_contains hash n =
   | [] -> None
   | (n', num) :: t -> if n' = n then Some num else hash_contains t n
 
-(** [choose_type pl acc] returns an updated tuple list (modeling a hashmap) that
+(** [choose_type cl acc] returns an updated tuple list (modeling a hashmap) that
     represents the current count of card number types in [pl]. *)
 let rec choose_type cl acc =
   match cl with
@@ -110,20 +113,68 @@ let rec choose_type cl acc =
       | None -> choose_type t ((snd h, 1) :: acc)
       | Some x -> choose_type t ((snd h, x + 1) :: acc))
 
-(** [suggested_card_type pl] returns a number [n] that occurs the most in [pl]. *)
+(** [suggested_card_type cl] returns a list of numbers that have the same
+    frequency in [cl]. *)
 let suggested_card_type cl =
-  List.sort (fun (_, x) (_, x') -> Stdlib.compare x' x) (choose_type cl [])
-  |> List.hd |> fst
+  let sorted_counts =
+    List.sort (fun (_, x) (_, x') -> Stdlib.compare x' x) (choose_type cl [])
+  in
+  let max_frequency =
+    match sorted_counts with
+    | [] -> 0
+    | (_, freq) :: _ -> freq
+  in
+  List.filter (fun (_, freq) -> freq = max_frequency) sorted_counts
+  |> List.map fst
+
+let assign_frequency_values hand =
+  let card_counts =
+    List.fold_left
+      (fun acc card ->
+        let count =
+          match List.assoc_opt card acc with
+          | Some c -> c + 1
+          | None -> 1
+        in
+        (card, count) :: acc)
+      [] hand
+  in
+
+  let total_cards = float_of_int (List.length hand) in
+
+  List.map
+    (fun card ->
+      let frequency_value =
+        match List.assoc_opt card card_counts with
+        | Some count -> 1.0 -. (float_of_int count /. total_cards)
+        | None -> 1.0
+      in
+      (card, Some frequency_value))
+    hand
 
 (** [suggested_play n num pl] facilitates the game play of the human player by
     evaluating [pl] to identify if the player has any cards with number [n]. If
     so, return [Some x] where [x] represents a list of all number [n] cards in
-    [pl] for the player to choose from. If [pl] does not contains cards with
-    number [n], *)
+    [pl] for the player to choose from. If [pl] does not contain cards with
+    number [n], the suggestion will be to either skip and return [None] or place
+    down the worst card(s) as [Some cl] where the number of cards placed down is
+    determined by a random number between [1] and [(4 - num)], where [num] is
+    the current number of cards on the table. If [num >= 4], then 1 card is
+    placed down. *)
 let suggested_play n num cl =
   if containsNum n cl then
     let x = numCards n cl 0 in
     Some (nCards n x cl [])
+  else if
+    let () = Random.self_init () in
+    Random.bool ()
+  then
+    let amt = 4 - num in
+    if amt <= 0 then Some [ assign_frequency_values cl |> List.hd |> fst ]
+    else
+      let () = Random.self_init () in
+      let x = Random.int amt + 1 in
+      Some (firstNCards cl x)
   else None
 
 (** [bot_play n num pl] facilitates the game play of the bots by first checking
@@ -141,12 +192,17 @@ let bot_play n num cl =
   if containsNum n cl then
     let x = Random.int (numCards n cl 0) + 1 in
     Some (nCards n x cl [])
-  else if Random.bool () then
+  else if
+    let () = Random.self_init () in
+    Random.bool ()
+  then
     let amt = 4 - num in
     if amt <= 0 then
+      let () = Random.self_init () in
       let idx = Random.int (List.length cl) in
       Some (getRandCards [ idx ] 0 cl [])
     else
+      let () = Random.self_init () in
       let x = Random.int amt + 1 in
       Some (getRandCards (rand_seq x (List.length cl) []) 0 cl [])
   else None

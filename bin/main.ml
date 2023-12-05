@@ -34,7 +34,7 @@ let start () =
   done;
   print_endline
     ("\nIn this game you will be " ^ main ^ ". Here are your cards: "
-    ^ (!main_player_cards |> deck_to_string))
+    ^ (!main_player_cards |> order |> deck_to_string))
 
 let exit () =
   let quit = ref None in
@@ -80,6 +80,7 @@ let current_round () =
 
 let player_order () = print_endline (!curr_player ^ "'s turn.")
 let bs_player_callout () = print_endline (!bs_curr_player ^ "'s callout turn")
+let bs_pass_curr_player p = change_to_pass p bs_pass
 
 let choose_cards () =
   let () =
@@ -88,7 +89,17 @@ let choose_cards () =
         What cards would you like to place? \n\
        \ Example: 4D-4C\n\
         Current cards: "
-      ^ deck_to_string !main_player_cards);
+      ^ deck_to_string (order !main_player_cards));
+    print_endline
+      ("Suggested play: "
+      ^
+      let suggested =
+        suggested_play (Option.get !card_type) (table_size table)
+          !main_player_cards
+      in
+      match suggested with
+      | None -> failwith "cannot pass"
+      | Some x -> order x |> deck_to_string);
     print_string "> "
   in
   let y = ref None in
@@ -106,7 +117,7 @@ let choose_cards () =
       ^ " and you have claimed to place down " ^ string_of_int amt ^ " "
       ^
       let cStr = card_to_string (Diamonds, Option.get !card_type) in
-      if String.length cStr = 2 then String.sub cStr 0 1 else "10")
+      if String.length cStr = 3 then String.sub cStr 0 1 else "10")
   in
   adding_cards_to_table table (Option.get !y |> toCardList);
   main_player_cards :=
@@ -152,7 +163,7 @@ let choose_card_type () =
       ("Suggested card type: "
       ^
       let suggested = suggested_card_type !main_player_cards in
-      number_match suggested);
+      suggested |> order_num |> num_list_to_string);
     print_string "> ";
     let x = String.lowercase_ascii (read_line ()) in
     try c := Some (Number (int_of_string x))
@@ -194,7 +205,7 @@ let bot_actions () =
     | _ -> None
   in
   match play with
-  | None -> change_to_pass !curr_player
+  | None -> change_to_pass !curr_player p
   | Some x ->
       (match !curr_player with
       | "Player 1" ->
@@ -220,16 +231,18 @@ let bot_actions () =
 let check_round () =
   if is_end p then
     match !curr_player with
-    | "Player 1" -> choose_card_type ()
+    | main_player -> choose_card_type ()
     | _ -> card_type := Some (snd (bot_cards ()))
 
 let pass_chosen () =
-  let () = change_to_pass !curr_player in
+  let () = change_to_pass !curr_player p in
   let () = curr_player := next_player () in
   let () = player_order () in
   check_round ()
 
 let pass_or_play () =
+  start_round bs_pass;
+  bs_pass_curr_player !curr_player;
   if !curr_player = main then begin
     let a = ref "" in
     while !a = "" do
@@ -257,7 +270,7 @@ let pass_or_play () =
     match !a with
     | "play" -> choose_card_type ()
     | _ ->
-        let () = change_to_pass !curr_player in
+        let () = change_to_pass !curr_player p in
         let () =
           curr_player := next_player ();
           bs_curr_player := next_bs_player ()
@@ -310,10 +323,13 @@ let callout () =
         | [] -> failwith "should not happen");
         print_endline
           ("\nCurrent cards: " ^ (order !main_player_cards |> deck_to_string)))
-      else if next_bs_player () = "Done" then
+      else if next_bs_player () = "Done" then (
+        change_to_pass !bs_curr_player bs_pass;
         let () = curr_player := next_player () in
-        player_order ()
-      else bs_curr_player := next_bs_player ()
+        player_order ())
+      else (
+        change_to_pass !bs_curr_player bs_pass;
+        bs_curr_player := next_bs_player ())
     end
     else (
       bs_player_callout ();
@@ -336,19 +352,21 @@ let callout () =
                 ^ deck_to_string (peek_at_table table |> order)
                 ^ ". " ^ !curr_player ^ " was lying.");
               match_player_with_hand !curr_player
-              := table_list @ !(match_player_with_hand !curr_player) |> order);
+              := table_list @ !(match_player_with_hand !curr_player) |> order;
+              curr_player := !bs_curr_player);
             table.table_cards <- [];
             bs_curr_player := "Done"
         | [] -> failwith "should not happen"
       end
       else (
         print_endline (!bs_curr_player ^ " does not call BS.");
+        change_to_pass !bs_curr_player bs_pass;
         bs_curr_player := next_bs_player ()))
   done;
   print_endline
     ("\nCurrent cards: " ^ (order !main_player_cards |> deck_to_string));
-  curr_player := next_player ();
-  card_type := None
+  if is_end bs_pass then curr_player := next_player () else card_type := None;
+  bs_curr_player := set_bs_player !curr_player
 
 let main () =
   print_endline "\n\nWelcome to the Liar Card Game!\n";
@@ -381,7 +399,10 @@ let main () =
   player1_hand := assign 1 13 s [] |> order;
   player2_hand := assign 14 26 s [] |> order;
   player3_hand := assign 27 39 s [] |> order;
-  player4_hand := assign 40 52 s [] |> order
+  player4_hand := assign 40 52 s [] |> order;
+  start_round p;
+  start_round bs_pass;
+  bs_pass_curr_player !curr_player
 
 let () =
   main ();

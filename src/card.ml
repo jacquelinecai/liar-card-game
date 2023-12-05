@@ -173,7 +173,7 @@ let rec valid (cl : card option list) (yourCards : card list) : bool =
       | None -> false
       | Some c -> true && contains c yourCards && valid t yourCards)
 
-(** [toCardList cl] returns the card option list into a card list Precondition:
+(** [toCardList cl] returns the card option list into a card list. Precondition:
     all the cards must be valid *)
 let rec toCardList (cl : card option list) : card list =
   match cl with
