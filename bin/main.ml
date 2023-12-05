@@ -115,9 +115,7 @@ let choose_cards () =
       ("You have chosen to place down " ^ string_of_int amt ^ " cards: "
       ^ (Option.get !y |> toCardList |> cardlist_to_string)
       ^ " and you have claimed to place down " ^ string_of_int amt ^ " "
-      ^
-      let cStr = card_to_string (Diamonds, Option.get !card_type) in
-      if String.length cStr = 3 then String.sub cStr 0 1 else "10")
+      ^ number_match (Option.get !card_type))
   in
   adding_cards_to_table table (Option.get !y |> toCardList);
   main_player_cards :=

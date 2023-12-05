@@ -32,6 +32,7 @@ let order (deck : card list) : card list =
         | _ -> compare n1 n2)
     deck
 
+(** [order_num nl] returns the number list in order *)
 let order_num (nList : number list) : number list =
   List.sort
     (fun n1 n2 ->
@@ -87,8 +88,8 @@ let rec nCards (n : number) (amt : int) (cl : card list) (acc : card list) :
         else nCards n amt t acc
   else acc
 
-(** [getRandCards lst idx deck acc] returns the cards of deck from the indices
-    in lst *)
+(** [getRandCards lst idx deck acc] returns the cards of [deck] from the indices
+    in [lst] *)
 let rec getRandCards (lst : int list) (idx : int) (deck : card list)
     (acc : card list) : card list =
   if List.length lst > 0 then
@@ -101,6 +102,7 @@ let rec getRandCards (lst : int list) (idx : int) (deck : card list)
         else getRandCards sorted (idx + 1) t acc
   else acc
 
+(** [firstNCards deck n] returns the first [n] cards in [deck] *)
 let rec firstNCards (deck : card list) (num : int) : card list =
   if num > 0 then
     match deck with
