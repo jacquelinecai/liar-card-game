@@ -20,6 +20,9 @@ type playerList = {
 (* [p] is the playerList with all players set to NotPass *)
 val p : playerList
 
+(* [bs_pass] is the playerList with all players set to NotPass *)
+val bs_pass : playerList
+
 (* [is_end p] returns [true] if all players are set to Pass in [p] *)
 val is_end : playerList -> bool
 
@@ -29,6 +32,10 @@ val pass_list : playerList -> string list
 
 (* [start_round] resets all players in the playerList to have NotPass *)
 val start_round : playerList -> unit
+
+(* [check_pass pl p] checks to see if player [p] has passed yet. Returns [true]
+   if Pass, else [false] *)
+val check_pass : playerList -> string -> bool
 
 (* [end_round p] resets the playerList to have NotPass if the [p] currently has
    all players set to Pass *)
@@ -41,12 +48,9 @@ val player_order : unit -> string
    playerList *)
 val change_to_pass : string -> playerList -> unit
 
-(* [number_match c] matches c to its associated string value*)
-val number_match : number -> string
-
-(* [suggested_card_type pl] returns a number [n] that occurs the most in
+(* [suggested_card_type pl] returns a number list that occurs the most in
    [pl]. *)
-val suggested_card_type : card list -> number
+val suggested_card_type : card list -> number list
 
 (* [suggested_play n num pl] facilitates the game play of the human player by
    evaluating [pl] to identify if the player has any cards with number [n]. If

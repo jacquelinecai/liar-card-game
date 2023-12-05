@@ -17,13 +17,6 @@ let pass_to_string x =
   | Pass -> "Pass"
   | NotPass -> "NotPass"
 
-let number_match c =
-  match c with
-  | Number x -> if x = 1 then "A" else string_of_int x
-  | Jack -> "J"
-  | Queen -> "Q"
-  | King -> "K"
-
 let p =
   { p1 = ref NotPass; p2 = ref NotPass; p3 = ref NotPass; p4 = ref NotPass }
 
@@ -50,6 +43,17 @@ let start_round (p : playerList) : unit =
   p.p2 := NotPass;
   p.p3 := NotPass;
   p.p4 := NotPass
+
+let check_pass (p : playerList) (pl : string) : bool =
+  let player =
+    match pl with
+    | "Player 1" -> p.p1
+    | "Player 2" -> p.p2
+    | "Player 3" -> p.p3
+    | "Player 4" -> p.p4
+    | _ -> failwith "invalid player"
+  in
+  !player = Pass
 
 let end_round (p : playerList) : unit =
   if p.p1 = ref Pass && p.p2 = ref Pass && p.p3 = ref Pass && p.p4 = ref Pass
