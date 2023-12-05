@@ -434,10 +434,10 @@ let table_tests =
 
 let all_pass x =
   if x then
-    let () = change_to_pass "Player 3" in
-    let () = change_to_pass "Player 1" in
-    let () = change_to_pass "Player 2" in
-    change_to_pass "Player 4"
+    let () = change_to_pass "Player 3" p in
+    let () = change_to_pass "Player 1" p in
+    let () = change_to_pass "Player 2" p in
+    change_to_pass "Player 4" p
   else ()
 
 let round_tests =
@@ -453,7 +453,7 @@ let round_tests =
         [ "NotPass"; "NotPass"; "NotPass"; "NotPass" ] );
     ( "testing change_to_pass with Player 2" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
-        (let () = change_to_pass "Player 2" in
+        (let () = change_to_pass "Player 2" p in
          pass_list p)
         [ "NotPass"; "Pass"; "NotPass"; "NotPass" ] );
     ( "testing change_to_pass when all players pass" >:: fun _ ->

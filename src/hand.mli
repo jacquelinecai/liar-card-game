@@ -13,7 +13,9 @@ val unshuffled_deck : card list
 
 val assign : int -> int -> card list -> card list -> card list
 val order : card list -> card list
+val order_num : number list -> number list
 val deck_to_string : card list -> string
+val num_list_to_string : number list -> string
 val player1_hand : card list ref
 val player2_hand : card list ref
 val player3_hand : card list ref
@@ -22,6 +24,7 @@ val containsNum : number -> card list -> bool
 val numCards : number -> card list -> int -> int
 val nCards : number -> int -> card list -> card list -> card list
 val getRandCards : int list -> int -> card list -> card list -> card list
+val firstNCards : card list -> int -> card list
 
 exception InvalidCard
 

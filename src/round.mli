@@ -19,8 +19,6 @@ type playerList = {
 
 (* [p] is the playerList with all players set to NotPass *)
 val p : playerList
-
-(* [is_end p] returns [true] if all players are set to Pass in [p] *)
 val is_end : playerList -> bool
 
 (* [pass_list p] is [v1;..;v4] where vi is the converted the values of [p] to a
@@ -36,23 +34,9 @@ val end_round : playerList -> unit
 
 (* [player_order ()] randomly picks one of the four players in the game *)
 val player_order : unit -> string
-
-(* [change_to_pass plyer] sets the player associated with [plyer] to Pass in the
-   playerList *)
 val change_to_pass : string -> unit
-
-(* [number_match c] matches c to its associated string value*)
 val number_match : number -> string
-
-(* [suggested_card_type pl] returns a number [n] that occurs the most in
-   [pl]. *)
 val suggested_card_type : card list -> number
-
-(* [suggested_play n num pl] facilitates the game play of the human player by
-   evaluating [pl] to identify if the player has any cards with number [n]. If
-   so, return [Some x] where [x] represents a list of all number [n] cards in
-   [pl] for the player to choose from. If [pl] does not contains cards with
-   number [n], *)
 val suggested_play : number -> int -> card list -> card list option
 
 (* [bot_play n num pl] facilitates the game play of the bots by first checking
