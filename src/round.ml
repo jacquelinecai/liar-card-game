@@ -1,4 +1,3 @@
-(* *)
 open Hand
 open Card
 
@@ -43,7 +42,7 @@ let pass_list (p : playerList) : string list =
         pass_to_string !p4;
       ]
 
-let start_round (p : playerList) : unit =
+let start_round : unit =
   p.p1 := NotPass;
   p.p2 := NotPass;
   p.p3 := NotPass;
@@ -51,7 +50,7 @@ let start_round (p : playerList) : unit =
 
 let end_round (p : playerList) : unit =
   if p.p1 = ref Pass && p.p2 = ref Pass && p.p3 = ref Pass && p.p4 = ref Pass
-  then start_round p
+  then start_round
   else ()
 
 let is_end (p : playerList) : bool =
@@ -110,32 +109,16 @@ let rec choose_type cl acc =
       | None -> choose_type t ((snd h, 1) :: acc)
       | Some x -> choose_type t ((snd h, x + 1) :: acc))
 
-(** [suggested_card_type pl] returns a number [n] that occurs the most in [pl]. *)
 let suggested_card_type cl =
   List.sort (fun (_, x) (_, x') -> Stdlib.compare x' x) (choose_type cl [])
   |> List.hd |> fst
 
-(** [suggested_play n num pl] facilitates the game play of the human player by
-    evaluating [pl] to identify if the player has any cards with number [n]. If
-    so, return [Some x] where [x] represents a list of all number [n] cards in
-    [pl] for the player to choose from. If [pl] does not contains cards with
-    number [n], *)
 let suggested_play n num cl =
   if containsNum n cl then
     let x = numCards n cl 0 in
     Some (nCards n x cl [])
   else None
 
-(** [bot_play n num pl] facilitates the game play of the bots by first checking
-    if [pl] contains any cards with number [n]. If so, return [Some cl] where cl
-    contains the cards with number [n] that the bot wants to put down. The
-    number of cards the bot places down is determined by a random number between
-    1 and the number of [n] cards the bot has. Else, the bot will randomly
-    decide between playing and passing, where if the bot chooses to play, return
-    [Some cl] where the number of cards placed down is determined by a random
-    number between [1] and [(4 - num)], where [num] is the current number of
-    cards on the table. If [num >= 4], then 1 card is placed down. If the bot
-    chooses to pass, return [None]. *)
 let bot_play n num cl =
   let () = Random.self_init () in
   if containsNum n cl then
