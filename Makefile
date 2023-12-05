@@ -24,3 +24,9 @@ zip:
 clean:
 	dune clean
 	rm -f game.zip
+
+doc:
+	dune build @doc
+
+opendoc: doc
+	@bash opendoc.sh
