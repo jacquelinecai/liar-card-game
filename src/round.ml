@@ -83,6 +83,7 @@ let player_order () =
   | 2 -> "Player 3"
   | _ -> "Player 4"
 
+(** [rand_seq n len acc] returns a random list of [n] indices *)
 let rec rand_seq num l acc =
   if num > 0 then (
     let () = Random.self_init () in
@@ -124,6 +125,8 @@ let suggested_card_type cl =
   List.filter (fun (_, freq) -> freq = max_frequency) sorted_counts
   |> List.map fst
 
+(** [assign_frequency_values h] returns a mapping of cards to their frequency in
+    [h] *)
 let assign_frequency_values hand =
   let card_counts =
     List.fold_left
