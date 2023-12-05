@@ -45,7 +45,7 @@ let pass_list (p : playerList) : string list =
         pass_to_string !p4;
       ]
 
-let start_round : unit =
+let start_round (p : playerList) : unit =
   p.p1 := NotPass;
   p.p2 := NotPass;
   p.p3 := NotPass;
@@ -53,7 +53,7 @@ let start_round : unit =
 
 let end_round (p : playerList) : unit =
   if p.p1 = ref Pass && p.p2 = ref Pass && p.p3 = ref Pass && p.p4 = ref Pass
-  then start_round
+  then start_round p
   else ()
 
 let is_end (p : playerList) : bool =
