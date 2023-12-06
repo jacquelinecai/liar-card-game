@@ -4,6 +4,28 @@ open Liargame.Table
 open Liargame.Hand
 open Liargame.Round
 
+let rec escape () =
+  let quit = ref None in
+  while !quit = None do
+    print_endline
+      "This will close your game. All progress will be lost. Do you wish to \
+       continue quitting (y/n)";
+    print_string "> ";
+    let x = read_line () in
+    match x with
+    | "y" ->
+        quit := Some 1;
+        print_endline
+          "\n\
+           You have successfully quit the Liar Card game. Thank you for joining";
+        Stdlib.exit 0
+    | "n" -> quit := Some 1
+    | _ ->
+        print_endline "Please enter 'y' or 'n'.";
+        escape ()
+  done;
+  ()
+
 let main_player =
   let () = Random.self_init () in
   let y = Random.int 4 in
@@ -27,10 +49,11 @@ let main_player_cards =
 let start () =
   let y = ref false in
   while not !y do
-    print_endline "\nPress \"s\" to start the game: ";
+    print_endline
+      "\nPress \"s\" to start the game or \"e\" to escape the game: ";
     print_string "> ";
     let x = read_line () in
-    if x = "s" then y := true
+    if x = "s" then y := true else if x = "e" then escape ()
   done;
   print_endline
     ("\nIn this game you will be " ^ main ^ ". Here are your cards: "
@@ -190,10 +213,12 @@ let bot_cards () =
   List.nth !curr_player_cards index
 
 let check_round () =
+  let x = !curr_player in
   if is_end p then
-    match !curr_player with
-    | main_player -> choose_card_type ()
+    match x with
+    | main -> choose_card_type ()
     | _ -> card_type := Some (snd (bot_cards ()))
+  else ()
 
 let pass_chosen () =
   let () = change_to_pass !curr_player p in
@@ -249,7 +274,7 @@ let pass_or_play () =
     while !a = "" do
       print_endline
         "You can choose to pass or play a card. Type 'pass' or 'play' to \
-         continue.";
+         continue. (Type 'e' to escape)";
       print_endline
         ("Suggested play: "
         ^
@@ -266,6 +291,7 @@ let pass_or_play () =
       let x = String.lowercase_ascii (read_line ()) in
       if x = "pass" then a := "pass"
       else if x = "play" then a := "play"
+      else if x = "e" then escape ()
       else print_endline "Please try again. Type 'pass' or 'play' to continue."
     done;
     match !a with
@@ -297,7 +323,9 @@ let callout () =
   else
     while !bs_curr_player <> "Done" && next_bs_player () <> "Done" do
       if !bs_curr_player = main then begin
-        print_endline "Do you want to call BS? Please input yes or no.";
+        print_endline
+          "Do you want to call BS? Please input yes or no. (Or \"e\" to escape \
+           the game)";
         print_string "> ";
         let response = read_line () |> String.lowercase_ascii in
         if response = "yes" then (
@@ -327,6 +355,7 @@ let callout () =
           | [] -> failwith "should not happen");
           print_endline
             ("\nCurrent cards: " ^ (order !main_player_cards |> deck_to_string)))
+        else if response = "e" then escape ()
         else if next_bs_player () = "Done" then (
           change_to_pass !bs_curr_player bs_pass;
           let () = curr_player := next_player () in
@@ -399,6 +428,9 @@ let main () =
   print_endline
     "6) Continue battling your way through the liar game and the player who \
      gets rid of their cards first wins!";
+  print_endline
+    "7) Lastly, if at any point you wish to escape the game press the \"e\' to \
+     leave";
   let () = Random.self_init () in
   let s = shuffle card_list in
   player1_hand := assign 1 13 s [] |> order;

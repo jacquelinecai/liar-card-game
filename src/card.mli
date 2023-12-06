@@ -1,20 +1,25 @@
+(* [number] represents the card number in a deck of cards*)
 type number =
   | Number of int
   | Jack
   | Queen
   | King
 
+(* [suit] represents the suit in a deck of cards*)
 type suit =
   | Diamonds
   | Clubs
   | Hearts
   | Spades
 
+(* [card] contains both the suit and number *)
 type card = suit * number
 
 exception Invalid
 
 val card_list : card list
+
+(* [card_list] contains all [cards] that *)
 val suit_match : suit -> string
 val number_match : number -> string
 val card_to_string : card -> string
