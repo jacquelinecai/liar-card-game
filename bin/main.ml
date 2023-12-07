@@ -5,12 +5,12 @@ open Liargame.Hand
 open Liargame.Round
 
 let rec escape () =
+  print_endline
+    "This will close your game. All progress will be lost. Do you wish to \
+     continue quitting (y/n)";
+  print_string "> ";
   let quit = ref None in
   while !quit = None do
-    print_endline
-      "This will close your game. All progress will be lost. Do you wish to \
-       continue quitting (y/n)";
-    print_string "> ";
     let x = read_line () in
     match x with
     | "y" ->
@@ -21,15 +21,61 @@ let rec escape () =
         Stdlib.exit 0
     | "n" -> quit := Some 1
     | _ ->
-        print_endline "Please enter 'y' or 'n'.";
+        print_endline
+          "Please try again. Enter 'y' to continue quitting or 'n' to return \
+           back to the main page."
+  done;
+  ()
+
+let rules () =
+  print_endline "\n\nWelcome to the Liar Card Game!\n";
+  print_endline
+    "You will be playing against 3 other bots. Here's the rules for this game: ";
+  print_endline
+    "1) You start off the game. At the start of each round, the selected \
+     player will choose the card type they claim to place down";
+  print_endline
+    "2) Each player will have the option of passing the round or placing down \
+     up to 4 cards";
+  print_endline
+    "3) If at any point during the game, you believe that the other players \
+     have lied in their card placement, instantiate the BS callout. If you're \
+     correct in your assumption, that player will collect all the cards on the \
+     table. If you're incorrect in your assumption, you must collect all the \
+     cards on the table.";
+  print_endline
+    "4) Each round ends when all players decide to pass or someone has \
+     collected all the cards on the table. If all players choose to pass, the \
+     current cards on the table will be discarded.";
+  print_endline
+    "5) Each subsequent round starts with the next player if everyone passes \
+     or the player who was correct in the BS callout.";
+  print_endline
+    "6) Continue battling your way through the liar game and the player who \
+     gets rid of their cards first wins!";
+  print_endline
+    "7) Lastly, if at any point you wish to escape the game press the \"e\' to \
+     leave or to come back to this page press \"r\"";
+  print_endline
+    "Press \"m\" to return back to the main page or \"e\" to leave this game";
+  let rule_escape = ref None in
+  while !rule_escape = None do
+    let x = read_line () in
+    match x with
+    | "m" -> rule_escape := Some true
+    | "e" ->
+        rule_escape := Some true;
         escape ()
+    | _ ->
+        print_endline
+          "Please try again. Enter 'm' to go back to the main page or 'e' to \
+           escape this game."
   done;
   ()
 
 let main_player =
   let () = Random.self_init () in
   let y = Random.int 4 in
-  print_endline (string_of_int y);
   match y with
   | 0 -> "Player 1"
   | 1 -> "Player 2"
@@ -50,10 +96,14 @@ let start () =
   let y = ref false in
   while not !y do
     print_endline
-      "\nPress \"s\" to start the game or \"e\" to escape the game: ";
+      "\n\
+       Press \"s\" to start the game,\"r\" for the rules of the game, or \"e\" \
+       to escape: ";
     print_string "> ";
     let x = read_line () in
-    if x = "s" then y := true else if x = "e" then escape ()
+    if x = "s" then y := true
+    else if x = "e" then escape ()
+    else if x = "r" then rules ()
   done;
   print_endline
     ("\nIn this game you will be " ^ main ^ ". Here are your cards: "
@@ -274,7 +324,7 @@ let pass_or_play () =
     while !a = "" do
       print_endline
         "You can choose to pass or play a card. Type 'pass' or 'play' to \
-         continue. (Type 'e' to escape)";
+         continue. (Type 'e' to escape or 'r' for rules)";
       print_endline
         ("Suggested play: "
         ^
@@ -292,6 +342,7 @@ let pass_or_play () =
       if x = "pass" then a := "pass"
       else if x = "play" then a := "play"
       else if x = "e" then escape ()
+      else if x = "r" then rules ()
       else print_endline "Please try again. Type 'pass' or 'play' to continue."
     done;
     match !a with
@@ -325,7 +376,7 @@ let callout () =
       if !bs_curr_player = main then begin
         print_endline
           "Do you want to call BS? Please input yes or no. (Or \"e\" to escape \
-           the game)";
+           the game/\"r\" for rules )";
         print_string "> ";
         let response = read_line () |> String.lowercase_ascii in
         if response = "yes" then (
@@ -356,6 +407,7 @@ let callout () =
           print_endline
             ("\nCurrent cards: " ^ (order !main_player_cards |> deck_to_string)))
         else if response = "e" then escape ()
+        else if response = "r" then rules ()
         else if next_bs_player () = "Done" then (
           change_to_pass !bs_curr_player bs_pass;
           let () = curr_player := next_player () in
@@ -403,34 +455,18 @@ let callout () =
   bs_curr_player := set_bs_player !curr_player
 
 let main () =
-  print_endline "\n\nWelcome to the Liar Card Game!\n";
-  print_endline
-    "You will be playing against 3 other bots. Here's the rules for this game: ";
-  print_endline
-    "1) You start off the game. At the start of each round, the selected \
-     player will choose the card type they claim to place down";
-  print_endline
-    "2) Each player will have the option of passing the round or placing down \
-     up to 4 cards";
-  print_endline
-    "3) If at any point during the game, you believe that the other players \
-     have lied in their card placement, instantiate the BS callout. If you're \
-     correct in your assumption, that player will collect all the cards on the \
-     table. If you're incorrect in your assumption, you must collect all the \
-     cards on the table.";
-  print_endline
-    "4) Each round ends when all players decide to pass or someone has \
-     collected all the cards on the table. If all players choose to pass, the \
-     current cards on the table will be discarded.";
-  print_endline
-    "5) Each subsequent round starts with the next player if everyone passes \
-     or the player who was correct in the BS callout.";
-  print_endline
-    "6) Continue battling your way through the liar game and the player who \
-     gets rid of their cards first wins!";
-  print_endline
-    "7) Lastly, if at any point you wish to escape the game press the \"e\' to \
-     leave";
+  print_endline "____       ________     ________     _________  ";
+  print_endline "|  |      |___  ___|   |  ____  |   |  ___   | ";
+  print_endline "|  |         |  |      |  |__|  |   |  |__|  | ";
+  print_endline "|  |         |  |      |   __   |   |   ___  |  ";
+  print_endline "|  |____   __|  |__    |  |  |  |   |  |  \\  \\  ";
+  print_endline "|______ | |________|   |__|  |__|   |__|   \\__\\";
+  print_endline "___________    ________   ______________  _______";
+  print_endline "|  _______|   |  ____  |  |   __  __   | |  _____|";
+  print_endline "|  |  ____    |  |__|  |  |  | |  | |  | | |_____";
+  print_endline "|  | |___ |   |   __   |  |  | |  | |  | |  _____|";
+  print_endline "|  |____| |   |  |  |  |  |  | |  | |  | | |______";
+  print_endline "|_________|   |__|  |__|  |__| |__| |__| |________|";
   let () = Random.self_init () in
   let s = shuffle card_list in
   player1_hand := assign 1 13 s [] |> order;
