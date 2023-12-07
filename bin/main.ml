@@ -153,6 +153,26 @@ let exit () =
 
 let winner_status = ref false
 
+let winner_display () =
+  print_endline
+    "________   _________   _________  ___________   _________     ________    \
+     ________   ____________ ";
+  print_endline
+    "|  ____|   |  ___   |  |   __  |  |  _______|  |  ___   |    |  ____  |  \
+     |___  ___|  |  ________|";
+  print_endline
+    "|  |       |  |  |  |  |  | |  |  |  |  ____   |  |__|  |    |  |__|  \
+     |     |  |     |  |________";
+  print_endline
+    "|  |       |  |  |  |  |  | |  |  |  | |___ |  |   ___  |    |   __   \
+     |     |  |     |________   |";
+  print_endline
+    ("|  |____   |  |__|  |  |  | |  |  |  |____| |  |  |  " ^ "\\  \\"
+   ^ "    |  |  |  |     |  |      ________|  |");
+  print_endline
+    ("|_______|  |________|  |__| |__|  |_________|  |__|   " ^ "\\__\\"
+   ^ "   |__|  |__|     |__|     |___________| ")
+
 let winner () =
   let status =
     card_status !player1_hand !player2_hand !player3_hand !player4_hand
@@ -164,6 +184,7 @@ let winner () =
       print_endline
         ("\nPlayer " ^ string_of_int win
        ^ " has gotten rid of their cards and wins the game!");
+      if "Player " ^ string_of_int win = main then winner_display ();
       winner_status := true;
       exit ()
 
