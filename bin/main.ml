@@ -124,11 +124,11 @@ let start () =
   while not !y do
     print_endline
       "\n\
-       Press \"s\" to start the game,\"r\" for the rules of the game, or \"e\" \
-       to escape: ";
+       Type \"start\" to start the game,\"r\" for the rules of the game, or \
+       \"e\" to escape: ";
     print_string "> ";
     let x = read_line () in
-    if x = "s" then y := true
+    if x = "start" then y := true
     else if x = "e" then escape ()
     else if x = "r" then rules ()
   done;
@@ -516,8 +516,8 @@ let main () =
   print_endline "|  |         |  |      |   __   |   |   ___  |  ";
   print_endline "|  |____   __|  |__    |  |  |  |   |  |  \\  \\  ";
   print_endline "|______ | |________|   |__|  |__|   |__|   \\__\\";
-  print_endline "___________    ________   ______________  _______";
-  print_endline "|  _______|   |  ____  |  |   __  __   | |  _____|";
+  print_endline "___________    ________   ______________  ________";
+  print_endline "|  _______|   |  ____  |  |   __  __   | |  ______|";
   print_endline "|  |  ____    |  |__|  |  |  | |  | |  | | |_____";
   print_endline "|  | |___ |   |   __   |  |  | |  | |  | |  _____|";
   print_endline "|  |____| |   |  |  |  |  |  | |  | |  | | |______";
