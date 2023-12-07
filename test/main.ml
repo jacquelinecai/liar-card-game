@@ -349,6 +349,14 @@ let hand_tests =
     ( "updateDeck test on a card not in the deck" >:: fun _ ->
       assert_raises InvalidCard (fun () ->
           updateDeck (Spades, Number 1) (assign 1 5 unshuffled_deck []) []) );
+    ( "Checking to see if player 1 has 13 cards at first" >:: fun _ ->
+      assert_equal 13 (player_hand_size 1) );
+    ( "Checking to see if player 2 has 13 cards at first" >:: fun _ ->
+      assert_equal 13 (player_hand_size 2) );
+    ( "Checking to see if player 3 has 13 cards at first" >:: fun _ ->
+      assert_equal 13 (player_hand_size 3) );
+    ( "Checking to see if player 4 has 13 cards at first" >:: fun _ ->
+      assert_equal 13 (player_hand_size 4) );
   ]
 
 let game_tests =
