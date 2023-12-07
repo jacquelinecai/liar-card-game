@@ -104,6 +104,21 @@ let card_tests =
         ]
         (String.split_on_char '-' (String.uppercase_ascii "JC-QD-KD-aD-2s")
         |> stringlist_to_card_list |> toCardList) );
+    ( "string to card random list6" >:: fun _ ->
+      assert_equal
+        [
+          (Hearts, Jack);
+          (Hearts, Queen);
+          (Hearts, King);
+          (Spades, Number 1);
+          (Spades, Number 2);
+          (Spades, Number 10);
+          (Spades, Number 4);
+          (Spades, Number 5);
+        ]
+        (String.split_on_char '-'
+           (String.uppercase_ascii "JH-QH-KH-AS-2s-10S-4S-5S")
+        |> stringlist_to_card_list |> toCardList) );
     ( "string to card list1" >:: fun _ ->
       assert_raises Invalid (fun () ->
           String.split_on_char '-' (String.uppercase_ascii "p")
@@ -111,6 +126,10 @@ let card_tests =
     ( "string to card list1" >:: fun _ ->
       assert_raises Invalid (fun () ->
           String.split_on_char '-' (String.uppercase_ascii "JC-QD-KD-aD-2z")
+          |> stringlist_to_card_list |> toCardList) );
+    ( "string to card list1" >:: fun _ ->
+      assert_raises Invalid (fun () ->
+          String.split_on_char '-' (String.uppercase_ascii "1d-2d-7d-11D")
           |> stringlist_to_card_list |> toCardList) );
     ( "valid test on not valid list" >:: fun _ ->
       assert_equal false (valid [ None ] unshuffled_deck) );
@@ -274,6 +293,10 @@ let hand_tests =
         ]
         (updateDeckWithCardList [] (assign 1 5 unshuffled_deck [])
         |> order |> card_to_string_list) );
+    ( "updateDeckWithCardList test on all cards" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string) []
+        (updateDeckWithCardList unshuffled_deck unshuffled_deck
+        |> order |> card_to_string_list) );
     ( "updateDeckWithCardList test on empty list" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string) [ "Ace of Clubs" ]
         (updateDeckWithCardList [] (assign 1 1 unshuffled_deck [])
@@ -290,6 +313,31 @@ let hand_tests =
         ]
         (updateDeck (Hearts, King) (assign 39 45 unshuffled_deck []) []
         |> order |> card_to_string_list) );
+    ( "updateDeck test on a card in the deck" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [
+          "2 of Spades";
+          "3 of Spades";
+          "4 of Spades";
+          "5 of Spades";
+          "6 of Spades";
+        ]
+        (updateDeck (Spades, Number 1) (assign 40 45 unshuffled_deck []) []
+        |> order |> card_to_string_list) );
+    ( "updateDeck test on a card in the deck" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [
+          "2 of Clubs";
+          "3 of Clubs";
+          "4 of Clubs";
+          "5 of Clubs";
+          "7 of Clubs";
+          "8 of Clubs";
+        ]
+        (updateDeck (Clubs, Number 6)
+           (updateDeck (Clubs, Number 1) (assign 1 8 unshuffled_deck []) [])
+           []
+        |> order |> card_to_string_list) );
     ( "updateDeck test on first card in the deck" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
         [ "2 of Clubs"; "3 of Clubs"; "4 of Clubs"; "5 of Clubs" ]
@@ -298,6 +346,9 @@ let hand_tests =
     ( "updateDeck test on a card not in the deck" >:: fun _ ->
       assert_raises InvalidCard (fun () ->
           updateDeck (Spades, Number 10) (assign 1 5 unshuffled_deck []) []) );
+    ( "updateDeck test on a card not in the deck" >:: fun _ ->
+      assert_raises InvalidCard (fun () ->
+          updateDeck (Spades, Number 1) (assign 1 5 unshuffled_deck []) []) );
   ]
 
 let game_tests =
