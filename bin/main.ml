@@ -5,10 +5,6 @@ open Liargame.Hand
 open Liargame.Round
 
 let suggestions = ref true
-let player1_cards_on_table = ref []
-let player2_cards_on_table = ref []
-let player3_cards_on_table = ref []
-let player4_cards_on_table = ref []
 
 let suggestion_settings () =
   print_endline
@@ -234,13 +230,6 @@ let curr_player = ref "Player 1"
 let bs_curr_player = ref "Player 2"
 let table = empty_table
 
-let curr_player_to_cards_on_table () =
-  match !curr_player with
-  | "Player 1" -> player1_cards_on_table
-  | "Player 2" -> player2_cards_on_table
-  | "Player 3" -> player3_cards_on_table
-  | _ -> player4_cards_on_table
-
 let current_round () =
   print_endline
     ("For this round the card will be "
@@ -346,25 +335,25 @@ let choose_card_type () =
   current_round ();
   choose_cards ()
 
-let curr_player_cards () =
-  match !curr_player with
-  | "Player 1" -> player1_hand
-  | "Player 2" -> player2_hand
-  | "Player 3" -> player3_hand
-  | "Player 4" -> player4_hand
-  | _ -> failwith "Impossible"
-
 let bot_cards () =
-  let x = curr_player_cards () in
-  let length = List.length !x in
+  let curr_player_cards =
+    match !curr_player with
+    | "Player 1" -> player1_hand
+    | "Player 2" -> player2_hand
+    | "Player 3" -> player3_hand
+    | "Player 4" -> player4_hand
+    | _ -> failwith "Impossible"
+  in
+  let length = List.length !curr_player_cards in
   let index = Random.int length in
-  List.nth !x index
+  List.nth !curr_player_cards index
 
 let check_round () =
   let x = !curr_player in
   if is_end p then
-    if x = main then choose_card_type ()
-    else card_type := Some (snd (bot_cards ()))
+    match x with
+    | main -> choose_card_type ()
+    | _ -> card_type := Some (snd (bot_cards ()))
   else ()
 
 let pass_chosen () =
@@ -410,8 +399,6 @@ let bot_actions () =
         ^ (List.length x |> string_of_int)
         ^ " "
         ^ number_match (Option.get !card_type));
-      let y = curr_player_to_cards_on_table () in
-      y := (List.length x, number_match (Option.get !card_type)) :: !y;
       bs_curr_player := set_bs_player !curr_player
 
 let pass_or_play () =
@@ -472,47 +459,11 @@ let match_player_with_hand player =
   | "Player 4" -> player4_hand
   | _ -> failwith "impossible"
 
-let rec card_on_table_of_player x =
-  match x with
-  | [ (x, y) ] ->
-      let output = string_of_int x ^ " " ^ y in
-      if x = 1 then output else output ^ "'s "
-  | (x, y) :: t ->
-      let output = string_of_int x ^ " " ^ y in
-      if x = 1 then output ^ ", " ^ card_on_table_of_player t
-      else output ^ "'s, " ^ card_on_table_of_player t
-  | [] -> ""
-
-let more_information () =
-  print_endline
-    ("It is now your turn to choose whether to call BS on " ^ !curr_player
-   ^ ". Would you like more information about the number of cards the player \
-      currently has and what the player previously put down before deciding? \
-      (Enter 'y' for more information and any other key to continue)");
-  print_string "> ";
-  let input = read_line () in
-  if input = "y" then
-    print_endline
-      (!curr_player ^ " has "
-      ^ (let x = curr_player_cards () in
-         !x |> List.length |> string_of_int)
-      ^ " cards. Here are the cards that the player has claimed to placed down \
-         that are currently on the table: "
-      ^ card_on_table_of_player !(curr_player_to_cards_on_table ()))
-  else ()
-
-let reset () =
-  player1_cards_on_table := [];
-  player2_cards_on_table := [];
-  player3_cards_on_table := [];
-  player4_cards_on_table := []
-
 let callout () =
   if check_pass p !curr_player then ()
   else
     while !bs_curr_player <> "Done" && next_bs_player () <> "Done" do
       if !bs_curr_player = main then begin
-        more_information ();
         print_endline
           "Do you want to call BS? Please input yes or no. (Or 'e' to escape \
            the game, 'r' for rules, 's' for suggestion settings, or 'c' to see \
@@ -520,7 +471,6 @@ let callout () =
         print_string "> ";
         let response = read_line () |> String.lowercase_ascii in
         if response = "yes" then (
-          reset ();
           let table_list = peek_at_table table in
           (match table_list with
           | (suit, number) :: t ->
@@ -564,7 +514,6 @@ let callout () =
         let () = Random.self_init () in
         if Random.int 8 < 1 then begin
           print_endline (!bs_curr_player ^ " calls BS.");
-          reset ();
           let table_list = peek_at_table table in
           match table_list with
           | (suit, number) :: t ->
