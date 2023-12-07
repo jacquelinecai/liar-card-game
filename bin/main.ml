@@ -4,6 +4,23 @@ open Liargame.Table
 open Liargame.Hand
 open Liargame.Round
 
+let suggestions = ref true
+
+let suggestion_settings () =
+  print_endline
+    ("The suggestion setting is currently: "
+    ^ if !suggestions then "on" else "off");
+  print_endline
+    "Would you like to change the current settings? (Press 'y' to change or \
+     any other key to leave this page)";
+  print_string "> ";
+  let x = read_line () in
+  if x = "y" then suggestions := not !suggestions;
+  print_endline
+    ("The suggestion setting is now turned "
+    ^ (if !suggestions then "on" else "off")
+    ^ ". Now returning you to the main page...")
+
 let rec escape () =
   print_endline
     "This will close your game. All progress will be lost. Do you wish to \
@@ -54,10 +71,17 @@ let rules () =
     "6) Continue battling your way through the liar game and the player who \
      gets rid of their cards first wins!";
   print_endline
-    "7) Lastly, if at any point you wish to escape the game press the \"e\' to \
-     leave or to come back to this page press \"r\"";
+    "7) This game has features that gives suggested plays and cards to guide \
+     you on your way to victory! ";
   print_endline
-    "Press \"m\" to return back to the main page or \"e\" to leave this game";
+    "8) Lastly, if at any point you wish to escape the game press the \"e\' to \
+     leave or to come back to this page press \"r\". If you would like to turn \
+     off the game suggestions mentioned in (7), press \"s\" at any point to \
+     change the settings.";
+  print_endline
+    "Press \"m\" to return back to the main page, \"s\" to change the settings \
+     mentioned in (7), or \"e\" to leave this game";
+  print_string "> ";
   let rule_escape = ref None in
   while !rule_escape = None do
     let x = read_line () in
@@ -66,6 +90,9 @@ let rules () =
     | "e" ->
         rule_escape := Some true;
         escape ()
+    | "s" ->
+        rule_escape := Some true;
+        suggestion_settings ()
     | _ ->
         print_endline
           "Please try again. Enter 'm' to go back to the main page or 'e' to \
@@ -164,15 +191,15 @@ let choose_cards () =
         Current cards: "
       ^ deck_to_string (order !main_player_cards));
     print_endline
-      ("Suggested play: "
-      ^
-      let suggested =
-        suggested_play (Option.get !card_type) (table_size table)
-          !main_player_cards
-      in
-      match suggested with
-      | None -> failwith "cannot pass"
-      | Some x -> order x |> deck_to_string);
+      (if !suggestions then
+         let suggested =
+           suggested_play (Option.get !card_type) (table_size table)
+             !main_player_cards
+         in
+         match suggested with
+         | None -> ""
+         | Some x -> "Suggested play: " ^ (order x |> deck_to_string)
+       else "");
     print_string "> "
   in
   let y = ref None in
@@ -231,10 +258,12 @@ let choose_card_type () =
        Choose a card type you are claiming to have. Possible options include: \n\
       \    A, 2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K";
     print_endline
-      ("Suggested card type: "
-      ^
-      let suggested = suggested_card_type !main_player_cards in
-      suggested |> order_num |> num_list_to_string);
+      (if !suggestions then
+         "Suggested card type: "
+         ^
+         let suggested = suggested_card_type !main_player_cards in
+         suggested |> order_num |> num_list_to_string
+       else "");
     print_string "> ";
     let x = String.lowercase_ascii (read_line ()) in
     try c := Some (Number (int_of_string x))
@@ -324,25 +353,29 @@ let pass_or_play () =
     while !a = "" do
       print_endline
         "You can choose to pass or play a card. Type 'pass' or 'play' to \
-         continue. (Type 'e' to escape or 'r' for rules)";
+         continue. (Type 'e' to escape or 'r' for rules or 's' to change the \
+         suggestion settings)";
       print_endline
-        ("Suggested play: "
-        ^
-        let suggested =
-          if !card_type <> None then
-            suggested_play (Option.get !card_type) (table_size table)
-              !main_player_cards
-          else Some []
-        in
-        match suggested with
-        | None -> "pass"
-        | Some x -> "play");
+        (if !suggestions then
+           "Suggested play: "
+           ^
+           let suggested =
+             if !card_type <> None then
+               suggested_play (Option.get !card_type) (table_size table)
+                 !main_player_cards
+             else Some []
+           in
+           match suggested with
+           | None -> "pass"
+           | Some x -> "play"
+         else "");
       print_string "> ";
       let x = String.lowercase_ascii (read_line ()) in
       if x = "pass" then a := "pass"
       else if x = "play" then a := "play"
       else if x = "e" then escape ()
       else if x = "r" then rules ()
+      else if x = "s" then suggestion_settings ()
       else print_endline "Please try again. Type 'pass' or 'play' to continue."
     done;
     match !a with
@@ -375,8 +408,8 @@ let callout () =
     while !bs_curr_player <> "Done" && next_bs_player () <> "Done" do
       if !bs_curr_player = main then begin
         print_endline
-          "Do you want to call BS? Please input yes or no. (Or \"e\" to escape \
-           the game/\"r\" for rules )";
+          "Do you want to call BS? Please input yes or no. (Or 'e' to escape \
+           the game/'r' for rules/'s' for suggestion settings )";
         print_string "> ";
         let response = read_line () |> String.lowercase_ascii in
         if response = "yes" then (
@@ -408,6 +441,7 @@ let callout () =
             ("\nCurrent cards: " ^ (order !main_player_cards |> deck_to_string)))
         else if response = "e" then escape ()
         else if response = "r" then rules ()
+        else if response = "s" then suggestion_settings ()
         else if next_bs_player () = "Done" then (
           change_to_pass !bs_curr_player bs_pass;
           let () = curr_player := next_player () in
@@ -466,7 +500,9 @@ let main () =
   print_endline "|  |  ____    |  |__|  |  |  | |  | |  | | |_____";
   print_endline "|  | |___ |   |   __   |  |  | |  | |  | |  _____|";
   print_endline "|  |____| |   |  |  |  |  |  | |  | |  | | |______";
-  print_endline "|_________|   |__|  |__|  |__| |__| |__| |________|";
+  print_endline "|_________|   |__|  |__|  |__| |__| |__| |________|"
+
+let deal_cards () =
   let () = Random.self_init () in
   let s = shuffle card_list in
   player1_hand := assign 1 13 s [] |> order;
@@ -479,6 +515,7 @@ let main () =
 
 let () =
   main ();
+  deal_cards ();
   start ();
   while !winner_status = false do
     player_order ();
