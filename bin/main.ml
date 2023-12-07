@@ -76,17 +76,19 @@ let rules () =
      you on your way to victory! Remember, you do not have to follow these \
      suggestions.";
   print_endline
-    "8) Lastly, if at any point you wish to escape the game, press \"e\' to \
+    "8) This game also has a feature that allows you to see the number of \
+     cards in each player's hand. ";
+  print_endline
+    "9) Lastly, if at any point you wish to escape the game, press \"e\' to \
      leave. If you would like to access the rule page again, press \"r\". If \
      you would like to turn off the game suggestions mentioned in (7), press \
-     \"s\" at any point to change the settings. \n";
+     \"s\" at any point in the game. To see the number of cards in each \
+     player's hand, press \"c\" \n";
   print_endline
     "If you will like to start the game, press \"m\" to return back to the \
-     main page.\n\
-    \ If you would like to change the game suggestion settings, press \"s\" to \
-     change the settings. If you want to leave this game, feel free to press \
-     \"e\". \n";
-  print_endline "We wish you can enjoy this game!";
+     main page. If you would like to change the game suggestion settings, \
+     press \"s\". If you want to leave this game, feel free to press \"e\". \
+     Enjoy! \n";
   print_string "> ";
   let rule_escape = ref None in
   while !rule_escape = None do
@@ -411,7 +413,7 @@ let pass_or_play () =
       print_endline
         "You can choose to pass or play a card. Type 'pass' or 'play' to \
          continue. (Type 'e' to escape or 'r' for rules or 's' to change the \
-         suggestion settings)";
+         suggestion settings or 'c' to see how many cards all players have.)";
       print_endline
         (if !suggestions then
            "Suggested play: "
