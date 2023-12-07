@@ -117,6 +117,14 @@ let main_player =
 
 let main = main_player
 
+let match_main_player =
+  match main with
+  | "Player 1" -> 1
+  | "Player 2" -> 2
+  | "Player 3" -> 3
+  | "Player 4" -> 4
+  | _ -> failwith "impossible"
+
 let main_player_cards =
   match main with
   | "Player 1" -> player1_hand
@@ -127,40 +135,25 @@ let main_player_cards =
 
 let show_player_hand_size () =
   let curr_player = main in
-  match curr_player with
-  | "Player 1" ->
-      print_endline
-        ("Player 2 has " ^ string_of_int (player_hand_size 2) ^ " cards");
-      print_endline
-        ("Player 3 has " ^ string_of_int (player_hand_size 3) ^ " cards");
-      print_endline
-        ("Player 4 has " ^ string_of_int (player_hand_size 4) ^ " cards");
-      print_endline ("You have " ^ string_of_int (player_hand_size 1) ^ " cards")
-  | "Player 2" ->
-      print_endline
-        ("Player 1 has " ^ string_of_int (player_hand_size 1) ^ " cards");
-      print_endline
-        ("Player 3 has " ^ string_of_int (player_hand_size 3) ^ " cards");
-      print_endline
-        ("Player 4 has " ^ string_of_int (player_hand_size 4) ^ " cards");
-      print_endline ("You have " ^ string_of_int (player_hand_size 2) ^ " cards")
-  | "Player 3" ->
-      print_endline
-        ("Player 1 has " ^ string_of_int (player_hand_size 1) ^ " cards");
-      print_endline
-        ("Player 2 has " ^ string_of_int (player_hand_size 2) ^ " cards");
-      print_endline
-        ("Player 4 has " ^ string_of_int (player_hand_size 4) ^ " cards");
-      print_endline ("You have " ^ string_of_int (player_hand_size 3) ^ " cards")
-  | "Player 4" ->
-      print_endline
-        ("Player 1 has " ^ string_of_int (player_hand_size 1) ^ " cards");
-      print_endline
-        ("Player 2 has " ^ string_of_int (player_hand_size 2) ^ " cards");
-      print_endline
-        ("Player 3 has " ^ string_of_int (player_hand_size 3) ^ " cards");
-      print_endline ("You have " ^ string_of_int (player_hand_size 4) ^ " cards")
-  | _ -> ()
+  let other_players = [ "Player 1"; "Player 2"; "Player 3"; "Player 4" ] in
+
+  let print_hand_size player_num =
+    print_endline
+      ("Player " ^ string_of_int player_num ^ " has "
+      ^ string_of_int (player_hand_size player_num)
+      ^ " cards")
+  in
+
+  List.iter
+    (fun player ->
+      match curr_player with
+      | _ when player = curr_player -> ()
+      | _ ->
+          let player_num = int_of_string (String.sub player 7 1) in
+          print_hand_size player_num)
+    other_players;
+  print_endline
+    ("You have " ^ string_of_int (player_hand_size match_main_player) ^ " cards")
 
 let start () =
   let y = ref false in
