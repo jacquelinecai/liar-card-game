@@ -69,22 +69,28 @@ let rules () =
      collected all the cards on the table. If all players choose to pass, the \
      current cards on the table will be discarded.";
   print_endline
-    "5) Each subsequent round starts with the next player if everyone passes \
-     or the player who was correct in the BS callout.";
+    "5) Each subsequent round starts with the next player if everyone passes. \
+     If a player was correct in their BS callout, then the next round will \
+     start with that player.";
   print_endline
     "6) Continue battling your way through the liar game and the player who \
      gets rid of their cards first wins!";
   print_endline
     "7) This game has features that gives suggested plays and cards to guide \
-     you on your way to victory! ";
+     you on your way to victory! Remember, you do not have to follow these \
+     suggestions.";
   print_endline
-    "8) Lastly, if at any point you wish to escape the game press the \"e\' to \
-     leave or to come back to this page press \"r\". If you would like to turn \
-     off the game suggestions mentioned in (7), press \"s\" at any point to \
-     change the settings.";
+    "8) Lastly, if at any point you wish to escape the game, press \"e\' to \
+     leave. If you would like to access the rule page again, press \"r\". If \
+     you would like to turn off the game suggestions mentioned in (7), press \
+     \"s\" at any point to change the settings. \n";
   print_endline
-    "Press \"m\" to return back to the main page, \"s\" to change the settings \
-     mentioned in (7), or \"e\" to leave this game";
+    "If you will like to start the game, press \"m\" to return back to the \
+     main page.\n\
+    \ If you would like to change the game suggestion settings, press \"s\" to \
+     change the settings. If you want to leave this game, feel free to press \
+     \"e\". \n";
+  print_endline "We wish you can enjoy this game!";
   print_string "> ";
   let rule_escape = ref None in
   while !rule_escape = None do
@@ -122,6 +128,43 @@ let main_player_cards =
   | "Player 3" -> player3_hand
   | "Player 4" -> player4_hand
   | _ -> failwith "impossible"
+
+let show_player_hand_size () =
+  let curr_player = main in
+  match curr_player with
+  | "Player 1" ->
+      print_endline
+        ("Player 2 has " ^ string_of_int (player_hand_size 2) ^ " cards");
+      print_endline
+        ("Player 3 has " ^ string_of_int (player_hand_size 3) ^ " cards");
+      print_endline
+        ("Player 4 has " ^ string_of_int (player_hand_size 4) ^ " cards");
+      print_endline ("You have " ^ string_of_int (player_hand_size 1) ^ " cards")
+  | "Player 2" ->
+      print_endline
+        ("Player 1 has " ^ string_of_int (player_hand_size 1) ^ " cards");
+      print_endline
+        ("Player 3 has " ^ string_of_int (player_hand_size 3) ^ " cards");
+      print_endline
+        ("Player 4 has " ^ string_of_int (player_hand_size 4) ^ " cards");
+      print_endline ("You have " ^ string_of_int (player_hand_size 2) ^ " cards")
+  | "Player 3" ->
+      print_endline
+        ("Player 1 has " ^ string_of_int (player_hand_size 1) ^ " cards");
+      print_endline
+        ("Player 2 has " ^ string_of_int (player_hand_size 2) ^ " cards");
+      print_endline
+        ("Player 4 has " ^ string_of_int (player_hand_size 4) ^ " cards");
+      print_endline ("You have " ^ string_of_int (player_hand_size 3) ^ " cards")
+  | "Player 4" ->
+      print_endline
+        ("Player 1 has " ^ string_of_int (player_hand_size 1) ^ " cards");
+      print_endline
+        ("Player 2 has " ^ string_of_int (player_hand_size 2) ^ " cards");
+      print_endline
+        ("Player 3 has " ^ string_of_int (player_hand_size 3) ^ " cards");
+      print_endline ("You have " ^ string_of_int (player_hand_size 4) ^ " cards")
+  | _ -> ()
 
 let start () =
   let y = ref false in
@@ -479,7 +522,8 @@ let callout () =
         more_information ();
         print_endline
           "Do you want to call BS? Please input yes or no. (Or 'e' to escape \
-           the game/'r' for rules/'s' for suggestion settings )";
+           the game, 'r' for rules, 's' for suggestion settings, or 'c' to see \
+           how many cards all players have. )";
         print_string "> ";
         let response = read_line () |> String.lowercase_ascii in
         if response = "yes" then (
@@ -513,6 +557,7 @@ let callout () =
         else if response = "e" then escape ()
         else if response = "r" then rules ()
         else if response = "s" then suggestion_settings ()
+        else if response = "c" then show_player_hand_size ()
         else if next_bs_player () = "Done" then (
           change_to_pass !bs_curr_player bs_pass;
           let () = curr_player := next_player () in
