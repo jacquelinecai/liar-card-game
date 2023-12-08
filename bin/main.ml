@@ -162,7 +162,7 @@ let start () =
   while not !y do
     print_endline
       "\n\
-       Type \"start\" to start the game,\"r\" for the rules of the game, or \
+       Type \"start\" to start the game, \"r\" for the rules of the game, or \
        \"e\" to escape: ";
     print_string "> ";
     let x = read_line () in
@@ -241,6 +241,9 @@ let player_order () = print_endline (!curr_player ^ "'s turn.")
 let bs_player_callout () = print_endline (!bs_curr_player ^ "'s callout turn")
 let bs_pass_curr_player p = change_to_pass p bs_pass
 
+let play_suggestion () =
+  suggested_play (Option.get !card_type) (table_size table) !main_player_cards
+
 let choose_cards () =
   let () =
     print_endline
@@ -251,10 +254,7 @@ let choose_cards () =
       ^ deck_to_string (order !main_player_cards));
     print_endline
       (if !suggestions then
-         let suggested =
-           suggested_play (Option.get !card_type) (table_size table)
-             !main_player_cards
-         in
+         let suggested = play_suggestion () in
          match suggested with
          | None -> ""
          | Some x -> "Suggested play: " ^ (order x |> deck_to_string)
@@ -420,8 +420,10 @@ let pass_or_play () =
            ^
            let suggested =
              if !card_type <> None then
-               suggested_play (Option.get !card_type) (table_size table)
-                 !main_player_cards
+               if play_suggestion () = None then
+                 suggested_play (Option.get !card_type) (table_size table)
+                   !main_player_cards
+               else play_suggestion ()
              else Some []
            in
            match suggested with

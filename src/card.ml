@@ -89,8 +89,6 @@ let card_to_string c =
   let number = number_match (snd c) in
   number ^ " " ^ suit
 
-(** Implementation based on the Fisher-Yates Shuffling Algorithm:
-    https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle *)
 let shuffle d =
   let d_arr = Array.of_list d in
   for i = 51 downto 0 do
@@ -143,7 +141,7 @@ let string_to_card s =
     | _ -> None
   else None
 
-exception Invalid
+exception InvalidCard
 
 let rec stringlist_to_card_list (sl : string list) : card option list =
   match sl with
@@ -156,15 +154,11 @@ let rec cardlist_to_string (cl : card list) =
   | h :: [] -> card_to_string h
   | h :: t -> card_to_string h ^ ", " ^ cardlist_to_string t
 
-(** [contains c cl] returns true if the card list contains the card, else
-    returns false *)
 let rec contains (c : card) (cl : card list) : bool =
   match cl with
   | [] -> false
   | h :: t -> if h = c then true else contains c t
 
-(** [valid cl yourCards] returns true if the card list has all valid cards and
-    all the cards from cl are in yourCards, else returns false *)
 let rec valid (cl : card option list) (yourCards : card list) : bool =
   match cl with
   | [] -> true
@@ -173,12 +167,10 @@ let rec valid (cl : card option list) (yourCards : card list) : bool =
       | None -> false
       | Some c -> true && contains c yourCards && valid t yourCards)
 
-(** [toCardList cl] returns the card option list into a card list. Precondition:
-    all the cards must be valid *)
 let rec toCardList (cl : card option list) : card list =
   match cl with
   | [] -> []
   | h :: t -> (
       match h with
-      | None -> raise Invalid (* Should never be raised *)
+      | None -> raise InvalidCard (* Should never be raised *)
       | Some c -> c :: toCardList t)

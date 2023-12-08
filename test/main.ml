@@ -55,19 +55,20 @@ let deck2 =
 let card_tests =
   [
     ( "shuffling deck produces different output each time" >:: fun _ ->
-      assert_equal false (deck1 = deck2) );
+      assert_equal ~printer:string_of_bool false (deck1 = deck2) );
     ( "shuffling deck produces permutation of input deck" >:: fun _ ->
-      assert_equal true (order deck1 = order unshuffled_deck) );
+      assert_equal ~printer:string_of_bool true
+        (order deck1 = order unshuffled_deck) );
     ( "shuffling deck doesn't change input deck" >:: fun _ ->
-      assert_equal false (deck1 = unshuffled_deck) );
+      assert_equal ~printer:string_of_bool false (deck1 = unshuffled_deck) );
     ( "contains test on a card in the deck" >:: fun _ ->
-      assert_equal true
+      assert_equal ~printer:string_of_bool true
         (contains (Hearts, King) (assign 39 45 unshuffled_deck [])) );
     ( "contains test on first card in the deck" >:: fun _ ->
-      assert_equal true
+      assert_equal ~printer:string_of_bool true
         (contains (Clubs, Number 1) (assign 1 5 unshuffled_deck [])) );
     ( "contains test on a card not in the deck" >:: fun _ ->
-      assert_equal false
+      assert_equal ~printer:string_of_bool false
         (contains (Spades, Number 10) (assign 1 5 unshuffled_deck [])) );
     ( "string to card list1" >:: fun _ ->
       assert_equal
@@ -120,15 +121,15 @@ let card_tests =
            (String.uppercase_ascii "JH-QH-KH-AS-2s-10S-4S-5S")
         |> stringlist_to_card_list |> toCardList) );
     ( "string to card list1" >:: fun _ ->
-      assert_raises Invalid (fun () ->
+      assert_raises InvalidCard (fun () ->
           String.split_on_char '-' (String.uppercase_ascii "p")
           |> stringlist_to_card_list |> toCardList) );
     ( "string to card list1" >:: fun _ ->
-      assert_raises Invalid (fun () ->
+      assert_raises InvalidCard (fun () ->
           String.split_on_char '-' (String.uppercase_ascii "JC-QD-KD-aD-2z")
           |> stringlist_to_card_list |> toCardList) );
     ( "string to card list1" >:: fun _ ->
-      assert_raises Invalid (fun () ->
+      assert_raises InvalidCard (fun () ->
           String.split_on_char '-' (String.uppercase_ascii "1d-2d-7d-11D")
           |> stringlist_to_card_list |> toCardList) );
     ( "valid test on not valid list" >:: fun _ ->
@@ -502,37 +503,67 @@ let all_pass x =
 let round_tests =
   [
     ( "testing number_match with a number" >:: fun _ ->
-      assert_equal ~printer:pp_string (number_match (Number 10)) "10" );
+      assert_equal ~printer:pp_string "10" (number_match (Number 10)) );
     ( "testing number_match with Jack" >:: fun _ ->
-      assert_equal ~printer:pp_string (number_match Jack) "J" );
+      assert_equal ~printer:pp_string "J" (number_match Jack) );
     ( "testing number_match with Ace" >:: fun _ ->
-      assert_equal ~printer:pp_string (number_match (Number 1)) "A" );
+      assert_equal ~printer:pp_string "A" (number_match (Number 1)) );
     ( "testing pass_list" >:: fun _ ->
-      assert_equal ~printer:(pp_list pp_string) (pass_list p)
-        [ "NotPass"; "NotPass"; "NotPass"; "NotPass" ] );
+      assert_equal ~printer:(pp_list pp_string)
+        [ "NotPass"; "NotPass"; "NotPass"; "NotPass" ]
+        (pass_list p) );
     ( "testing change_to_pass with Player 2" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
+        [ "NotPass"; "Pass"; "NotPass"; "NotPass" ]
         (let () = change_to_pass "Player 2" p in
-         pass_list p)
-        [ "NotPass"; "Pass"; "NotPass"; "NotPass" ] );
+         pass_list p) );
     ( "testing change_to_pass when all players pass" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
+        [ "Pass"; "Pass"; "Pass"; "Pass" ]
         (let () = all_pass true in
-         pass_list p)
-        [ "Pass"; "Pass"; "Pass"; "Pass" ] );
+         pass_list p) );
     ( "testing is_end when all players pass" >:: fun _ ->
-      assert_equal ~printer:string_of_bool
+      assert_equal ~printer:string_of_bool true
         (let () = all_pass true in
-         is_end p)
-        true );
+         is_end p) );
     ( "testing end_round when all players pass" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
+        [ "NotPass"; "NotPass"; "NotPass"; "NotPass" ]
         (let () = all_pass true in
          let () = end_round p in
-         pass_list p)
-        [ "NotPass"; "NotPass"; "NotPass"; "NotPass" ] );
+         pass_list p) );
+    ( "suggested_card_play with one number of greatest frequency" >:: fun _ ->
+      assert_equal ~printer:(pp_list number_match) [ Number 1 ]
+        (suggested_card_type (assign 1 14 unshuffled_deck [])) );
+    ( "suggested_card_play with many numbers of same frequency" >:: fun _ ->
+      assert_equal ~printer:(pp_list number_match)
+        [ Number 1; Number 2; Number 3; Number 4; Number 5; King ]
+        (suggested_card_type (assign 13 31 unshuffled_deck []) |> order_num) );
+    ( "suggested_card_play on entire deck" >:: fun _ ->
+      assert_equal ~printer:(pp_list number_match)
+        [
+          Number 1;
+          Number 2;
+          Number 3;
+          Number 4;
+          Number 5;
+          Number 6;
+          Number 7;
+          Number 8;
+          Number 9;
+          Number 10;
+          Jack;
+          Queen;
+          King;
+        ]
+        (suggested_card_type unshuffled_deck |> order_num) );
+    ( "suggested_play with card list that contains number n" >:: fun _ ->
+      assert_equal ~printer:(pp_list pp_string)
+        [ "Ace of Clubs"; "Ace of Diamonds" ]
+        (suggested_play (Number 1) 0 (assign 1 14 unshuffled_deck [])
+        |> Option.get |> card_to_string_list) );
     ( "bot_play returns card list with correct range of cards" >:: fun _ ->
-      assert_equal true
+      assert_equal ~printer:string_of_bool true
         (bot_play (Number 5) 4 unshuffled_deck |> Option.get |> List.length <= 4)
     );
   ]
