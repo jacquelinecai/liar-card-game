@@ -192,24 +192,10 @@ let exit () =
 let winner_status = ref false
 
 let winner_display () =
-  print_endline
-    "________   _________   _________  ___________   _________     ________    \
-     ________   ____________ ";
-  print_endline
-    "|  ____|   |  ___   |  |   __  |  |  _______|  |  ___   |    |  ____  |  \
-     |___  ___|  |  ________|";
-  print_endline
-    "|  |       |  |  |  |  |  | |  |  |  |  ____   |  |__|  |    |  |__|  \
-     |     |  |     |  |________";
-  print_endline
-    "|  |       |  |  |  |  |  | |  |  |  | |___ |  |   ___  |    |   __   \
-     |     |  |     |________   |";
-  print_endline
-    ("|  |____   |  |__|  |  |  | |  |  |  |____| |  |  |  " ^ "\\  \\"
-   ^ "    |  |  |  |     |  |      ________|  |");
-  print_endline
-    ("|_______|  |________|  |__| |__|  |_________|  |__|   " ^ "\\__\\"
-   ^ "   |__|  |__|     |__|     |___________| ")
+  let input =
+    "data/winner.txt" |> In_channel.open_text |> In_channel.input_all
+  in
+  print_endline input
 
 let winner () =
   let status =
@@ -551,18 +537,10 @@ let callout () =
   bs_curr_player := set_bs_player !curr_player
 
 let main () =
-  print_endline "____       ________     ________     _________  ";
-  print_endline "|  |      |___  ___|   |  ____  |   |  ___   | ";
-  print_endline "|  |         |  |      |  |__|  |   |  |__|  | ";
-  print_endline "|  |         |  |      |   __   |   |   ___  |  ";
-  print_endline "|  |____   __|  |__    |  |  |  |   |  |  \\  \\  ";
-  print_endline "|______ | |________|   |__|  |__|   |__|   \\__\\";
-  print_endline "___________    ________   ______________  ________";
-  print_endline "|  _______|   |  ____  |  |   __  __   | |  ______|";
-  print_endline "|  |  ____    |  |__|  |  |  | |  | |  | | |_____";
-  print_endline "|  | |___ |   |   __   |  |  | |  | |  | |  _____|";
-  print_endline "|  |____| |   |  |  |  |  |  | |  | |  | | |______";
-  print_endline "|_________|   |__|  |__|  |__| |__| |__| |________|"
+  let input =
+    "data/welcome.txt" |> In_channel.open_text |> In_channel.input_all
+  in
+  print_endline input
 
 let deal_cards () =
   let () = Random.self_init () in
