@@ -301,7 +301,6 @@ let check_round () =
   if is_end p then
     match x with
     | main -> choose_card_type ()
-    | _ -> card_type := Some (snd (bot_cards ()))
   else ()
 
 let pass_chosen () =
