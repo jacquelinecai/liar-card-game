@@ -141,7 +141,7 @@ let string_to_card s =
     | _ -> None
   else None
 
-exception Invalid
+exception InvalidCard
 
 let rec stringlist_to_card_list (sl : string list) : card option list =
   match sl with
@@ -172,5 +172,5 @@ let rec toCardList (cl : card option list) : card list =
   | [] -> []
   | h :: t -> (
       match h with
-      | None -> raise Invalid
+      | None -> raise InvalidCard (* Should never be raised *)
       | Some c -> c :: toCardList t)
