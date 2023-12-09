@@ -359,9 +359,8 @@ let check_round () =
   else ()
 
 let pass_chosen () =
-  let () = change_to_pass !curr_player p in
-  let () = curr_player := next_player () in
-  let () = player_order () in
+  change_to_pass !curr_player p;
+  curr_player := next_player ();
   check_round ()
 
 let bot_actions () =
@@ -379,8 +378,8 @@ let bot_actions () =
   in
   match play with
   | None ->
-      pass_chosen ();
-      print_endline (!curr_player ^ " decides to pass.")
+      print_endline (!curr_player ^ " decides to pass.");
+      pass_chosen ()
   | Some x ->
       (match !curr_player with
       | "Player 1" ->
