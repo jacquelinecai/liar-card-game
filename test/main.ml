@@ -472,6 +472,10 @@ let table_tests =
       assert_equal ~printer:(pp_list pp_string) []
         (discard_cards table1;
          peek_at_table table1 |> card_to_string_list) );
+    ( "discard a pile of size 1 checking table size" >:: fun _ ->
+      assert_equal 0
+        (discard_cards table1;
+         table_size table1) );
     ( "discard a pile of size 2" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
         [ "3 of Hearts"; "Queen of Spades" ]
@@ -481,6 +485,10 @@ let table_tests =
       assert_equal ~printer:(pp_list pp_string) []
         (discard_cards table2;
          peek_at_table table2 |> card_to_string_list) );
+    ( "discard a pile of size 2 checking table size" >:: fun _ ->
+      assert_equal 0
+        (discard_cards table2;
+         table_size table2) );
     ( "discard a pile of size 3" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
         [ "5 of Clubs"; "3 of Hearts"; "Queen of Spades" ]
@@ -490,6 +498,10 @@ let table_tests =
       assert_equal ~printer:(pp_list pp_string) []
         (discard_cards table3;
          peek_at_table table3 |> card_to_string_list) );
+    ( "discard a pile of size 3 checking table size" >:: fun _ ->
+      assert_equal 0
+        (discard_cards table3;
+         table_size table3) );
   ]
 
 let all_pass x =
