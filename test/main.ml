@@ -1,3 +1,38 @@
+(** Test Plan: We strive to create tests to ensure the functionality and
+    usability of our single-player Liar Card Game in the terminal environment.
+
+    Our unit test cases ensure that the functions of the game are running as
+    expected. We mainly used OUnit tests to test functions in our Card, Hand,
+    Game, Round, and Table modules. We used black box testing when evaluating
+    the game from an external perspective and tested basic cases of card
+    situations. We verified that game functions were running expectedly
+    according to their specifications. Furthermore, we used glass box testing to
+    assess the internal logic and code structure. We tested edge cases such as
+    empty lists of cards, empty tables, and other unexpected cases. All of our
+    functions in our Card, Hand, Game, Round and Table modules were tested using
+    OUnit tests. Both glass box testing and black box testing were used to
+    create test cases. Some functions could not be tested directly, but instead
+    were developed through pipelining through other functions contained in the
+    module. These approaches helped to make sure that our documentation was
+    correct and to find edge cases for functions in our modules. We ensured the
+    correct handling of card piles and their distribution based on the outcomes
+    of the game. However, certain functionalities, like calling BS, were tested
+    manually by either playing the game since this functionality requires user
+    input.
+
+    Due to the fact that the cards are always distributed randomly, we could
+    only use manual test cases in the terminal to analyze the actual stimulation
+    of the game in real scenarios. Player roles were also distributed randomly,
+    which we tested through multiple plays of the game. We manually tested the
+    information printed due to our /bin/main.ml file before and after each round
+    and/or move. All of our functionalities in our /bin/main.ml file were tested
+    manually by playing the game in the terminal due to this reason, and also
+    since some of our functionalities require user input. We manually tested
+    cases of randomized and unexpected user inputs throughout the game.
+
+    Our program behaves exactly as intended through our OUnit and manual testing
+    cases. *)
+
 open OUnit2
 open Liargame
 open Card
