@@ -539,7 +539,9 @@ let round_tests =
         (let () = all_pass true in
          is_end p) );
     ( "testing is_end when no players pass" >:: fun _ ->
-      assert_equal ~printer:string_of_bool false (is_end p) );
+      assert_equal ~printer:string_of_bool false
+        (let () = start_round p in
+         is_end p) );
     ( "testing end_round when all players pass" >:: fun _ ->
       assert_equal ~printer:(pp_list pp_string)
         [ "NotPass"; "NotPass"; "NotPass"; "NotPass" ]
