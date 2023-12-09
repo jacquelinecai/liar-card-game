@@ -45,50 +45,10 @@ let rec escape () =
   ()
 
 let rules () =
-  print_endline "\n\nWelcome to the Liar Card Game!\n";
-  print_endline
-    "You will be playing against 3 other bots. Here's the rules for this game: ";
-  print_endline
-    "1) You start off the game. At the start of each round, the selected \
-     player will choose the card type they claim to place down";
-  print_endline
-    "2) Each player will have the option of passing the round or placing down \
-     up to 4 cards";
-  print_endline
-    "3) If at any point during the game, you believe that the other players \
-     have lied in their card placement, instantiate the BS callout. If you're \
-     correct in your assumption, that player will collect all the cards on the \
-     table. If you're incorrect in your assumption, you must collect all the \
-     cards on the table.";
-  print_endline
-    "4) Each round ends when all players decide to pass or someone has \
-     collected all the cards on the table. If all players choose to pass, the \
-     current cards on the table will be discarded.";
-  print_endline
-    "5) Each subsequent round starts with the next player if everyone passes. \
-     If a player was correct in their BS callout, then the next round will \
-     start with that player.";
-  print_endline
-    "6) Continue battling your way through the liar game and the player who \
-     gets rid of their cards first wins!";
-  print_endline
-    "7) This game has features that gives suggested plays and cards to guide \
-     you on your way to victory! Remember, you do not have to follow these \
-     suggestions.";
-  print_endline
-    "8) This game also has a feature that allows you to see the number of \
-     cards in each player's hand. ";
-  print_endline
-    "9) Lastly, if at any point you wish to escape the game, press \"e\' to \
-     leave. If you would like to access the rule page again, press \"r\". If \
-     you would like to turn off the game suggestions mentioned in (7), press \
-     \"s\" at any point in the game. To see the number of cards in each \
-     player's hand, press \"c\" \n";
-  print_endline
-    "If you will like to start the game, press \"m\" to return back to the \
-     main page. If you would like to change the game suggestion settings, \
-     press \"s\". If you want to leave this game, feel free to press \"e\". \
-     Enjoy! \n";
+  let input =
+    "data/rules.txt" |> In_channel.open_text |> In_channel.input_all
+  in
+  print_endline input;
   print_string "> ";
   let rule_escape = ref None in
   while !rule_escape = None do
