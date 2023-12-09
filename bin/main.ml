@@ -381,6 +381,7 @@ let pass_or_play () =
       else if x = "e" then escape ()
       else if x = "r" then rules ()
       else if x = "s" then suggestion_settings ()
+      else if x = "c" then show_player_hand_size ()
       else print_endline "Please try again. Type 'pass' or 'play' to continue."
     done;
     match !a with
