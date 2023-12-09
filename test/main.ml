@@ -23,12 +23,12 @@
     Due to the fact that the cards are always distributed randomly, we could
     only use manual test cases in the terminal to analyze the actual stimulation
     of the game in real scenarios. Player roles were also distributed randomly,
-    which we tested through multiple plays of the game. We manually tested the
-    information printed due to our /bin/main.ml file before and after each round
-    and/or move. All of our functionalities in our /bin/main.ml file were tested
-    manually by playing the game in the terminal due to this reason, and also
-    since some of our functionalities require user input. We manually tested
-    cases of randomized and unexpected user inputs throughout the game.
+    which we tested through multiple plays of the game. All of our
+    functionalities in our /bin/main.ml file were tested manually by playing the
+    game in the terminal due to this reason, and also since some of our
+    functionalities require user input. We manually tested the information
+    printed before and after each round and/or move. We manually tested cases of
+    randomized and unexpected user inputs throughout the game.
 
     Our program behaves exactly as intended through our OUnit and manual testing
     cases. *)
@@ -425,7 +425,10 @@ let game_tests =
           card_status [] [] [] [] |> check_winner) );
   ]
 
+(** Have to make multiple tables due to the fact that we are mutating each table
+    in our test cases.*)
 let empty_table = { table_cards = []; discard_pile = [] }
+
 let table1 = { table_cards = []; discard_pile = [] }
 let add_one_card = adding_cards_to_table table1 [ (Diamonds, Jack) ]
 let table2 = { table_cards = []; discard_pile = [] }
@@ -450,6 +453,13 @@ let table5 = { table_cards = []; discard_pile = [] }
 let modify_table =
   modify_table_cards table5
     [ (Clubs, Number 1); (Spades, Queen); (Diamonds, Number 10) ]
+
+let table6 = { table_cards = []; discard_pile = [] }
+let table7 = { table_cards = []; discard_pile = [] }
+let table8 = { table_cards = []; discard_pile = [] }
+let card1 : card = (Spades, Number 1)
+let card2 : card = (Hearts, King)
+let card3 : card = (Diamonds, Number 2)
 
 let table_tests =
   [
@@ -537,6 +547,31 @@ let table_tests =
       assert_equal 0
         (discard_cards table3;
          table_size table3) );
+    ( "Combining multiple operations: adding_cards_to_table and discard_cards \
+       and peek_at_table and peek_at_discard_pile"
+    >:: fun _ ->
+      adding_cards_to_table table6 [ card1; card2; card3 ];
+      discard_cards table6;
+      assert (peek_at_table table6 = []);
+      assert (peek_at_discard_pile table6 = [ card3; card2; card1 ]) );
+    ( "Combining multiple operations: modifying and discard_cards and \
+       peek_at_table and peek_at_discard_pile"
+    >:: fun _ ->
+      modify_table_cards table7 [ card1; card2 ];
+      discard_cards table7;
+      assert (peek_at_table table7 = []);
+      assert (peek_at_discard_pile table7 = [ card1; card2 ]) );
+    ( "Complex sequence of operations" >:: fun _ ->
+      adding_cards_to_table table8 [ card1 ];
+      modify_table_cards table8 [ card2; card3 ];
+      discard_cards table8;
+      adding_cards_to_table table8 [ card1; card2 ];
+      modify_table_cards table8 [ card3 ];
+      discard_cards table8;
+      assert (peek_at_table table8 = []);
+      assert (
+        peek_at_discard_pile table8
+        = [ card3; card2; card1; card2; card3; card1 ]) );
   ]
 
 let all_pass x =

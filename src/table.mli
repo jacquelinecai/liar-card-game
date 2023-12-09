@@ -11,14 +11,15 @@ val empty_table : table
 (** Represents the empty table. *)
 
 val modify_table_cards : table -> card list -> unit
-(** Modifies the cards on the table by adding cards to the beginning of the
-    table. *)
+(** modify_table_cards table [c1; c2; c3] modifies the table by adding cards to
+    the front of the table in the order [c1; c2; c3]*)
 
 val adding_card_to_table : table -> card option -> unit
 (** Adds a singular card onto the table. *)
 
 val adding_cards_to_table : table -> card list -> unit
-(** Adds list of cards onto the end of the table. *)
+(** adding_cards_to_table table [c1; c2; c3] adds cards to the front of the
+    table in the order [c3; c2; c1] *)
 
 val peek_at_table : table -> card list
 (** Returns the list of cards on the table at the current moment. *)
