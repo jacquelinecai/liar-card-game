@@ -405,6 +405,8 @@ let pass_or_play () =
         in
         player_order ();
         if !card_type = None then card_type := Some (snd (bot_cards ()));
+        start_round bs_pass;
+        change_to_pass !curr_player bs_pass;
         bot_actions ()
   end
   else (
@@ -424,6 +426,7 @@ let callout () =
   else
     while !bs_curr_player <> "Done" && next_bs_player () <> "Done" do
       if !bs_curr_player = main then begin
+        print_endline (!bs_curr_player ^ "'s callout turn");
         print_endline
           "Do you want to call BS? Please input 'yes' or 'no'. (Or 'e' to \
            escape the game, 'r' for rules, 's' for suggestion settings, or 'c' \
@@ -463,7 +466,7 @@ let callout () =
         else if response = "c" then show_player_hand_size ()
         else if next_bs_player () = "Done" then (
           change_to_pass !bs_curr_player bs_pass;
-          let () = curr_player := next_player () in
+          curr_player := next_player ();
           player_order ())
         else (
           change_to_pass !bs_curr_player bs_pass;
@@ -502,10 +505,13 @@ let callout () =
           change_to_pass !bs_curr_player bs_pass;
           bs_curr_player := next_bs_player ()))
     done;
+  if is_end bs_pass then (
+    curr_player := next_player ();
+    print_endline "All players have decided to not call BS")
+  else card_type := None;
+  bs_curr_player := set_bs_player !curr_player;
   print_endline
-    ("\nCurrent cards: " ^ (order !main_player_cards |> deck_to_string));
-  if is_end bs_pass then curr_player := next_player () else card_type := None;
-  bs_curr_player := set_bs_player !curr_player
+    ("\nCurrent cards: " ^ (order !main_player_cards |> deck_to_string))
 
 let main () =
   let input =
