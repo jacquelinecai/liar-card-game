@@ -41,7 +41,8 @@ let rec escape () =
     | _ ->
         print_endline
           "Please try again. Enter 'y' to continue quitting or 'n' to return \
-           back to the main page."
+           back to the main page.";
+        print_string "> "
   done;
   ()
 
@@ -65,7 +66,8 @@ let rules () =
     | _ ->
         print_endline
           "Please try again. Enter 'm' to go back to the main page or 'e' to \
-           escape this game."
+           escape this game.";
+        print_string "> "
   done;
   ()
 
@@ -191,6 +193,8 @@ let bs_pass_curr_player p = change_to_pass p bs_pass
 let play_suggestion () =
   suggested_play (Option.get !card_type) (table_size table) !main_player_cards
 
+let round_suggestion = ref None
+
 let choose_cards () =
   let () =
     print_endline
@@ -202,19 +206,10 @@ let choose_cards () =
     print_endline
       (if !suggestions then
          let suggested =
-           if play_suggestion () = None then (
-             let generate_suggestion =
-               ref
-                 (suggested_play (Option.get !card_type) (table_size table)
-                    !main_player_cards)
-             in
-             while !generate_suggestion = None do
-               generate_suggestion :=
-                 suggested_play (Option.get !card_type) (table_size table)
-                   !main_player_cards
-             done;
-             !generate_suggestion)
-           else play_suggestion ()
+           while !round_suggestion = None do
+             round_suggestion := play_suggestion ()
+           done;
+           !round_suggestion
          in
          match suggested with
          | None -> failwith "impossible"
@@ -227,7 +222,9 @@ let choose_cards () =
     let x = String.uppercase_ascii (read_line ()) in
     let cards_placed = String.split_on_char '-' x |> stringlist_to_card_list in
     if valid cards_placed !main_player_cards then y := Some cards_placed
-    else print_endline "One or more of your cards are not valid. Try again."
+    else (
+      print_endline "One or more of your cards are not valid. Try again.";
+      print_string "> ")
   done;
   let amt = List.length (Option.get !y) in
   let () =
@@ -295,6 +292,7 @@ let choose_card_type () =
       else print_endline "That is not a possible card type."
   done;
   card_type := !c;
+  round_suggestion := play_suggestion ();
   current_round ();
   choose_cards ()
 
@@ -378,7 +376,9 @@ let pass_or_play () =
            "Suggested play: "
            ^
            let suggested =
-             if !card_type <> None then play_suggestion ()
+             if !card_type <> None then (
+               round_suggestion := play_suggestion ();
+               !round_suggestion)
              else Some [] (* Should never happen *)
            in
            match suggested with
@@ -393,7 +393,9 @@ let pass_or_play () =
       else if x = "r" then rules ()
       else if x = "s" then suggestion_settings ()
       else if x = "c" then show_player_hand_size ()
-      else print_endline "Please try again. Type 'pass' or 'play' to continue."
+      else (
+        print_endline "Please try again. Type 'pass' or 'play' to continue.";
+        print_string "> ")
     done;
     match !a with
     | "play" -> choose_card_type ()
