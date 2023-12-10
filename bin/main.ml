@@ -199,7 +199,7 @@ let choose_cards () =
   let () =
     print_endline
       ("\n\n\
-        What cards would you like to place? \n\
+       \        What cards would you like to place? \n\
         Example: 4D-4C\n\
         Current cards: "
       ^ deck_to_string (order !main_player_cards));
