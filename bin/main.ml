@@ -24,7 +24,7 @@ let suggestion_settings () =
 let rec escape () =
   print_endline
     "This will close your game. All progress will be lost. Do you wish to \
-     continue quitting (y/n)";
+     continue quitting? (y/n)";
   print_string "> ";
   let quit = ref None in
   while !quit = None do
@@ -34,7 +34,8 @@ let rec escape () =
         quit := Some 1;
         print_endline
           "\n\
-           You have successfully quit the Liar Card game. Thank you for joining";
+           You have successfully quit the Liar Card game. Thank you for \
+           playing! Exiting the session...\n";
         Stdlib.exit 0
     | "n" -> quit := Some 1
     | _ ->
@@ -123,7 +124,7 @@ let start () =
     print_endline
       "\n\
        Type \"start\" to start the game, \"r\" for the rules of the game, or \
-       \"e\" to escape: ";
+       \"e\" to escape:";
     print_string "> ";
     let x = read_line () in
     if x = "start" then y := true
@@ -195,14 +196,28 @@ let choose_cards () =
     print_endline
       ("\n\n\
         What cards would you like to place? \n\
-       \ Example: 4D-4C\n\
+        Example: 4D-4C\n\
         Current cards: "
       ^ deck_to_string (order !main_player_cards));
     print_endline
       (if !suggestions then
-         let suggested = play_suggestion () in
+         let suggested =
+           if play_suggestion () = None then (
+             let generate_suggestion =
+               ref
+                 (suggested_play (Option.get !card_type) (table_size table)
+                    !main_player_cards)
+             in
+             while !generate_suggestion = None do
+               generate_suggestion :=
+                 suggested_play (Option.get !card_type) (table_size table)
+                   !main_player_cards
+             done;
+             !generate_suggestion)
+           else play_suggestion ()
+         in
          match suggested with
-         | None -> ""
+         | None -> failwith "impossible"
          | Some x -> "Suggested play: " ^ (order x |> deck_to_string)
        else "");
     print_string "> "
@@ -363,12 +378,8 @@ let pass_or_play () =
            "Suggested play: "
            ^
            let suggested =
-             if !card_type <> None then
-               if play_suggestion () = None then
-                 suggested_play (Option.get !card_type) (table_size table)
-                   !main_player_cards
-               else play_suggestion ()
-             else Some []
+             if !card_type <> None then play_suggestion ()
+             else Some [] (* Should never happen *)
            in
            match suggested with
            | None -> "pass"

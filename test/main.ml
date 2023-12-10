@@ -552,15 +552,15 @@ let table_tests =
     >:: fun _ ->
       adding_cards_to_table table6 [ card1; card2; card3 ];
       discard_cards table6;
-      assert (peek_at_table table6 = []);
-      assert (peek_at_discard_pile table6 = [ card3; card2; card1 ]) );
+      assert_equal [] (peek_at_table table6);
+      assert_equal [ card3; card2; card1 ] (peek_at_discard_pile table6) );
     ( "Combining multiple operations: modifying and discard_cards and \
        peek_at_table and peek_at_discard_pile"
     >:: fun _ ->
       modify_table_cards table7 [ card1; card2 ];
       discard_cards table7;
-      assert (peek_at_table table7 = []);
-      assert (peek_at_discard_pile table7 = [ card1; card2 ]) );
+      assert_equal [] (peek_at_table table7);
+      assert_equal [ card1; card2 ] (peek_at_discard_pile table7) );
     ( "Complex sequence of operations" >:: fun _ ->
       adding_cards_to_table table8 [ card1 ];
       modify_table_cards table8 [ card2; card3 ];
@@ -568,10 +568,10 @@ let table_tests =
       adding_cards_to_table table8 [ card1; card2 ];
       modify_table_cards table8 [ card3 ];
       discard_cards table8;
-      assert (peek_at_table table8 = []);
-      assert (
-        peek_at_discard_pile table8
-        = [ card3; card2; card1; card2; card3; card1 ]) );
+      assert_equal [] (peek_at_table table8);
+      assert_equal
+        [ card3; card2; card1; card2; card3; card1 ]
+        (peek_at_discard_pile table8) );
   ]
 
 let all_pass x =
@@ -648,10 +648,53 @@ let round_tests =
         [ "Ace of Clubs"; "Ace of Diamonds" ]
         (suggested_play (Number 1) 0 (assign 1 14 unshuffled_deck [])
         |> Option.get |> card_to_string_list) );
+    ( "suggested_play with card list that doesn't contain number n" >:: fun _ ->
+      let play = suggested_play Jack 1 (assign 1 8 unshuffled_deck []) in
+      match play with
+      | Some x -> assert_equal true (List.length x <= 4)
+      | None ->
+          assert_raises (Invalid_argument "option is None") (fun () ->
+              Option.get play) );
+    ( "suggested_play only places down one card with card list that doesn't \
+       contain number n"
+    >:: fun _ ->
+      let cl =
+        [
+          (Hearts, Queen);
+          (Diamonds, Number 1);
+          (Hearts, King);
+          (Diamonds, Queen);
+          (Clubs, Number 7);
+        ]
+      in
+      let play = suggested_play Jack 5 cl in
+      match play with
+      | Some x ->
+          assert_equal 1 (List.length x);
+          assert_equal Queen (List.hd x |> snd)
+      | None ->
+          assert_raises (Invalid_argument "option is None") (fun () ->
+              Option.get play) );
     ( "bot_play returns card list with correct range of cards" >:: fun _ ->
       assert_equal ~printer:string_of_bool true
         (bot_play (Number 5) 4 unshuffled_deck |> Option.get |> List.length <= 4)
     );
+    ( "bot_play with card list that doesn't contain number n" >:: fun _ ->
+      let bot = bot_play King 0 (assign 1 5 unshuffled_deck []) in
+      match bot with
+      | Some x -> assert_equal true (List.length x <= 4)
+      | None ->
+          assert_raises (Invalid_argument "option is None") (fun () ->
+              Option.get bot) );
+    ( "bot_play only places down one card with card list that doesn't contain \
+       number n"
+    >:: fun _ ->
+      let bot = bot_play King 4 (assign 1 5 unshuffled_deck []) in
+      match bot with
+      | Some x -> assert_equal 1 (List.length x)
+      | None ->
+          assert_raises (Invalid_argument "option is None") (fun () ->
+              Option.get bot) );
   ]
 
 let suite =
