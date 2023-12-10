@@ -51,9 +51,10 @@ val contains : card -> card list -> bool
 (** [contains c cl] returns [true] if [cl] contains the card, else returns
     [false] *)
 
-val valid : card option list -> card list -> bool
-(** [valid cl yourCards] returns [true] if the card list has all valid cards and
-    all the cards from [cl] are in [yourCards], else returns [false] *)
+val valid : card option list -> card list -> card list -> bool
+(** [valid cl yourCards updated] returns [true] if the card list has all valid
+    cards and all the cards from [cl] are in [yourCards] and [updated], else
+    returns [false] *)
 
 val toCardList : card option list -> card list
 (** [toCardList cl] returns the card option list into a card list. Precondition:

@@ -198,10 +198,7 @@ let round_suggestion = ref None
 let choose_cards () =
   let () =
     print_endline
-      ("\n\n\
-       \        What cards would you like to place? \n\
-        Example: 4D-4C\n\
-        Current cards: "
+      ("\nWhat cards would you like to place? \nExample: 4D-4C\nCurrent cards: "
       ^ deck_to_string (order !main_player_cards));
     print_endline
       (if !suggestions then
@@ -221,7 +218,8 @@ let choose_cards () =
   while !y = None do
     let x = String.uppercase_ascii (read_line ()) in
     let cards_placed = String.split_on_char '-' x |> stringlist_to_card_list in
-    if valid cards_placed !main_player_cards then y := Some cards_placed
+    if valid cards_placed !main_player_cards !main_player_cards then
+      y := Some cards_placed
     else (
       print_endline "One or more of your cards are not valid. Try again.";
       print_string "> ")
@@ -427,9 +425,9 @@ let callout () =
     while !bs_curr_player <> "Done" && next_bs_player () <> "Done" do
       if !bs_curr_player = main then begin
         print_endline
-          "Do you want to call BS? Please input yes or no. (Or 'e' to escape \
-           the game, 'r' for rules, 's' for suggestion settings, or 'c' to see \
-           how many cards all players have. )";
+          "Do you want to call BS? Please input 'yes' or 'no'. (Or 'e' to \
+           escape the game, 'r' for rules, 's' for suggestion settings, or 'c' \
+           to see how many cards all players have. )";
         print_string "> ";
         let response = read_line () |> String.lowercase_ascii in
         if response = "yes" then (

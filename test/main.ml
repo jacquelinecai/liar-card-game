@@ -168,20 +168,22 @@ let card_tests =
           String.split_on_char '-' (String.uppercase_ascii "1d-2d-7d-11D")
           |> stringlist_to_card_list |> toCardList) );
     ( "valid test on not valid list" >:: fun _ ->
-      assert_equal false (valid [ None ] unshuffled_deck) );
+      assert_equal false (valid [ None ] unshuffled_deck unshuffled_deck) );
     ( "valid test on not valid list" >:: fun _ ->
       assert_equal false
         (valid
            [ Some (Clubs, Number 1); Some (Hearts, King); None ]
-           unshuffled_deck) );
+           unshuffled_deck unshuffled_deck) );
     ( "valid test on not valid list" >:: fun _ ->
       assert_equal true
-        (valid [ Some (Clubs, Number 1); Some (Hearts, King) ] unshuffled_deck)
-    );
+        (valid
+           [ Some (Clubs, Number 1); Some (Hearts, King) ]
+           unshuffled_deck unshuffled_deck) );
     ( "valid test on cards not in list" >:: fun _ ->
       assert_equal false
         (valid
            [ Some (Clubs, Number 1); Some (Hearts, King) ]
+           [ (Clubs, Number 2); (Hearts, Number 3) ]
            [ (Clubs, Number 2); (Hearts, Number 3) ]) );
     ( "card list to string" >:: fun _ ->
       assert_equal ~printer:pp_string "K ♣, 5 ♦"

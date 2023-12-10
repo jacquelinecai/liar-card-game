@@ -159,13 +159,16 @@ let rec contains (c : card) (cl : card list) : bool =
   | [] -> false
   | h :: t -> if h = c then true else contains c t
 
-let rec valid (cl : card option list) (yourCards : card list) : bool =
+let rec valid (cl : card option list) (yourCards : card list)
+    (updated : card list) : bool =
   match cl with
   | [] -> true
   | h :: t -> (
       match h with
       | None -> false
-      | Some c -> true && contains c yourCards && valid t yourCards)
+      | Some c ->
+          contains c updated
+          && valid t yourCards (List.filter (fun x -> x <> c) updated))
 
 let rec toCardList (cl : card option list) : card list =
   match cl with
