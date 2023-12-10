@@ -1,3 +1,5 @@
+(** Determines the cards on the table *)
+
 type card = Card.card
 (** Type representing a card. *)
 

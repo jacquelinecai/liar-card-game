@@ -38,7 +38,7 @@ val shuffle : card list -> card list
 
 val string_to_card : string -> card option
 (** [string_to_card s] returns [Some c] if [s] can be represented as a valid
-    card [c]. Otherwise, return [None] *)
+    card [c], where [s] is a string. Otherwise, return [None] *)
 
 val stringlist_to_card_list : string list -> card option list
 (** [stringlist_to_card_list lst] returns a list of card representations of the

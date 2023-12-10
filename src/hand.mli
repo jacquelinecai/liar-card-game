@@ -22,7 +22,7 @@ val order : card list -> card list
 (** [order deck] returns [deck] in order based on number and suit *)
 
 val order_num : number list -> number list
-(** [order_num nl] returns [nl] in order *)
+(** [order_num nl] returns [nl] in order where [nl] represents a number list *)
 
 val deck_to_string : card list -> string
 (** [deck_to_string deck] returns a string of each card in [deck] *)
@@ -47,7 +47,7 @@ val player_hand_size : int -> int
 
 val containsNum : number -> card list -> bool
 (** [containsNum n cl] returns [true] if [cl] contains the card number [n], else
-    returns [false] *)
+    returns [false], where [c1] represents a card list *)
 
 val numCards : number -> card list -> int -> int
 (** [numCards n cl acc] returns the number of cards in [cl] that have a number
@@ -62,10 +62,11 @@ val getRandCards : int list -> int -> card list -> card list -> card list
     in [lst] *)
 
 val firstNCards : card list -> int -> card list
-(** [firstNCards deck n] returns the first [n] cards in [deck] *)
+(** [firstNCards deck n] returns the first n cards in [deck] *)
 
 val updateDeck : card -> card list -> card list -> card list
 (**[updateDeck c cl acc] returns [cl] without the card [c] *)
 
 val updateDeckWithCardList : card list -> card list -> card list
-(**[updateDeckWithCardList clr cl] returns [cl] without the cards from [clr] *)
+(**[updateDeckWithCardList clr cl] returns [cl] without the cards from [clr],
+   where [c1r] and [cl] are card lists *)
