@@ -439,7 +439,7 @@ let callout () =
               if number = Option.get !card_type then (
                 print_endline
                   ("Here are the cards in the table: "
-                  ^ deck_to_string (peek_at_table table |> order)
+                  ^ deck_to_string (peek_at_table table)
                   ^ ". " ^ !curr_player ^ " was not lying.");
                 match_player_with_hand !bs_curr_player
                 := table_list @ !(match_player_with_hand !bs_curr_player)
@@ -448,7 +448,7 @@ let callout () =
               else (
                 print_endline
                   ("Here are the cards in the table: "
-                  ^ deck_to_string (peek_at_table table |> order)
+                  ^ deck_to_string (peek_at_table table)
                   ^ ". " ^ !curr_player ^ " was lying.");
                 match_player_with_hand !curr_player
                 := table_list @ !(match_player_with_hand !curr_player) |> order;
@@ -482,7 +482,7 @@ let callout () =
               if number = Option.get !card_type then (
                 print_endline
                   ("Here are the cards on the table: "
-                  ^ deck_to_string (peek_at_table table |> order)
+                  ^ deck_to_string (peek_at_table table)
                   ^ ". " ^ !curr_player ^ " was not lying.");
                 match_player_with_hand !bs_curr_player
                 := table_list @ !(match_player_with_hand !bs_curr_player)
@@ -490,7 +490,7 @@ let callout () =
               else (
                 print_endline
                   ("Here are the cards on the table: "
-                  ^ deck_to_string (peek_at_table table |> order)
+                  ^ deck_to_string (peek_at_table table)
                   ^ ". " ^ !curr_player ^ " was lying.");
                 match_player_with_hand !curr_player
                 := table_list @ !(match_player_with_hand !curr_player) |> order;
