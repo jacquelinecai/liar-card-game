@@ -89,11 +89,10 @@ let card_to_string c =
   let number = number_match (snd c) in
   number ^ " " ^ suit
 
-(** Implementation based on the Fisher-Yates Shuffling Algorithm:
-    https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
 let shuffle d =
   let d_arr = Array.of_list d in
   for i = 51 downto 0 do
+    let () = Random.self_init () in
     let j = Random.int (i + 1) in
     let temp = d_arr.(j) in
     d_arr.(j) <- d_arr.(i);
@@ -123,7 +122,6 @@ let string_number_match s =
   | "7" -> Some (Number 7)
   | "8" -> Some (Number 8)
   | "9" -> Some (Number 9)
-  | "10" -> Some (Number 10)
   | "J" -> Some Jack
   | "Q" -> Some Queen
   | "K" -> Some King
@@ -136,4 +134,43 @@ let string_to_card s =
     match (suit, num) with
     | Some x, Some y -> Some (x, y)
     | _ -> None
+  else if String.length s = 3 && String.sub s 0 2 = "10" then
+    let suit = string_suit_match (String.sub s 1 2) in
+    match suit with
+    | Some x -> Some (x, Number 10)
+    | _ -> None
   else None
+
+exception InvalidCard
+
+let rec stringlist_to_card_list (sl : string list) : card option list =
+  match sl with
+  | [] -> []
+  | h :: t -> string_to_card h :: stringlist_to_card_list t
+
+let rec cardlist_to_string (cl : card list) =
+  match cl with
+  | [] -> ""
+  | h :: [] -> card_to_string h
+  | h :: t -> card_to_string h ^ ", " ^ cardlist_to_string t
+
+let rec contains (c : card) (cl : card list) : bool =
+  match cl with
+  | [] -> false
+  | h :: t -> if h = c then true else contains c t
+
+let rec valid (cl : card option list) (yourCards : card list) : bool =
+  match cl with
+  | [] -> true
+  | h :: t -> (
+      match h with
+      | None -> false
+      | Some c -> true && contains c yourCards && valid t yourCards)
+
+let rec toCardList (cl : card option list) : card list =
+  match cl with
+  | [] -> []
+  | h :: t -> (
+      match h with
+      | None -> raise InvalidCard (* Should never be raised *)
+      | Some c -> c :: toCardList t)
