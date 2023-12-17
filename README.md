@@ -1,4 +1,4 @@
-### CS 3110 Final Project
+### CS 3110 Final Project (Liar Card Game)
 
 Jacqueline Cai (jxc6)
 
